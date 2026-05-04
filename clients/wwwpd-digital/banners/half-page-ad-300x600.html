@@ -5,11 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Half Page Ad – 300×600 | pd digital Hub</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
       background: #111;
@@ -20,7 +16,6 @@
       font-family: sans-serif;
     }
 
-    /* ── Banner shell ─────────────────────────────── */
     .banner {
       position: relative;
       width: 300px;
@@ -30,17 +25,16 @@
       border: 1px solid rgba(255,255,255,0.08);
     }
 
-    /* ── Background gradient overlay ─────────────── */
     .bg-gradient {
       position: absolute;
       inset: 0;
-      background: radial-gradient(ellipse at 20% 10%, rgba(26,127,212,0.18) 0%, transparent 60%),
-                  radial-gradient(ellipse at 80% 90%, rgba(79,200,200,0.12) 0%, transparent 55%);
+      background:
+        radial-gradient(ellipse at 20% 10%, rgba(26,127,212,0.18) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 90%, rgba(79,200,200,0.12) 0%, transparent 55%);
       opacity: 0;
       animation: fadeIn 0.8s ease forwards;
     }
 
-    /* ── Decorative background geometry ──────────── */
     .bg-geo {
       position: absolute;
       width: 320px;
@@ -52,12 +46,6 @@
       animation: fadeIn 1.2s 0.4s ease forwards, slowRotate 28s 1.2s linear infinite;
     }
 
-    .bg-geo svg {
-      width: 100%;
-      height: 100%;
-    }
-
-    /* ── Logo ─────────────────────────────────────── */
     .logo-wrap {
       position: absolute;
       top: 82px;
@@ -68,16 +56,15 @@
       animation: logoEnter 0.9s 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
     }
 
-    .logo-wrap img {
+    .logo-wrap svg {
       width: 100%;
       height: auto;
       display: block;
     }
 
-    /* ── Divider line ─────────────────────────────── */
     .divider {
       position: absolute;
-      top: 212px;
+      top: 218px;
       left: 30px;
       width: 0;
       height: 1px;
@@ -85,10 +72,9 @@
       animation: drawLine 0.5s 1.85s ease forwards;
     }
 
-    /* ── Banner name ──────────────────────────────── */
     .banner-name {
       position: absolute;
-      top: 232px;
+      top: 238px;
       left: 0;
       width: 300px;
       text-align: center;
@@ -102,10 +88,9 @@
       animation: textReveal 0.8s 2.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
     }
 
-    /* ── Dimensions label ─────────────────────────── */
     .dimensions {
       position: absolute;
-      top: 270px;
+      top: 276px;
       left: 0;
       width: 300px;
       text-align: center;
@@ -118,7 +103,6 @@
       animation: fadeSlideUp 0.6s 3.05s ease forwards;
     }
 
-    /* ── URL / CTA area ───────────────────────────── */
     .cta-wrap {
       position: absolute;
       bottom: 52px;
@@ -136,13 +120,12 @@
       font-size: 11px;
       letter-spacing: 0.18em;
       color: rgba(255,255,255,0.5);
-      text-transform: lowercase;
     }
 
     .cta-btn {
       display: inline-block;
       padding: 9px 28px;
-      border: 1px solid rgba(79, 200, 200, 0.55);
+      border: 1px solid rgba(79,200,200,0.55);
       border-radius: 2px;
       font-size: 10px;
       font-weight: 600;
@@ -152,9 +135,7 @@
       animation: pulse 2.8s 4.4s ease-in-out infinite;
     }
 
-    /* ── Corner accent ────────────────────────────── */
-    .corner-tl,
-    .corner-br {
+    .corner-tl, .corner-br {
       position: absolute;
       width: 18px;
       height: 18px;
@@ -163,20 +144,17 @@
     }
 
     .corner-tl {
-      top: 16px;
-      left: 16px;
+      top: 16px; left: 16px;
       border-top: 1px solid rgba(26,127,212,0.6);
       border-left: 1px solid rgba(26,127,212,0.6);
     }
 
     .corner-br {
-      bottom: 16px;
-      right: 16px;
+      bottom: 16px; right: 16px;
       border-bottom: 1px solid rgba(79,200,200,0.6);
       border-right: 1px solid rgba(79,200,200,0.6);
     }
 
-    /* ── Scan line (subtle) ───────────────────────── */
     .scanline {
       position: absolute;
       left: 0;
@@ -187,51 +165,27 @@
       animation: scan 6s 1s linear infinite;
     }
 
-    /* ════════════════════════════════════════════════
-       Keyframes
-    ════════════════════════════════════════════════ */
-    @keyframes fadeIn {
-      to { opacity: 1; }
-    }
-
-    @keyframes logoEnter {
-      to {
-        opacity: 1;
-        transform: translateX(-50%) translateY(0);
-      }
-    }
-
-    @keyframes drawLine {
-      to { width: 240px; }
-    }
+    @keyframes fadeIn    { to { opacity: 1; } }
+    @keyframes logoEnter { to { opacity: 1; transform: translateX(-50%) translateY(0); } }
+    @keyframes drawLine  { to { width: 240px; } }
 
     @keyframes textReveal {
-      to {
-        opacity: 1;
-        filter: blur(0px);
-        letter-spacing: 0.32em;
-      }
+      to { opacity: 1; filter: blur(0px); letter-spacing: 0.32em; }
     }
 
     @keyframes fadeSlideUp {
-      from {
-        opacity: 0;
-        transform: translateY(10px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
     }
 
     @keyframes pulse {
-      0%, 100% { box-shadow: 0 0 0 0 rgba(79,200,200,0); border-color: rgba(79,200,200,0.55); }
-      50%       { box-shadow: 0 0 14px 2px rgba(79,200,200,0.18); border-color: rgba(79,200,200,0.9); }
+      0%,100% { box-shadow: 0 0 0 0 rgba(79,200,200,0); border-color: rgba(79,200,200,0.55); }
+      50%      { box-shadow: 0 0 14px 2px rgba(79,200,200,0.18); border-color: rgba(79,200,200,0.9); }
     }
 
     @keyframes slowRotate {
-      from { transform: translate(-50%, -50%) rotate(0deg); }
-      to   { transform: translate(-50%, -50%) rotate(360deg); }
+      from { transform: translate(-50%,-50%) rotate(0deg); }
+      to   { transform: translate(-50%,-50%) rotate(360deg); }
     }
 
     @keyframes scan {
@@ -246,50 +200,78 @@
 
 <div class="banner">
 
-  <!-- Background -->
   <div class="bg-gradient"></div>
 
-  <!-- Decorative background geometry (triangle echo from logo) -->
+  <!-- Decorative rotating triangles (echo of logo shape) -->
   <div class="bg-geo">
     <svg viewBox="0 0 320 320" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <polygon points="160,30 40,280 280,280"
-        stroke="url(#geoGrad)" stroke-width="0.8" fill="none" opacity="0.22"/>
-      <polygon points="160,70 75,260 245,260"
-        stroke="url(#geoGrad)" stroke-width="0.5" fill="none" opacity="0.14"/>
       <defs>
         <linearGradient id="geoGrad" x1="0" y1="0" x2="320" y2="320" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stop-color="#b8e04a"/>
-          <stop offset="50%" stop-color="#4fc8c8"/>
+          <stop offset="0%"   stop-color="#b8e04a"/>
+          <stop offset="50%"  stop-color="#4fc8c8"/>
           <stop offset="100%" stop-color="#1a7fd4"/>
         </linearGradient>
       </defs>
+      <polygon points="160,30 40,280 280,280"   stroke="url(#geoGrad)" stroke-width="0.8" fill="none" opacity="0.22"/>
+      <polygon points="160,70 75,260 245,260"   stroke="url(#geoGrad)" stroke-width="0.5" fill="none" opacity="0.14"/>
     </svg>
   </div>
 
-  <!-- Scan line -->
   <div class="scanline"></div>
 
-  <!-- Logo -->
+  <!-- Logo (inline SVG – no external file needed) -->
   <div class="logo-wrap">
-    <img src="../assets/logo/logo.png" alt="pd digital Hub">
+    <svg viewBox="0 0 580 195" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <!-- Left mountain gradient: yellow-green → teal → blue -->
+        <linearGradient id="mGrad" x1="0.7" y1="0" x2="0" y2="1">
+          <stop offset="0%"   stop-color="#c8e63d"/>
+          <stop offset="42%"  stop-color="#3ecfc8"/>
+          <stop offset="100%" stop-color="#1a7fd4"/>
+        </linearGradient>
+        <!-- Right chevron gradient: teal → blue -->
+        <linearGradient id="cGrad" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%"   stop-color="#4fcfc8"/>
+          <stop offset="100%" stop-color="#1a7fd4"/>
+        </linearGradient>
+      </defs>
+
+      <!-- Left mountain – front face (bright) -->
+      <path d="M4,178 L72,6 L90,6 L34,162 Z" fill="url(#mGrad)"/>
+      <!-- Left mountain – inner face (ribbon fold, slightly darker) -->
+      <path d="M34,162 L90,6 L112,34 L68,178 Z" fill="url(#mGrad)" opacity="0.6"/>
+
+      <!-- Right chevron – front blade -->
+      <path d="M88,72 L124,168 L142,160 L108,66 Z" fill="url(#cGrad)"/>
+      <!-- Right chevron – back blade -->
+      <path d="M108,66 L142,160 L170,132 L132,50 Z" fill="url(#cGrad)" opacity="0.82"/>
+
+      <!-- Text: "pd" bold -->
+      <text x="198" y="148"
+            font-family="'Helvetica Neue',Helvetica,Arial,sans-serif"
+            font-size="86"
+            font-weight="800"
+            fill="#ffffff">pd</text>
+
+      <!-- Text: " digital Hub" regular -->
+      <text x="298" y="148"
+            font-family="'Helvetica Neue',Helvetica,Arial,sans-serif"
+            font-size="86"
+            font-weight="400"
+            fill="#ffffff"> digital Hub</text>
+    </svg>
   </div>
 
-  <!-- Divider -->
   <div class="divider"></div>
 
-  <!-- Banner name -->
   <div class="banner-name">Half Page Ad</div>
-
-  <!-- Dimensions -->
   <div class="dimensions">300 &times; 600 px</div>
 
-  <!-- CTA / URL -->
   <div class="cta-wrap">
     <span class="url-text">wwwpd-digital.de</span>
     <span class="cta-btn">Mehr erfahren</span>
   </div>
 
-  <!-- Corner accents -->
   <div class="corner-tl"></div>
   <div class="corner-br"></div>
 
