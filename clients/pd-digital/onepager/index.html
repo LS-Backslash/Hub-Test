@@ -1,0 +1,1649 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>pd digital Hub – Werbemöglichkeiten</title>
+<style>
+:root {
+  --blue: #1a7fd4;
+  --teal: #3dcde6;
+  --green: #c8f064;
+  --dark: #0d1b2e;
+  --darker: #060e1a;
+  --mid: #111e30;
+  --white: #ffffff;
+  --gray: #f5f5f7;
+  --text: #1d1d1f;
+  --muted: #6e6e73;
+  --ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+*,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
+  color: var(--text);
+  overflow-x: hidden;
+  background: #fff;
+}
+
+/* ── NAV ─────────────────────────────────────── */
+nav {
+  position: fixed; top:0; left:0; right:0; z-index:1000;
+  height: 56px;
+  display: flex; align-items:center; justify-content:space-between;
+  padding: 0 48px;
+  transition: background 0.5s var(--ease), border-color 0.5s;
+  border-bottom: 1px solid transparent;
+}
+nav.scrolled {
+  background: rgba(255,255,255,0.88);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-bottom-color: rgba(0,0,0,0.08);
+}
+.nav-logo { height:26px; width:auto; display:block; }
+.nav-logo-dark  { display:block; }
+.nav-logo-light { display:none; }
+nav.scrolled .nav-logo-dark  { display:none; }
+nav.scrolled .nav-logo-light { display:block; }
+.nav-cta {
+  font-size:13px; font-weight:500;
+  color:rgba(255,255,255,0.85);
+  text-decoration:none;
+  padding:7px 18px;
+  border:1px solid rgba(255,255,255,0.3);
+  border-radius:100px;
+  transition:all 0.3s;
+}
+nav.scrolled .nav-cta { color:var(--blue); border-color:rgba(26,127,212,0.4); }
+.nav-cta:hover { background:rgba(255,255,255,0.15); }
+nav.scrolled .nav-cta:hover { background:rgba(26,127,212,0.07); }
+
+/* ── HERO ────────────────────────────────────── */
+.hero {
+  position:relative; height:100vh; min-height:680px;
+  background:var(--dark);
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  overflow:hidden; text-align:center;
+}
+.hero-bg {
+  position:absolute; inset:0;
+  background:
+    radial-gradient(ellipse at 15% 25%, rgba(26,127,212,0.28) 0%, transparent 55%),
+    radial-gradient(ellipse at 85% 75%, rgba(61,205,230,0.18) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 10%, rgba(200,240,100,0.08) 0%, transparent 45%);
+}
+.geo {
+  position:absolute; will-change:transform; pointer-events:none;
+}
+.geo svg { width:100%; height:100%; }
+.geo-1 { width:700px; height:700px; top:-200px; right:-150px; opacity:0.05; }
+.geo-2 { width:500px; height:500px; bottom:-120px; left:-100px; opacity:0.04; }
+.geo-3 { width:240px; height:240px; top:28%; left:8%; opacity:0.07; }
+.hero-content {
+  position:relative; z-index:2;
+  max-width:860px; padding:0 40px;
+  will-change:transform;
+}
+.hero-logo {
+  height:52px; width:auto; margin:0 auto 52px;
+  opacity:0; transform:translateY(18px);
+  animation:fadeUp 1s 0.2s var(--ease) forwards;
+}
+.hero-eyebrow {
+  font-size:12px; font-weight:600; letter-spacing:0.2em;
+  text-transform:uppercase; color:var(--teal);
+  margin-bottom:18px;
+  opacity:0; transform:translateY(16px);
+  animation:fadeUp 1s 0.38s var(--ease) forwards;
+}
+.hero-h1 {
+  font-size:clamp(42px,7vw,92px); font-weight:700;
+  line-height:1.04; letter-spacing:-0.03em;
+  color:#fff; margin-bottom:22px;
+  opacity:0; transform:translateY(22px);
+  animation:fadeUp 1s 0.52s var(--ease) forwards;
+}
+.grad-text {
+  background:linear-gradient(135deg,var(--green) 0%,var(--teal) 45%,var(--blue) 100%);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.hero-sub {
+  font-size:clamp(17px,2.2vw,22px); font-weight:400;
+  color:rgba(255,255,255,0.5); line-height:1.55;
+  max-width:520px; margin:0 auto 44px;
+  opacity:0; transform:translateY(18px);
+  animation:fadeUp 1s 0.66s var(--ease) forwards;
+}
+.hero-btn {
+  display:inline-flex; align-items:center; gap:8px;
+  background:linear-gradient(135deg,var(--blue),var(--teal));
+  color:#fff; text-decoration:none;
+  font-size:17px; font-weight:500;
+  padding:16px 38px; border-radius:100px;
+  opacity:0; transform:translateY(18px);
+  animation:fadeUp 1s 0.8s var(--ease) forwards;
+  transition:transform 0.3s,box-shadow 0.3s;
+}
+.hero-btn:hover {
+  transform:translateY(-3px);
+  box-shadow:0 16px 48px rgba(26,127,212,0.45);
+}
+.scroll-hint {
+  position:absolute; bottom:32px; left:50%;
+  transform:translateX(-50%);
+  display:flex; flex-direction:column; align-items:center; gap:8px;
+  opacity:0; animation:fadeUp 1s 1.2s var(--ease) forwards;
+}
+.scroll-hint span {
+  font-size:11px; letter-spacing:0.15em; text-transform:uppercase;
+  color:rgba(255,255,255,0.3);
+}
+.scroll-line {
+  width:1px; height:48px;
+  background:linear-gradient(to bottom,rgba(255,255,255,0.4),transparent);
+  animation:scrollPulse 2.2s ease-in-out infinite;
+}
+
+/* ── NUMBERS ─────────────────────────────────── */
+.numbers {
+  background:#fff; padding:110px 40px;
+  text-align:center;
+}
+.numbers-grid {
+  display:flex; justify-content:center; gap:80px;
+  flex-wrap:wrap; max-width:900px; margin:0 auto;
+}
+.num-item {
+  opacity:0; transform:translateY(28px);
+  transition:opacity 0.7s var(--ease),transform 0.7s var(--ease);
+}
+.num-item.visible { opacity:1; transform:translateY(0); }
+.num-item:nth-child(2) { transition-delay:0.12s; }
+.num-item:nth-child(3) { transition-delay:0.24s; }
+.num-val {
+  font-size:64px; font-weight:700; letter-spacing:-0.04em;
+  background:linear-gradient(135deg,var(--blue),var(--teal));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  background-clip:text; line-height:1;
+}
+.num-label {
+  font-size:17px; color:var(--muted); margin-top:10px;
+}
+
+/* ── INTRO ───────────────────────────────────── */
+.intro {
+  background:var(--gray); padding:130px 40px; text-align:center;
+}
+.intro-inner { max-width:720px; margin:0 auto; }
+.sec-label {
+  display:inline-block;
+  font-size:12px; font-weight:600; letter-spacing:0.2em;
+  text-transform:uppercase; color:var(--blue);
+  margin-bottom:18px;
+  opacity:0; transform:translateY(16px);
+  transition:opacity 0.7s var(--ease),transform 0.7s var(--ease);
+}
+.sec-label.visible { opacity:1; transform:translateY(0); }
+.sec-label-teal { color:var(--teal); }
+.intro-h2 {
+  font-size:clamp(28px,4vw,52px); font-weight:700;
+  letter-spacing:-0.025em; line-height:1.12;
+  color:var(--text); margin-bottom:22px;
+  opacity:0; transform:translateY(22px);
+  transition:opacity 0.8s 0.14s var(--ease),transform 0.8s 0.14s var(--ease);
+}
+.intro-h2.visible { opacity:1; transform:translateY(0); }
+.intro-p {
+  font-size:19px; line-height:1.7; color:var(--muted);
+  opacity:0; transform:translateY(18px);
+  transition:opacity 0.8s 0.28s var(--ease),transform 0.8s 0.28s var(--ease);
+}
+.intro-p.visible { opacity:1; transform:translateY(0); }
+
+/* ── FORMATS ─────────────────────────────────── */
+.formats {
+  background:var(--darker); padding:120px 40px;
+}
+.formats-hdr {
+  text-align:center; margin-bottom:80px;
+}
+.formats-h2 {
+  font-size:clamp(30px,4vw,54px); font-weight:700;
+  letter-spacing:-0.025em; color:#fff; margin-bottom:14px;
+  opacity:0; transform:translateY(22px);
+  transition:opacity 0.8s 0.14s var(--ease),transform 0.8s 0.14s var(--ease);
+}
+.formats-h2.visible { opacity:1; transform:translateY(0); }
+.formats-sub {
+  font-size:19px; color:rgba(255,255,255,0.42);
+  max-width:500px; margin:0 auto;
+  opacity:0; transform:translateY(16px);
+  transition:opacity 0.8s 0.28s var(--ease),transform 0.8s 0.28s var(--ease);
+}
+.formats-sub.visible { opacity:1; transform:translateY(0); }
+.formats-grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(310px,1fr));
+  gap:18px; max-width:1160px; margin:0 auto;
+}
+.fcard {
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.07);
+  border-radius:20px; padding:28px;
+  opacity:0; transform:translateY(36px);
+  transition:opacity 0.6s var(--ease),transform 0.6s var(--ease),
+             background 0.3s,border-color 0.3s,box-shadow 0.3s;
+}
+.fcard.visible { opacity:1; transform:translateY(0); }
+.fcard:hover {
+  background:rgba(255,255,255,0.07);
+  border-color:rgba(61,205,230,0.28);
+  box-shadow:0 0 0 1px rgba(61,205,230,0.15),0 20px 60px rgba(0,0,0,0.4);
+}
+.fcard-preview {
+  border-radius:8px;
+  background:linear-gradient(135deg,rgba(26,127,212,0.2),rgba(61,205,230,0.12));
+  border:1px solid rgba(255,255,255,0.08);
+  display:flex; align-items:center; justify-content:center;
+  margin-bottom:22px; overflow:hidden; position:relative;
+}
+.fcard-preview::after {
+  content:''; position:absolute; inset:0;
+  background:linear-gradient(135deg,rgba(200,240,100,0.04),rgba(26,127,212,0.06));
+}
+.fcard-preview .mini-logo {
+  width:55%; max-width:110px; opacity:0.55; position:relative; z-index:1;
+}
+.fcard-tag {
+  display:inline-block;
+  font-size:11px; font-weight:600; letter-spacing:0.12em;
+  text-transform:uppercase; color:var(--teal);
+  background:rgba(61,205,230,0.1);
+  padding:3px 10px; border-radius:100px; margin-bottom:10px;
+}
+.fcard-name {
+  font-size:21px; font-weight:700; color:#fff;
+  letter-spacing:-0.01em; margin-bottom:5px;
+}
+.fcard-size {
+  font-size:13px; color:rgba(255,255,255,0.35);
+  font-family:'SF Mono','Fira Code',monospace;
+  margin-bottom:12px;
+}
+.fcard-desc {
+  font-size:15px; line-height:1.6; color:rgba(255,255,255,0.48);
+}
+
+/* ── DEMO ────────────────────────────────────── */
+.demo {
+  background:var(--gray); padding:130px 40px; text-align:center;
+}
+.demo-inner { max-width:800px; margin:0 auto; }
+.demo-h2 {
+  font-size:clamp(28px,4vw,52px); font-weight:700;
+  letter-spacing:-0.025em; line-height:1.12;
+  color:var(--text); margin-bottom:16px;
+  opacity:0; transform:translateY(22px);
+  transition:opacity 0.8s 0.14s var(--ease),transform 0.8s 0.14s var(--ease);
+}
+.demo-h2.visible { opacity:1; transform:translateY(0); }
+.demo-p {
+  font-size:19px; color:var(--muted); margin-bottom:40px;
+  opacity:0; transform:translateY(16px);
+  transition:opacity 0.8s 0.28s var(--ease),transform 0.8s 0.28s var(--ease);
+}
+.demo-p.visible { opacity:1; transform:translateY(0); }
+.demo-link {
+  display:inline-flex; align-items:center; gap:10px;
+  background:var(--dark); color:#fff; text-decoration:none;
+  font-size:16px; font-weight:500;
+  padding:15px 34px; border-radius:100px;
+  transition:transform 0.3s,box-shadow 0.3s;
+  opacity:0;
+  transition:opacity 0.8s 0.4s var(--ease),transform 0.3s,box-shadow 0.3s;
+}
+.demo-link.visible { opacity:1; }
+.demo-link:hover { transform:translateY(-3px); box-shadow:0 14px 40px rgba(0,0,0,0.2); }
+.demo-mockup {
+  margin:64px auto 0;
+  width:300px; height:600px;
+  border-radius:18px; overflow:hidden;
+  box-shadow:0 40px 100px rgba(0,0,0,0.18),0 0 0 1px rgba(0,0,0,0.06);
+  opacity:0; transform:translateY(40px) scale(0.97);
+  transition:opacity 0.9s var(--ease),transform 0.9s var(--ease);
+}
+.demo-mockup.visible { opacity:1; transform:translateY(0) scale(1); }
+.demo-mockup iframe { width:100%; height:100%; border:none; pointer-events:none; }
+
+/* ── CTA ─────────────────────────────────────── */
+.cta-sec {
+  background:var(--dark); padding:150px 40px;
+  text-align:center; position:relative; overflow:hidden;
+}
+.cta-bg {
+  position:absolute; inset:0;
+  background:
+    radial-gradient(ellipse at 25% 50%,rgba(26,127,212,0.22) 0%,transparent 60%),
+    radial-gradient(ellipse at 75% 50%,rgba(61,205,230,0.14) 0%,transparent 55%);
+}
+.cta-inner { position:relative; z-index:2; max-width:600px; margin:0 auto; }
+.cta-h2 {
+  font-size:clamp(36px,6vw,70px); font-weight:700;
+  letter-spacing:-0.03em; color:#fff; line-height:1.08;
+  margin-bottom:18px;
+  opacity:0; transform:translateY(22px);
+  transition:opacity 0.8s var(--ease),transform 0.8s var(--ease);
+}
+.cta-h2.visible { opacity:1; transform:translateY(0); }
+.cta-p {
+  font-size:20px; color:rgba(255,255,255,0.48);
+  margin-bottom:48px; line-height:1.55;
+  opacity:0; transform:translateY(18px);
+  transition:opacity 0.8s 0.14s var(--ease),transform 0.8s 0.14s var(--ease);
+}
+.cta-p.visible { opacity:1; transform:translateY(0); }
+.cta-btn {
+  display:inline-block;
+  background:linear-gradient(135deg,var(--blue),var(--teal));
+  color:#fff; text-decoration:none;
+  font-size:18px; font-weight:500;
+  padding:18px 48px; border-radius:100px;
+  opacity:0; transform:translateY(18px);
+  transition:opacity 0.8s 0.28s var(--ease),transform 0.8s 0.28s var(--ease),
+             box-shadow 0.3s;
+}
+.cta-btn.visible { opacity:1; transform:translateY(0); }
+.cta-btn:hover { box-shadow:0 20px 56px rgba(26,127,212,0.5); }
+.cta-url {
+  margin-top:28px; font-size:14px;
+  color:rgba(255,255,255,0.25); letter-spacing:0.05em;
+  opacity:0; transition:opacity 0.8s 0.42s var(--ease);
+}
+.cta-url.visible { opacity:1; }
+
+/* ── FOOTER ──────────────────────────────────── */
+footer {
+  background:var(--darker); padding:28px 48px;
+  display:flex; align-items:center; justify-content:space-between;
+  flex-wrap:wrap; gap:14px;
+}
+.footer-logo { height:20px; width:auto; opacity:0.4; }
+.footer-txt { font-size:12px; color:rgba(255,255,255,0.2); }
+
+/* ── ANIMATIONS ──────────────────────────────── */
+@keyframes fadeUp {
+  to { opacity:1; transform:translateY(0); }
+}
+@keyframes scrollPulse {
+  0%,100% { opacity:0.4; transform:scaleY(1); }
+  50%      { opacity:0.9; transform:scaleY(0.65); }
+}
+
+/* ── RESPONSIVE ──────────────────────────────── */
+@media(max-width:768px){
+  nav { padding:0 20px; }
+  .hero-content { padding:0 24px; }
+  .numbers { padding:80px 24px; }
+  .numbers-grid { gap:44px; }
+  .formats { padding:80px 20px; }
+  .formats-grid { grid-template-columns:1fr; }
+  .demo { padding:80px 24px; }
+  .cta-sec { padding:100px 24px; }
+  footer { padding:24px 20px; flex-direction:column; align-items:flex-start; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <div style="display:flex;align-items:center;gap:12px;">
+    <div class="nav-logo nav-logo-dark" style="height:26px;width:auto;"><svg version="1.1" id="NAVD_logo" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 166.39 65.2" style="enable-background:new 0 0 166.39 65.2;" xml:space="preserve">
+<style type="text/css">
+	.NAVD_st0{fill:url(#NAVD_SVGID_1_);}
+	.NAVD_st1{fill:url(#NAVD_SVGID_2_);}
+	.NAVD_st2{fill:url(#NAVD_SVGID_3_);}
+</style>
+<g>
+	<linearGradient id="NAVD_SVGID_1_" gradientUnits="userSpaceOnUse" x1="84.782" y1="5.7049" x2="55.5431" y2="35.9557">
+		<stop  offset="0.0186" style="stop-color:#FFDC00"/>
+		<stop  offset="0.1653" style="stop-color:#C8F064"/>
+		<stop  offset="0.4721" style="stop-color:#3DCDE6"/>
+		<stop  offset="0.7099" style="stop-color:#3595D2"/>
+		<stop  offset="0.8885" style="stop-color:#006CE5"/>
+	</linearGradient>
+	<path class="NAVD_st0" d="M74.62,18.78L55.61,30.47l3.09,5.68c0.28,0.16,0.69,0.16,1,0.16c0.61,0,1.17-0.46,1.94-1.27l15.6-16.27H74.62z
+		"/>
+	<linearGradient id="NAVD_SVGID_2_" gradientUnits="userSpaceOnUse" x1="66.0922" y1="48.2799" x2="38.8873" y2="11.4285">
+		<stop  offset="0.0186" style="stop-color:#FFDC00"/>
+		<stop  offset="0.2228" style="stop-color:#C8F064"/>
+		<stop  offset="0.6044" style="stop-color:#3DCDE6"/>
+		<stop  offset="1" style="stop-color:#006CE5"/>
+	</linearGradient>
+	<path class="NAVD_st1" d="M43.32,7.87l15.38,28.29L37.23,18.78l3.92-10.91c0.36-0.48,0.65-0.78,1.1-0.78
+		C42.81,7.09,43.04,7.44,43.32,7.87z"/>
+	<linearGradient id="NAVD_SVGID_3_" gradientUnits="userSpaceOnUse" x1="35.1623" y1="0.8092" x2="11.589" y2="65.5764">
+		<stop  offset="0.0186" style="stop-color:#FFDC00"/>
+		<stop  offset="0.2228" style="stop-color:#C8F064"/>
+		<stop  offset="0.5274" style="stop-color:#3DCDE6"/>
+		<stop  offset="1" style="stop-color:#006CE5"/>
+	</linearGradient>
+	<polygon class="NAVD_st2" points="41.16,7.87 7.08,53.86 24.62,53.86 	"/>
+	<g fill="#ffffff">
+		<path d="M38.04,44.5c0-0.54,0.3-0.84,0.84-0.84h0.64c0.54,0,0.82,0.3,0.82,0.7v0.46c0,0.22-0.02,0.4-0.02,0.4h0.04
+			c0,0,0.9-1.81,3.29-1.81c2.77,0,4.56,2.19,4.56,5.36c0,3.25-2.01,5.36-4.7,5.36c-2.13,0-2.95-1.57-2.95-1.57h-0.04
+			c0,0,0.06,0.36,0.06,0.88v3.61c0,0.56-0.28,0.84-0.84,0.84h-0.86c-0.54,0-0.84-0.28-0.84-0.84V44.5z M43.06,51.99
+			c1.41,0,2.57-1.14,2.57-3.17c0-1.95-1.04-3.21-2.53-3.21c-1.32,0-2.59,0.96-2.59,3.23C40.51,50.42,41.39,51.99,43.06,51.99z"/>
+		<path d="M54.18,43.42c2.25,0,2.99,1.47,2.99,1.47h0.04c0,0-0.04-0.26-0.04-0.58v-3.81c0-0.54,0.28-0.84,0.82-0.84h0.88
+			c0.54,0,0.82,0.3,0.82,0.84v12.57c0,0.56-0.28,0.84-0.82,0.84h-0.74c-0.54,0-0.82-0.26-0.82-0.76v-0.4c0-0.2,0.04-0.36,0.04-0.36
+			h-0.04c0,0-0.86,1.77-3.21,1.77c-2.77,0-4.56-2.19-4.56-5.36C49.54,45.52,51.47,43.42,54.18,43.42z M54.66,51.99
+			c1.32,0,2.57-0.96,2.57-3.23c0-1.59-0.82-3.15-2.55-3.15c-1.39,0-2.57,1.14-2.57,3.17C52.11,50.72,53.15,51.99,54.66,51.99z"/>
+		<path d="M70.34,43.56c2.45,0,3.31,2.03,3.31,2.03h0.04c0,0-0.06-0.34-0.06-0.76v-4.54c0-0.32,0.18-0.5,0.5-0.5h0.38
+			c0.32,0,0.48,0.18,0.48,0.5v13.11c0,0.32-0.16,0.5-0.48,0.5h-0.34c-0.32,0-0.5-0.16-0.5-0.48v-0.76c0-0.36,0.08-0.62,0.08-0.62
+			h-0.04c0,0-0.86,2.11-3.51,2.11c-2.71,0-4.4-2.17-4.4-5.3C65.8,45.64,67.69,43.56,70.34,43.56z M70.4,52.91
+			c1.69,0,3.27-1.2,3.27-4.08c0-2.05-1.04-4.04-3.21-4.04c-1.79,0-3.25,1.49-3.25,4.04C67.21,51.33,68.51,52.91,70.4,52.91z"/>
+		<path d="M77.97,41.01v-0.72c0-0.32,0.16-0.5,0.48-0.5h0.5c0.32,0,0.48,0.18,0.48,0.5v0.72c0,0.32-0.16,0.48-0.48,0.48h-0.5
+			C78.13,41.49,77.97,41.33,77.97,41.01z M78.01,44.3c0-0.32,0.18-0.5,0.5-0.5h0.38c0.32,0,0.48,0.18,0.48,0.5v9.09
+			c0,0.32-0.16,0.5-0.48,0.5h-0.38c-0.32,0-0.5-0.18-0.5-0.5V44.3z"/>
+		<path d="M83.77,56.36c0.44,0.2,1.22,0.52,2.35,0.52c1.87,0,3.47-0.92,3.47-3.17v-1.04c0-0.38,0.06-0.72,0.06-0.72h-0.04
+			c-0.6,1.14-1.63,1.89-3.21,1.89c-2.71,0-4.5-2.13-4.5-5.24c0-2.97,1.65-5.04,4.46-5.04c2.61,0,3.29,1.85,3.29,1.85h0.04
+			c0,0-0.04-0.14-0.04-0.34v-0.82c0-0.26,0.16-0.44,0.48-0.44h0.32c0.32,0,0.5,0.18,0.5,0.5v9.35c0,3.21-2.39,4.46-4.8,4.46
+			c-1.04,0-2.07-0.22-2.91-0.6c-0.3-0.14-0.38-0.34-0.24-0.64l0.12-0.28C83.27,56.32,83.45,56.24,83.77,56.36z M89.61,48.7
+			c0-2.99-1.45-3.91-3.13-3.91c-2.05,0-3.17,1.45-3.17,3.77c0,2.53,1.3,4.06,3.29,4.06C88.21,52.61,89.61,51.63,89.61,48.7z"/>
+		<path d="M93.95,41.01v-0.72c0-0.32,0.16-0.5,0.48-0.5h0.5c0.32,0,0.48,0.18,0.48,0.5v0.72c0,0.32-0.16,0.48-0.48,0.48h-0.5
+			C94.11,41.49,93.95,41.33,93.95,41.01z M93.99,44.3c0-0.32,0.18-0.5,0.5-0.5h0.38c0.32,0,0.48,0.18,0.48,0.5v9.09
+			c0,0.32-0.16,0.5-0.48,0.5h-0.38c-0.32,0-0.5-0.18-0.5-0.5V44.3z"/>
+		<path d="M99.11,45.02h-0.84c-0.32,0-0.48-0.16-0.48-0.48v-0.16c0-0.32,0.16-0.5,0.48-0.5h0.86v-2.37c0-0.32,0.18-0.5,0.5-0.5h0.36
+			c0.32,0,0.48,0.18,0.48,0.5v2.37h2.05c0.32,0,0.5,0.18,0.5,0.5v0.16c0,0.32-0.18,0.48-0.5,0.48h-2.05v5.06
+			c0,2.33,1.43,2.61,2.21,2.65c0.4,0.04,0.54,0.16,0.54,0.5v0.26c0,0.32-0.16,0.48-0.56,0.48c-2.21,0-3.55-1.34-3.55-3.71V45.02z"/>
+		<path d="M110.87,47.71h0.58v-0.32c0-1.95-1.06-2.61-2.49-2.61c-1.12,0-1.99,0.42-2.45,0.7c-0.28,0.14-0.5,0.1-0.68-0.16l-0.12-0.2
+			c-0.16-0.26-0.12-0.52,0.14-0.68c0.52-0.32,1.65-0.88,3.21-0.88c2.41,0,3.75,1.34,3.75,3.87v5.96c0,0.32-0.16,0.5-0.48,0.5h-0.32
+			c-0.32,0-0.5-0.16-0.5-0.5v-0.8c0-0.46,0.06-0.76,0.06-0.76h-0.04c0.02,0-0.9,2.31-3.41,2.31c-1.71,0-3.41-1-3.41-2.95
+			C104.71,47.89,108.92,47.71,110.87,47.71z M108.36,52.99c1.95,0,3.09-2.01,3.09-3.77v-0.48h-0.56c-1.59,0-4.78,0.06-4.78,2.33
+			C106.11,52.01,106.85,52.99,108.36,52.99z"/>
+		<path d="M115.75,40.28c0-0.32,0.16-0.5,0.48-0.5h0.38c0.32,0,0.5,0.18,0.5,0.5v10.98c0,1.26,0.6,1.41,1.04,1.47
+			c0.24,0.02,0.42,0.14,0.42,0.44v0.3c0,0.3-0.14,0.5-0.52,0.5c-0.82,0-2.31-0.26-2.31-2.47V40.28z"/>
+		<path d="M124.36,40.28c0-0.32,0.16-0.5,0.48-0.5h0.42c0.3,0,0.48,0.18,0.48,0.5v5.92h8.19v-5.92c0-0.32,0.16-0.5,0.48-0.5h0.4
+			c0.32,0,0.5,0.18,0.5,0.5v13.11c0,0.32-0.18,0.5-0.5,0.5h-0.4c-0.32,0-0.48-0.18-0.48-0.5v-5.94h-8.19v5.94
+			c0,0.32-0.18,0.5-0.48,0.5h-0.42c-0.32,0-0.48-0.18-0.48-0.5V40.28z"/>
+		<path d="M138.37,44.3c0-0.32,0.16-0.5,0.48-0.5h0.38c0.32,0,0.5,0.18,0.5,0.5v5.56c0,1.59,0.24,2.99,2.19,2.99
+			c2.31,0,3.73-2.03,3.73-4.22V44.3c0-0.32,0.18-0.5,0.5-0.5h0.38c0.32,0,0.48,0.18,0.48,0.5v9.09c0,0.32-0.16,0.5-0.48,0.5h-0.36
+			c-0.32,0-0.48-0.18-0.48-0.5v-1.16c0-0.4,0.06-0.72,0.06-0.72h-0.04c-0.38,0.98-1.75,2.63-3.97,2.63c-2.39,0-3.37-1.28-3.37-3.91
+			V44.3z"/>
+		<path d="M150.12,40.28c0-0.32,0.16-0.5,0.48-0.5h0.38c0.32,0,0.5,0.18,0.5,0.5v4.52c0,0.46-0.08,0.82-0.08,0.82h0.04
+			c0,0,0.88-2.07,3.47-2.07c2.71,0,4.4,2.17,4.4,5.28c0,3.21-1.91,5.3-4.56,5.3c-2.45,0-3.37-2.11-3.37-2.11h-0.04
+			c0,0,0.08,0.3,0.08,0.74v0.66c0,0.28-0.18,0.46-0.5,0.46h-0.32c-0.32,0-0.48-0.18-0.48-0.5V40.28z M154.63,52.91
+			c1.81,0,3.27-1.49,3.27-4.05c0-2.47-1.32-4.06-3.19-4.06c-1.69,0-3.27,1.2-3.27,4.06C151.44,50.92,152.48,52.91,154.63,52.91z"/>
+	</g>
+</g>
+</svg></div>
+    <div class="nav-logo nav-logo-light" style="height:26px;width:auto;"><svg version="1.1" id="NAVL_logo" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 166.39 65.2" style="enable-background:new 0 0 166.39 65.2;" xml:space="preserve">
+<style type="text/css">
+	.NAVL_st0{fill:url(#NAVL_SVGID_1_);}
+	.NAVL_st1{fill:url(#NAVL_SVGID_2_);}
+	.NAVL_st2{fill:url(#NAVL_SVGID_3_);}
+</style>
+<g>
+	<linearGradient id="NAVL_SVGID_1_" gradientUnits="userSpaceOnUse" x1="84.782" y1="5.7049" x2="55.5431" y2="35.9557">
+		<stop  offset="0.0186" style="stop-color:#FFDC00"/>
+		<stop  offset="0.1653" style="stop-color:#C8F064"/>
+		<stop  offset="0.4721" style="stop-color:#3DCDE6"/>
+		<stop  offset="0.7099" style="stop-color:#3595D2"/>
+		<stop  offset="0.8885" style="stop-color:#006CE5"/>
+	</linearGradient>
+	<path class="NAVL_st0" d="M74.62,18.78L55.61,30.47l3.09,5.68c0.28,0.16,0.69,0.16,1,0.16c0.61,0,1.17-0.46,1.94-1.27l15.6-16.27H74.62z
+		"/>
+	<linearGradient id="NAVL_SVGID_2_" gradientUnits="userSpaceOnUse" x1="66.0922" y1="48.2799" x2="38.8873" y2="11.4285">
+		<stop  offset="0.0186" style="stop-color:#FFDC00"/>
+		<stop  offset="0.2228" style="stop-color:#C8F064"/>
+		<stop  offset="0.6044" style="stop-color:#3DCDE6"/>
+		<stop  offset="1" style="stop-color:#006CE5"/>
+	</linearGradient>
+	<path class="NAVL_st1" d="M43.32,7.87l15.38,28.29L37.23,18.78l3.92-10.91c0.36-0.48,0.65-0.78,1.1-0.78
+		C42.81,7.09,43.04,7.44,43.32,7.87z"/>
+	<linearGradient id="NAVL_SVGID_3_" gradientUnits="userSpaceOnUse" x1="35.1623" y1="0.8092" x2="11.589" y2="65.5764">
+		<stop  offset="0.0186" style="stop-color:#FFDC00"/>
+		<stop  offset="0.2228" style="stop-color:#C8F064"/>
+		<stop  offset="0.5274" style="stop-color:#3DCDE6"/>
+		<stop  offset="1" style="stop-color:#006CE5"/>
+	</linearGradient>
+	<polygon class="NAVL_st2" points="41.16,7.87 7.08,53.86 24.62,53.86 	"/>
+	<g>
+		<path d="M38.04,44.5c0-0.54,0.3-0.84,0.84-0.84h0.64c0.54,0,0.82,0.3,0.82,0.7v0.46c0,0.22-0.02,0.4-0.02,0.4h0.04
+			c0,0,0.9-1.81,3.29-1.81c2.77,0,4.56,2.19,4.56,5.36c0,3.25-2.01,5.36-4.7,5.36c-2.13,0-2.95-1.57-2.95-1.57h-0.04
+			c0,0,0.06,0.36,0.06,0.88v3.61c0,0.56-0.28,0.84-0.84,0.84h-0.86c-0.54,0-0.84-0.28-0.84-0.84V44.5z M43.06,51.99
+			c1.41,0,2.57-1.14,2.57-3.17c0-1.95-1.04-3.21-2.53-3.21c-1.32,0-2.59,0.96-2.59,3.23C40.51,50.42,41.39,51.99,43.06,51.99z"/>
+		<path d="M54.18,43.42c2.25,0,2.99,1.47,2.99,1.47h0.04c0,0-0.04-0.26-0.04-0.58v-3.81c0-0.54,0.28-0.84,0.82-0.84h0.88
+			c0.54,0,0.82,0.3,0.82,0.84v12.57c0,0.56-0.28,0.84-0.82,0.84h-0.74c-0.54,0-0.82-0.26-0.82-0.76v-0.4c0-0.2,0.04-0.36,0.04-0.36
+			h-0.04c0,0-0.86,1.77-3.21,1.77c-2.77,0-4.56-2.19-4.56-5.36C49.54,45.52,51.47,43.42,54.18,43.42z M54.66,51.99
+			c1.32,0,2.57-0.96,2.57-3.23c0-1.59-0.82-3.15-2.55-3.15c-1.39,0-2.57,1.14-2.57,3.17C52.11,50.72,53.15,51.99,54.66,51.99z"/>
+		<path d="M70.34,43.56c2.45,0,3.31,2.03,3.31,2.03h0.04c0,0-0.06-0.34-0.06-0.76v-4.54c0-0.32,0.18-0.5,0.5-0.5h0.38
+			c0.32,0,0.48,0.18,0.48,0.5v13.11c0,0.32-0.16,0.5-0.48,0.5h-0.34c-0.32,0-0.5-0.16-0.5-0.48v-0.76c0-0.36,0.08-0.62,0.08-0.62
+			h-0.04c0,0-0.86,2.11-3.51,2.11c-2.71,0-4.4-2.17-4.4-5.3C65.8,45.64,67.69,43.56,70.34,43.56z M70.4,52.91
+			c1.69,0,3.27-1.2,3.27-4.08c0-2.05-1.04-4.04-3.21-4.04c-1.79,0-3.25,1.49-3.25,4.04C67.21,51.33,68.51,52.91,70.4,52.91z"/>
+		<path d="M77.97,41.01v-0.72c0-0.32,0.16-0.5,0.48-0.5h0.5c0.32,0,0.48,0.18,0.48,0.5v0.72c0,0.32-0.16,0.48-0.48,0.48h-0.5
+			C78.13,41.49,77.97,41.33,77.97,41.01z M78.01,44.3c0-0.32,0.18-0.5,0.5-0.5h0.38c0.32,0,0.48,0.18,0.48,0.5v9.09
+			c0,0.32-0.16,0.5-0.48,0.5h-0.38c-0.32,0-0.5-0.18-0.5-0.5V44.3z"/>
+		<path d="M83.77,56.36c0.44,0.2,1.22,0.52,2.35,0.52c1.87,0,3.47-0.92,3.47-3.17v-1.04c0-0.38,0.06-0.72,0.06-0.72h-0.04
+			c-0.6,1.14-1.63,1.89-3.21,1.89c-2.71,0-4.5-2.13-4.5-5.24c0-2.97,1.65-5.04,4.46-5.04c2.61,0,3.29,1.85,3.29,1.85h0.04
+			c0,0-0.04-0.14-0.04-0.34v-0.82c0-0.26,0.16-0.44,0.48-0.44h0.32c0.32,0,0.5,0.18,0.5,0.5v9.35c0,3.21-2.39,4.46-4.8,4.46
+			c-1.04,0-2.07-0.22-2.91-0.6c-0.3-0.14-0.38-0.34-0.24-0.64l0.12-0.28C83.27,56.32,83.45,56.24,83.77,56.36z M89.61,48.7
+			c0-2.99-1.45-3.91-3.13-3.91c-2.05,0-3.17,1.45-3.17,3.77c0,2.53,1.3,4.06,3.29,4.06C88.21,52.61,89.61,51.63,89.61,48.7z"/>
+		<path d="M93.95,41.01v-0.72c0-0.32,0.16-0.5,0.48-0.5h0.5c0.32,0,0.48,0.18,0.48,0.5v0.72c0,0.32-0.16,0.48-0.48,0.48h-0.5
+			C94.11,41.49,93.95,41.33,93.95,41.01z M93.99,44.3c0-0.32,0.18-0.5,0.5-0.5h0.38c0.32,0,0.48,0.18,0.48,0.5v9.09
+			c0,0.32-0.16,0.5-0.48,0.5h-0.38c-0.32,0-0.5-0.18-0.5-0.5V44.3z"/>
+		<path d="M99.11,45.02h-0.84c-0.32,0-0.48-0.16-0.48-0.48v-0.16c0-0.32,0.16-0.5,0.48-0.5h0.86v-2.37c0-0.32,0.18-0.5,0.5-0.5h0.36
+			c0.32,0,0.48,0.18,0.48,0.5v2.37h2.05c0.32,0,0.5,0.18,0.5,0.5v0.16c0,0.32-0.18,0.48-0.5,0.48h-2.05v5.06
+			c0,2.33,1.43,2.61,2.21,2.65c0.4,0.04,0.54,0.16,0.54,0.5v0.26c0,0.32-0.16,0.48-0.56,0.48c-2.21,0-3.55-1.34-3.55-3.71V45.02z"/>
+		<path d="M110.87,47.71h0.58v-0.32c0-1.95-1.06-2.61-2.49-2.61c-1.12,0-1.99,0.42-2.45,0.7c-0.28,0.14-0.5,0.1-0.68-0.16l-0.12-0.2
+			c-0.16-0.26-0.12-0.52,0.14-0.68c0.52-0.32,1.65-0.88,3.21-0.88c2.41,0,3.75,1.34,3.75,3.87v5.96c0,0.32-0.16,0.5-0.48,0.5h-0.32
+			c-0.32,0-0.5-0.16-0.5-0.5v-0.8c0-0.46,0.06-0.76,0.06-0.76h-0.04c0.02,0-0.9,2.31-3.41,2.31c-1.71,0-3.41-1-3.41-2.95
+			C104.71,47.89,108.92,47.71,110.87,47.71z M108.36,52.99c1.95,0,3.09-2.01,3.09-3.77v-0.48h-0.56c-1.59,0-4.78,0.06-4.78,2.33
+			C106.11,52.01,106.85,52.99,108.36,52.99z"/>
+		<path d="M115.75,40.28c0-0.32,0.16-0.5,0.48-0.5h0.38c0.32,0,0.5,0.18,0.5,0.5v10.98c0,1.26,0.6,1.41,1.04,1.47
+			c0.24,0.02,0.42,0.14,0.42,0.44v0.3c0,0.3-0.14,0.5-0.52,0.5c-0.82,0-2.31-0.26-2.31-2.47V40.28z"/>
+		<path d="M124.36,40.28c0-0.32,0.16-0.5,0.48-0.5h0.42c0.3,0,0.48,0.18,0.48,0.5v5.92h8.19v-5.92c0-0.32,0.16-0.5,0.48-0.5h0.4
+			c0.32,0,0.5,0.18,0.5,0.5v13.11c0,0.32-0.18,0.5-0.5,0.5h-0.4c-0.32,0-0.48-0.18-0.48-0.5v-5.94h-8.19v5.94
+			c0,0.32-0.18,0.5-0.48,0.5h-0.42c-0.32,0-0.48-0.18-0.48-0.5V40.28z"/>
+		<path d="M138.37,44.3c0-0.32,0.16-0.5,0.48-0.5h0.38c0.32,0,0.5,0.18,0.5,0.5v5.56c0,1.59,0.24,2.99,2.19,2.99
+			c2.31,0,3.73-2.03,3.73-4.22V44.3c0-0.32,0.18-0.5,0.5-0.5h0.38c0.32,0,0.48,0.18,0.48,0.5v9.09c0,0.32-0.16,0.5-0.48,0.5h-0.36
+			c-0.32,0-0.48-0.18-0.48-0.5v-1.16c0-0.4,0.06-0.72,0.06-0.72h-0.04c-0.38,0.98-1.75,2.63-3.97,2.63c-2.39,0-3.37-1.28-3.37-3.91
+			V44.3z"/>
+		<path d="M150.12,40.28c0-0.32,0.16-0.5,0.48-0.5h0.38c0.32,0,0.5,0.18,0.5,0.5v4.52c0,0.46-0.08,0.82-0.08,0.82h0.04
+			c0,0,0.88-2.07,3.47-2.07c2.71,0,4.4,2.17,4.4,5.28c0,3.21-1.91,5.3-4.56,5.3c-2.45,0-3.37-2.11-3.37-2.11h-0.04
+			c0,0,0.08,0.3,0.08,0.74v0.66c0,0.28-0.18,0.46-0.5,0.46h-0.32c-0.32,0-0.48-0.18-0.48-0.5V40.28z M154.63,52.91
+			c1.81,0,3.27-1.49,3.27-4.05c0-2.47-1.32-4.06-3.19-4.06c-1.69,0-3.27,1.2-3.27,4.06C151.44,50.92,152.48,52.91,154.63,52.91z"/>
+	</g>
+</g>
+</svg></div>
+  </div>
+  <a href="#kontakt" class="nav-cta">Kontakt aufnehmen</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="top">
+  <div class="hero-bg"></div>
+  <!-- Parallax geometric shapes -->
+  <div class="geo geo-1" data-speed="0.3">
+    <svg viewBox="0 0 700 700" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="g1" x1="0" y1="0" x2="700" y2="700" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#c8f064"/>
+          <stop offset="50%" stop-color="#3dcde6"/>
+          <stop offset="100%" stop-color="#1a7fd4"/>
+        </linearGradient>
+      </defs>
+      <polygon points="350,40 60,640 640,640" stroke="url(#g1)" stroke-width="1.2" fill="none"/>
+      <polygon points="350,110 130,600 570,600" stroke="url(#g1)" stroke-width="0.7" fill="none"/>
+      <polygon points="350,180 200,560 500,560" stroke="url(#g1)" stroke-width="0.4" fill="none"/>
+    </svg>
+  </div>
+  <div class="geo geo-2" data-speed="0.18">
+    <svg viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="g2" x1="0" y1="500" x2="500" y2="0" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#006ce5"/>
+          <stop offset="100%" stop-color="#3dcde6"/>
+        </linearGradient>
+      </defs>
+      <polygon points="250,30 30,460 470,460" stroke="url(#g2)" stroke-width="1" fill="none"/>
+      <polygon points="250,90 90,420 410,420" stroke="url(#g2)" stroke-width="0.5" fill="none"/>
+    </svg>
+  </div>
+  <div class="geo geo-3" data-speed="0.5">
+    <svg viewBox="0 0 240 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="g3" x1="0" y1="0" x2="240" y2="240" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#ffdc00"/>
+          <stop offset="100%" stop-color="#3dcde6"/>
+        </linearGradient>
+      </defs>
+      <polygon points="120,10 10,220 230,220" stroke="url(#g3)" stroke-width="1.5" fill="none"/>
+    </svg>
+  </div>
+
+  <div class="hero-content" id="hero-content">
+    <div class="hero-logo"><svg version="1.1" id="HERO_logo" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 166.39 65.2" style="enable-background:new 0 0 166.39 65.2;" xml:space="preserve">
+<style type="text/css">
+	.HERO_st0{fill:url(#HERO_SVGID_1_);}
+	.HERO_st1{fill:url(#HERO_SVGID_2_);}
+	.HERO_st2{fill:url(#HERO_SVGID_3_);}
+</style>
+<g>
+	<linearGradient id="HERO_SVGID_1_" gradientUnits="userSpaceOnUse" x1="84.782" y1="5.7049" x2="55.5431" y2="35.9557">
+		<stop  offset="0.0186" style="stop-color:#FFDC00"/>
+		<stop  offset="0.1653" style="stop-color:#C8F064"/>
+		<stop  offset="0.4721" style="stop-color:#3DCDE6"/>
+		<stop  offset="0.7099" style="stop-color:#3595D2"/>
+		<stop  offset="0.8885" style="stop-color:#006CE5"/>
+	</linearGradient>
+	<path class="HERO_st0" d="M74.62,18.78L55.61,30.47l3.09,5.68c0.28,0.16,0.69,0.16,1,0.16c0.61,0,1.17-0.46,1.94-1.27l15.6-16.27H74.62z
+		"/>
+	<linearGradient id="HERO_SVGID_2_" gradientUnits="userSpaceOnUse" x1="66.0922" y1="48.2799" x2="38.8873" y2="11.4285">
+		<stop  offset="0.0186" style="stop-color:#FFDC00"/>
+		<stop  offset="0.2228" style="stop-color:#C8F064"/>
+		<stop  offset="0.6044" style="stop-color:#3DCDE6"/>
+		<stop  offset="1" style="stop-color:#006CE5"/>
+	</linearGradient>
+	<path class="HERO_st1" d="M43.32,7.87l15.38,28.29L37.23,18.78l3.92-10.91c0.36-0.48,0.65-0.78,1.1-0.78
+		C42.81,7.09,43.04,7.44,43.32,7.87z"/>
+	<linearGradient id="HERO_SVGID_3_" gradientUnits="userSpaceOnUse" x1="35.1623" y1="0.8092" x2="11.589" y2="65.5764">
+		<stop  offset="0.0186" style="stop-color:#FFDC00"/>
+		<stop  offset="0.2228" style="stop-color:#C8F064"/>
+		<stop  offset="0.5274" style="stop-color:#3DCDE6"/>
+		<stop  offset="1" style="stop-color:#006CE5"/>
+	</linearGradient>
+	<polygon class="HERO_st2" points="41.16,7.87 7.08,53.86 24.62,53.86 	"/>
+	<g fill="#ffffff">
+		<path d="M38.04,44.5c0-0.54,0.3-0.84,0.84-0.84h0.64c0.54,0,0.82,0.3,0.82,0.7v0.46c0,0.22-0.02,0.4-0.02,0.4h0.04
+			c0,0,0.9-1.81,3.29-1.81c2.77,0,4.56,2.19,4.56,5.36c0,3.25-2.01,5.36-4.7,5.36c-2.13,0-2.95-1.57-2.95-1.57h-0.04
+			c0,0,0.06,0.36,0.06,0.88v3.61c0,0.56-0.28,0.84-0.84,0.84h-0.86c-0.54,0-0.84-0.28-0.84-0.84V44.5z M43.06,51.99
+			c1.41,0,2.57-1.14,2.57-3.17c0-1.95-1.04-3.21-2.53-3.21c-1.32,0-2.59,0.96-2.59,3.23C40.51,50.42,41.39,51.99,43.06,51.99z"/>
+		<path d="M54.18,43.42c2.25,0,2.99,1.47,2.99,1.47h0.04c0,0-0.04-0.26-0.04-0.58v-3.81c0-0.54,0.28-0.84,0.82-0.84h0.88
+			c0.54,0,0.82,0.3,0.82,0.84v12.57c0,0.56-0.28,0.84-0.82,0.84h-0.74c-0.54,0-0.82-0.26-0.82-0.76v-0.4c0-0.2,0.04-0.36,0.04-0.36
+			h-0.04c0,0-0.86,1.77-3.21,1.77c-2.77,0-4.56-2.19-4.56-5.36C49.54,45.52,51.47,43.42,54.18,43.42z M54.66,51.99
+			c1.32,0,2.57-0.96,2.57-3.23c0-1.59-0.82-3.15-2.55-3.15c-1.39,0-2.57,1.14-2.57,3.17C52.11,50.72,53.15,51.99,54.66,51.99z"/>
+		<path d="M70.34,43.56c2.45,0,3.31,2.03,3.31,2.03h0.04c0,0-0.06-0.34-0.06-0.76v-4.54c0-0.32,0.18-0.5,0.5-0.5h0.38
+			c0.32,0,0.48,0.18,0.48,0.5v13.11c0,0.32-0.16,0.5-0.48,0.5h-0.34c-0.32,0-0.5-0.16-0.5-0.48v-0.76c0-0.36,0.08-0.62,0.08-0.62
+			h-0.04c0,0-0.86,2.11-3.51,2.11c-2.71,0-4.4-2.17-4.4-5.3C65.8,45.64,67.69,43.56,70.34,43.56z M70.4,52.91
+			c1.69,0,3.27-1.2,3.27-4.08c0-2.05-1.04-4.04-3.21-4.04c-1.79,0-3.25,1.49-3.25,4.04C67.21,51.33,68.51,52.91,70.4,52.91z"/>
+		<path d="M77.97,41.01v-0.72c0-0.32,0.16-0.5,0.48-0.5h0.5c0.32,0,0.48,0.18,0.48,0.5v0.72c0,0.32-0.16,0.48-0.48,0.48h-0.5
+			C78.13,41.49,77.97,41.33,77.97,41.01z M78.01,44.3c0-0.32,0.18-0.5,0.5-0.5h0.38c0.32,0,0.48,0.18,0.48,0.5v9.09
+			c0,0.32-0.16,0.5-0.48,0.5h-0.38c-0.32,0-0.5-0.18-0.5-0.5V44.3z"/>
+		<path d="M83.77,56.36c0.44,0.2,1.22,0.52,2.35,0.52c1.87,0,3.47-0.92,3.47-3.17v-1.04c0-0.38,0.06-0.72,0.06-0.72h-0.04
+			c-0.6,1.14-1.63,1.89-3.21,1.89c-2.71,0-4.5-2.13-4.5-5.24c0-2.97,1.65-5.04,4.46-5.04c2.61,0,3.29,1.85,3.29,1.85h0.04
+			c0,0-0.04-0.14-0.04-0.34v-0.82c0-0.26,0.16-0.44,0.48-0.44h0.32c0.32,0,0.5,0.18,0.5,0.5v9.35c0,3.21-2.39,4.46-4.8,4.46
+			c-1.04,0-2.07-0.22-2.91-0.6c-0.3-0.14-0.38-0.34-0.24-0.64l0.12-0.28C83.27,56.32,83.45,56.24,83.77,56.36z M89.61,48.7
+			c0-2.99-1.45-3.91-3.13-3.91c-2.05,0-3.17,1.45-3.17,3.77c0,2.53,1.3,4.06,3.29,4.06C88.21,52.61,89.61,51.63,89.61,48.7z"/>
+		<path d="M93.95,41.01v-0.72c0-0.32,0.16-0.5,0.48-0.5h0.5c0.32,0,0.48,0.18,0.48,0.5v0.72c0,0.32-0.16,0.48-0.48,0.48h-0.5
+			C94.11,41.49,93.95,41.33,93.95,41.01z M93.99,44.3c0-0.32,0.18-0.5,0.5-0.5h0.38c0.32,0,0.48,0.18,0.48,0.5v9.09
+			c0,0.32-0.16,0.5-0.48,0.5h-0.38c-0.32,0-0.5-0.18-0.5-0.5V44.3z"/>
+		<path d="M99.11,45.02h-0.84c-0.32,0-0.48-0.16-0.48-0.48v-0.16c0-0.32,0.16-0.5,0.48-0.5h0.86v-2.37c0-0.32,0.18-0.5,0.5-0.5h0.36
+			c0.32,0,0.48,0.18,0.48,0.5v2.37h2.05c0.32,0,0.5,0.18,0.5,0.5v0.16c0,0.32-0.18,0.48-0.5,0.48h-2.05v5.06
+			c0,2.33,1.43,2.61,2.21,2.65c0.4,0.04,0.54,0.16,0.54,0.5v0.26c0,0.32-0.16,0.48-0.56,0.48c-2.21,0-3.55-1.34-3.55-3.71V45.02z"/>
+		<path d="M110.87,47.71h0.58v-0.32c0-1.95-1.06-2.61-2.49-2.61c-1.12,0-1.99,0.42-2.45,0.7c-0.28,0.14-0.5,0.1-0.68-0.16l-0.12-0.2
+			c-0.16-0.26-0.12-0.52,0.14-0.68c0.52-0.32,1.65-0.88,3.21-0.88c2.41,0,3.75,1.34,3.75,3.87v5.96c0,0.32-0.16,0.5-0.48,0.5h-0.32
+			c-0.32,0-0.5-0.16-0.5-0.5v-0.8c0-0.46,0.06-0.76,0.06-0.76h-0.04c0.02,0-0.9,2.31-3.41,2.31c-1.71,0-3.41-1-3.41-2.95
+			C104.71,47.89,108.92,47.71,110.87,47.71z M108.36,52.99c1.95,0,3.09-2.01,3.09-3.77v-0.48h-0.56c-1.59,0-4.78,0.06-4.78,2.33
+			C106.11,52.01,106.85,52.99,108.36,52.99z"/>
+		<path d="M115.75,40.28c0-0.32,0.16-0.5,0.48-0.5h0.38c0.32,0,0.5,0.18,0.5,0.5v10.98c0,1.26,0.6,1.41,1.04,1.47
+			c0.24,0.02,0.42,0.14,0.42,0.44v0.3c0,0.3-0.14,0.5-0.52,0.5c-0.82,0-2.31-0.26-2.31-2.47V40.28z"/>
+		<path d="M124.36,40.28c0-0.32,0.16-0.5,0.48-0.5h0.42c0.3,0,0.48,0.18,0.48,0.5v5.92h8.19v-5.92c0-0.32,0.16-0.5,0.48-0.5h0.4
+			c0.32,0,0.5,0.18,0.5,0.5v13.11c0,0.32-0.18,0.5-0.5,0.5h-0.4c-0.32,0-0.48-0.18-0.48-0.5v-5.94h-8.19v5.94
+			c0,0.32-0.18,0.5-0.48,0.5h-0.42c-0.32,0-0.48-0.18-0.48-0.5V40.28z"/>
+		<path d="M138.37,44.3c0-0.32,0.16-0.5,0.48-0.5h0.38c0.32,0,0.5,0.18,0.5,0.5v5.56c0,1.59,0.24,2.99,2.19,2.99
+			c2.31,0,3.73-2.03,3.73-4.22V44.3c0-0.32,0.18-0.5,0.5-0.5h0.38c0.32,0,0.48,0.18,0.48,0.5v9.09c0,0.32-0.16,0.5-0.48,0.5h-0.36
+			c-0.32,0-0.48-0.18-0.48-0.5v-1.16c0-0.4,0.06-0.72,0.06-0.72h-0.04c-0.38,0.98-1.75,2.63-3.97,2.63c-2.39,0-3.37-1.28-3.37-3.91
+			V44.3z"/>
+		<path d="M150.12,40.28c0-0.32,0.16-0.5,0.48-0.5h0.38c0.32,0,0.5,0.18,0.5,0.5v4.52c0,0.46-0.08,0.82-0.08,0.82h0.04
+			c0,0,0.88-2.07,3.47-2.07c2.71,0,4.4,2.17,4.4,5.28c0,3.21-1.91,5.3-4.56,5.3c-2.45,0-3.37-2.11-3.37-2.11h-0.04
+			c0,0,0.08,0.3,0.08,0.74v0.66c0,0.28-0.18,0.46-0.5,0.46h-0.32c-0.32,0-0.48-0.18-0.48-0.5V40.28z M154.63,52.91
+			c1.81,0,3.27-1.49,3.27-4.05c0-2.47-1.32-4.06-3.19-4.06c-1.69,0-3.27,1.2-3.27,4.06C151.44,50.92,152.48,52.91,154.63,52.91z"/>
+	</g>
+</g>
+</svg></div>
+    <p class="hero-eyebrow">Digitale Werbemöglichkeiten</p>
+    <h1 class="hero-h1">
+      Ihre Botschaft.<br>
+      <span class="grad-text">Unsere Reichweite.</span>
+    </h1>
+    <p class="hero-sub">
+      Premium HTML5-Werbeflächen für maximale Sichtbarkeit –
+      skalierbar, animiert und wirkungsstark.
+    </p>
+    <a href="#formate" class="hero-btn">
+      Formate entdecken
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M8 3L13 8L8 13M3 8H13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </a>
+  </div>
+
+  <div class="scroll-hint">
+    <span>Scrollen</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- NUMBERS -->
+<section class="numbers">
+  <div class="numbers-grid">
+    <div class="num-item">
+      <div class="num-val">8+</div>
+      <div class="num-label">Werbeformate</div>
+    </div>
+    <div class="num-item">
+      <div class="num-val">HTML5</div>
+      <div class="num-label">Animierter Standard</div>
+    </div>
+    <div class="num-item">
+      <div class="num-val">100%</div>
+      <div class="num-label">Maßgeschneidert</div>
+    </div>
+  </div>
+</section>
+
+<!-- INTRO -->
+<section class="intro">
+  <div class="intro-inner">
+    <p class="sec-label">Über uns</p>
+    <h2 class="intro-h2">
+      Digital denken.<br>Wirkungsvoll werben.
+    </h2>
+    <p class="intro-p">
+      Der pd digital Hub ist Ihr Partner für hochwertiges digitales Marketing.
+      Wir entwickeln maßgeschneiderte HTML5-Werbemittel – von der ersten Idee
+      bis zum fertigen, animierten Banner – immer im Einklang mit Ihrer Corporate Identity.
+      Profitieren Sie von professionellen Formaten, die auf allen Geräten überzeugen.
+    </p>
+  </div>
+</section>
+
+<!-- FORMATS -->
+<section class="formats" id="formate">
+  <div class="formats-hdr">
+    <p class="sec-label sec-label-teal">Produktportfolio</p>
+    <h2 class="formats-h2">Alle Werbeformate</h2>
+    <p class="formats-sub">Von klassisch bis mobil – für jeden Kanal das richtige Format.</p>
+  </div>
+
+  <div class="formats-grid">
+
+    <!-- Billboard -->
+    <div class="fcard" style="grid-column:1/-1;">
+      <div class="fcard-preview" style="height:80px;">
+        <div class="mini-logo" style="width:180px;max-width:40%;"><svg version="1.1" id="NAVD_logo" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 166.39 65.2" style="enable-background:new 0 0 166.39 65.2;" xml:space="preserve">
+<style type="text/css">
+	.NAVD_st0{fill:url(#NAVD_SVGID_1_);}
+	.NAVD_st1{fill:url(#NAVD_SVGID_2_);}
+	.NAVD_st2{fill:url(#NAVD_SVGID_3_);}
+</style>
+<g>
+	<linearGradient id="NAVD_SVGID_1_" gradientUnits="userSpaceOnUse" x1="84.782" y1="5.7049" x2="55.5431" y2="35.9557">
+		<stop  offset="0.0186" style="stop-color:#FFDC00"/>
+		<stop  offset="0.1653" style="stop-color:#C8F064"/>
+		<stop  offset="0.4721" style="stop-color:#3DCDE6"/>
+		<stop  offset="0.7099" style="stop-color:#3595D2"/>
+		<stop  offset="0.8885" style="stop-color:#006CE5"/>
+	</linearGradient>
+	<path class="NAVD_st0" d="M74.62,18.78L55.61,30.47l3.09,5.68c0.28,0.16,0.69,0.16,1,0.16c0.61,0,1.17-0.46,1.94-1.27l15.6-16.27H74.62z
+		"/>
+	<linearGradient id="NAVD_SVGID_2_" gradientUnits="userSpaceOnUse" x1="66.0922" y1="48.2799" x2="38.8873" y2="11.4285">
+		<stop  offset="0.0186" style="stop-color:#FFDC00"/>
+		<stop  offset="0.2228" style="stop-color:#C8F064"/>
+		<stop  offset="0.6044" style="stop-color:#3DCDE6"/>
+		<stop  offset="1" style="stop-color:#006CE5"/>
+	</linearGradient>
+	<path class="NAVD_st1" d="M43.32,7.87l15.38,28.29L37.23,18.78l3.92-10.91c0.36-0.48,0.65-0.78,1.1-0.78
+		C42.81,7.09,43.04,7.44,43.32,7.87z"/>
+	<linearGradient id="NAVD_SVGID_3_" gradientUnits="userSpaceOnUse" x1="35.1623" y1="0.8092" x2="11.589" y2="65.5764">
+		<stop  offset="0.0186" style="stop-color:#FFDC00"/>
+		<stop  offset="0.2228" style="stop-color:#C8F064"/>
+		<stop  offset="0.5274" style="stop-color:#3DCDE6"/>
+		<stop  offset="1" style="stop-color:#006CE5"/>
+	</linearGradient>
+	<polygon class="NAVD_st2" points="41.16,7.87 7.08,53.86 24.62,53.86 	"/>
+	<g fill="#ffffff">
+		<path d="M38.04,44.5c0-0.54,0.3-0.84,0.84-0.84h0.64c0.54,0,0.82,0.3,0.82,0.7v0.46c0,0.22-0.02,0.4-0.02,0.4h0.04
+			c0,0,0.9-1.81,3.29-1.81c2.77,0,4.56,2.19,4.56,5.36c0,3.25-2.01,5.36-4.7,5.36c-2.13,0-2.95-1.57-2.95-1.57h-0.04
+			c0,0,0.06,0.36,0.06,0.88v3.61c0,0.56-0.28,0.84-0.84,0.84h-0.86c-0.54,0-0.84-0.28-0.84-0.84V44.5z M43.06,51.99
+			c1.41,0,2.57-1.14,2.57-3.17c0-1.95-1.04-3.21-2.53-3.21c-1.32,0-2.59,0.96-2.59,3.23C40.51,50.42,41.39,51.99,43.06,51.99z"/>
+		<path d="M54.18,43.42c2.25,0,2.99,1.47,2.99,1.47h0.04c0,0-0.04-0.26-0.04-0.58v-3.81c0-0.54,0.28-0.84,0.82-0.84h0.88
+			c0.54,0,0.82,0.3,0.82,0.84v12.57c0,0.56-0.28,0.84-0.82,0.84h-0.74c-0.54,0-0.82-0.26-0.82-0.76v-0.4c0-0.2,0.04-0.36,0.04-0.36
+			h-0.04c0,0-0.86,1.77-3.21,1.77c-2.77,0-4.56-2.19-4.56-5.36C49.54,45.52,51.47,43.42,54.18,43.42z M54.66,51.99
+			c1.32,0,2.57-0.96,2.57-3.23c0-1.59-0.82-3.15-2.55-3.15c-1.39,0-2.57,1.14-2.57,3.17C52.11,50.72,53.15,51.99,54.66,51.99z"/>
+		<path d="M70.34,43.56c2.45,0,3.31,2.03,3.31,2.03h0.04c0,0-0.06-0.34-0.06-0.76v-4.54c0-0.32,0.18-0.5,0.5-0.5h0.38
+			c0.32,0,0.48,0.18,0.48,0.5v13.11c0,0.32-0.16,0.5-0.48,0.5h-0.34c-0.32,0-0.5-0.16-0.5-0.48v-0.76c0-0.36,0.08-0.62,0.08-0.62
+			h-0.04c0,0-0.86,2.11-3.51,2.11c-2.71,0-4.4-2.17-4.4-5.3C65.8,45.64,67.69,43.56,70.34,43.56z M70.4,52.91
+			c1.69,0,3.27-1.2,3.27-4.08c0-2.05-1.04-4.04-3.21-4.04c-1.79,0-3.25,1.49-3.25,4.04C67.21,51.33,68.51,52.91,70.4,52.91z"/>
+		<path d="M77.97,41.01v-0.72c0-0.32,0.16-0.5,0.48-0.5h0.5c0.32,0,0.48,0.18,0.48,0.5v0.72c0,0.32-0.16,0.48-0.48,0.48h-0.5
+			C78.13,41.49,77.97,41.33,77.97,41.01z M78.01,44.3c0-0.32,0.18-0.5,0.5-0.5h0.38c0.32,0,0.48,0.18,0.48,0.5v9.09
+			c0,0.32-0.16,0.5-0.48,0.5h-0.38c-0.32,0-0.5-0.18-0.5-0.5V44.3z"/>
+		<path d="M83.77,56.36c0.44,0.2,1.22,0.52,2.35,0.52c1.87,0,3.47-0.92,3.47-3.17v-1.04c0-0.38,0.06-0.72,0.06-0.72h-0.04
+			c-0.6,1.14-1.63,1.89-3.21,1.89c-2.71,0-4.5-2.13-4.5-5.24c0-2.97,1.65-5.04,4.46-5.04c2.61,0,3.29,1.85,3.29,1.85h0.04
+			c0,0-0.04-0.14-0.04-0.34v-0.82c0-0.26,0.16-0.44,0.48-0.44h0.32c0.32,0,0.5,0.18,0.5,0.5v9.35c0,3.21-2.39,4.46-4.8,4.46
+			c-1.04,0-2.07-0.22-2.91-0.6c-0.3-0.14-0.38-0.34-0.24-0.64l0.12-0.28C83.27,56.32,83.45,56.24,83.77,56.36z M89.61,48.7
+			c0-2.99-1.45-3.91-3.13-3.91c-2.05,0-3.17,1.45-3.17,3.77c0,2.53,1.3,4.06,3.29,4.06C88.21,52.61,89.61,51.63,89.61,48.7z"/>
+		<path d="M93.95,41.01v-0.72c0-0.32,0.16-0.5,0.48-0.5h0.5c0.32,0,0.48,0.18,0.48,0.5v0.72c0,0.32-0.16,0.48-0.48,0.48h-0.5
+			C94.11,41.49,93.95,41.33,93.95,41.01z M93.99,44.3c0-0.32,0.18-0.5,0.5-0.5h0.38c0.32,0,0.48,0.18,0.48,0.5v9.09
+			c0,0.32-0.16,0.5-0.48,0.5h-0.38c-0.32,0-0.5-0.18-0.5-0.5V44.3z"/>
+		<path d="M99.11,45.02h-0.84c-0.32,0-0.48-0.16-0.48-0.48v-0.16c0-0.32,0.16-0.5,0.48-0.5h0.86v-2.37c0-0.32,0.18-0.5,0.5-0.5h0.36
+			c0.32,0,0.48,0.18,0.48,0.5v2.37h2.05c0.32,0,0.5,0.18,0.5,0.5v0.16c0,0.32-0.18,0.48-0.5,0.48h-2.05v5.06
+			c0,2.33,1.43,2.61,2.21,2.65c0.4,0.04,0.54,0.16,0.54,0.5v0.26c0,0.32-0.16,0.48-0.56,0.48c-2.21,0-3.55-1.34-3.55-3.71V45.02z"/>
+		<path d="M110.87,47.71h0.58v-0.32c0-1.95-1.06-2.61-2.49-2.61c-1.12,0-1.99,0.42-2.45,0.7c-0.28,0.14-0.5,0.1-0.68-0.16l-0.12-0.2
+			c-0.16-0.26-0.12-0.52,0.14-0.68c0.52-0.32,1.65-0.88,3.21-0.88c2.41,0,3.75,1.34,3.75,3.87v5.96c0,0.32-0.16,0.5-0.48,0.5h-0.32
+			c-0.32,0-0.5-0.16-0.5-0.5v-0.8c0-0.46,0.06-0.76,0.06-0.76h-0.04c0.02,0-0.9,2.31-3.41,2.31c-1.71,0-3.41-1-3.41-2.95
+			C104.71,47.89,108.92,47.71,110.87,47.71z M108.36,52.99c1.95,0,3.09-2.01,3.09-3.77v-0.48h-0.56c-1.59,0-4.78,0.06-4.78,2.33
+			C106.11,52.01,106.85,52.99,108.36,52.99z"/>
+		<path d="M115.75,40.28c0-0.32,0.16-0.5,0.48-0.5h0.38c0.32,0,0.5,0.18,0.5,0.5v10.98c0,1.26,0.6,1.41,1.04,1.47
+			c0.24,0.02,0.42,0.14,0.42,0.44v0.3c0,0.3-0.14,0.5-0.52,0.5c-0.82,0-2.31-0.26-2.31-2.47V40.28z"/>
+		<path d="M124.36,40.28c0-0.32,0.16-0.5,0.48-0.5h0.42c0.3,0,0.48,0.18,0.48,0.5v5.92h8.19v-5.92c0-0.32,0.16-0.5,0.48-0.5h0.4
+			c0.32,0,0.5,0.18,0.5,0.5v13.11c0,0.32-0.18,0.5-0.5,0.5h-0.4c-0.32,0-0.48-0.18-0.48-0.5v-5.94h-8.19v5.94
+			c0,0.32-0.18,0.5-0.48,0.5h-0.42c-0.32,0-0.48-0.18-0.48-0.5V40.28z"/>
+		<path d="M138.37,44.3c0-0.32,0.16-0.5,0.48-0.5h0.38c0.32,0,0.5,0.18,0.5,0.5v5.56c0,1.59,0.24,2.99,2.19,2.99
+			c2.31,0,3.73-2.03,3.73-4.22V44.3c0-0.32,0.18-0.5,0.5-0.5h0.38c0.32,0,0.48,0.18,0.48,0.5v9.09c0,0.32-0.16,0.5-0.48,0.5h-0.36
+			c-0.32,0-0.48-0.18-0.48-0.5v-1.16c0-0.4,0.06-0.72,0.06-0.72h-0.04c-0.38,0.98-1.75,2.63-3.97,2.63c-2.39,0-3.37-1.28-3.37-3.91
+			V44.3z"/>
+		<path d="M150.12,40.28c0-0.32,0.16-0.5,0.48-0.5h0.38c0.32,0,0.5,0.18,0.5,0.5v4.52c0,0.46-0.08,0.82-0.08,0.82h0.04
+			c0,0,0.88-2.07,3.47-2.07c2.71,0,4.4,2.17,4.4,5.28c0,3.21-1.91,5.3-4.56,5.3c-2.45,0-3.37-2.11-3.37-2.11h-0.04
+			c0,0,0.08,0.3,0.08,0.74v0.66c0,0.28-0.18,0.46-0.5,0.46h-0.32c-0.32,0-0.48-0.18-0.48-0.5V40.28z M154.63,52.91
+			c1.81,0,3.27-1.49,3.27-4.05c0-2.47-1.32-4.06-3.19-4.06c-1.69,0-3.27,1.2-3.27,4.06C151.44,50.92,152.48,52.91,154.63,52.91z"/>
+	</g>
+</g>
+</svg></div>
+      </div>
+      <span class="fcard-tag">Desktop Premium</span>
+      <div class="fcard-name">Billboard</div>
+      <div class="fcard-size">970 × 250 px</div>
+      <div class="fcard-desc">Das großformatigste Standard-Desktop-Format. Maximale Aufmerksamkeit durch volle Breite direkt über dem Content. Ideal für Markenauftritte und Produktlaunches.</div>
+    </div>
+
+    <!-- Superbanner -->
+    <div class="fcard" style="grid-column:1/-1;">
+      <div class="fcard-preview" style="height:52px;">
+        <div class="mini-logo" style="width:140px;max-width:35%;"><svg version="1.1" id="NAVD_logo" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 166.39 65.2" style="enable-background:new 0 0 166.39 65.2;" xml:space="preserve">
+<style type="text/css">
+	.NAVD_st0{fill:url(#NAVD_SVGID_1_);}
+	.NAVD_st1{fill:url(#NAVD_SVGID_2_);}
+	.NAVD_st2{fill:url(#NAVD_SVGID_3_);}
+</style>
+<g>
+	<linearGradient id="NAVD_SVGID_1_" gradientUnits="userSpaceOnUse" x1="84.782" y1="5.7049" x2="55.5431" y2="35.9557">
+		<stop  offset="0.0186" style="stop-color:#FFDC00"/>
+		<stop  offset="0.1653" style="stop-color:#C8F064"/>
+		<stop  offset="0.4721" style="stop-color:#3DCDE6"/>
+		<stop  offset="0.7099" style="stop-color:#3595D2"/>
+		<stop  offset="0.8885" style="stop-color:#006CE5"/>
+	</linearGradient>
+	<path class="NAVD_st0" d="M74.62,18.78L55.61,30.47l3.09,5.68c0.28,0.16,0.69,0.16,1,0.16c0.61,0,1.17-0.46,1.94-1.27l15.6-16.27H74.62z
+		"/>
+	<linearGradient id="NAVD_SVGID_2_" gradientUnits="userSpaceOnUse" x1="66.0922" y1="48.2799" x2="38.8873" y2="11.4285">
+		<stop  offset="0.0186" style="stop-color:#FFDC00"/>
+		<stop  offset="0.2228" style="stop-color:#C8F064"/>
+		<stop  offset="0.6044" style="stop-color:#3DCDE6"/>
+		<stop  offset="1" style="stop-color:#006CE5"/>
+	</linearGradient>
+	<path class="NAVD_st1" d="M43.32,7.87l15.38,28.29L37.23,18.78l3.92-10.91c0.36-0.48,0.65-0.78,1.1-0.78
+		C42.81,7.09,43.04,7.44,43.32,7.87z"/>
+	<linearGradient id="NAVD_SVGID_3_" gradientUnits="userSpaceOnUse" x1="35.1623" y1="0.8092" x2="11.589" y2="65.5764">
+		<stop  offset="0.0186" style="stop-color:#FFDC00"/>
+		<stop  offset="0.2228" style="stop-color:#C8F064"/>
+		<stop  offset="0.5274" style="stop-color:#3DCDE6"/>
+		<stop  offset="1" style="stop-color:#006CE5"/>
+	</linearGradient>
+	<polygon class="NAVD_st2" points="41.16,7.87 7.08,53.86 24.62,53.86 	"/>
+	<g fill="#ffffff">
+		<path d="M38.04,44.5c0-0.54,0.3-0.84,0.84-0.84h0.64c0.54,0,0.82,0.3,0.82,0.7v0.46c0,0.22-0.02,0.4-0.02,0.4h0.04
+			c0,0,0.9-1.81,3.29-1.81c2.77,0,4.56,2.19,4.56,5.36c0,3.25-2.01,5.36-4.7,5.36c-2.13,0-2.95-1.57-2.95-1.57h-0.04
+			c0,0,0.06,0.36,0.06,0.88v3.61c0,0.56-0.28,0.84-0.84,0.84h-0.86c-0.54,0-0.84-0.28-0.84-0.84V44.5z M43.06,51.99
+			c1.41,0,2.57-1.14,2.57-3.17c0-1.95-1.04-3.21-2.53-3.21c-1.32,0-2.59,0.96-2.59,3.23C40.51,50.42,41.39,51.99,43.06,51.99z"/>
+		<path d="M54.18,43.42c2.25,0,2.99,1.47,2.99,1.47h0.04c0,0-0.04-0.26-0.04-0.58v-3.81c0-0.54,0.28-0.84,0.82-0.84h0.88
+			c0.54,0,0.82,0.3,0.82,0.84v12.57c0,0.56-0.28,0.84-0.82,0.84h-0.74c-0.54,0-0.82-0.26-0.82-0.76v-0.4c0-0.2,0.04-0.36,0.04-0.36
+			h-0.04c0,0-0.86,1.77-3.21,1.77c-2.77,0-4.56-2.19-4.56-5.36C49.54,45.52,51.47,43.42,54.18,43.42z M54.66,51.99
+			c1.32,0,2.57-0.96,2.57-3.23c0-1.59-0.82-3.15-2.55-3.15c-1.39,0-2.57,1.14-2.57,3.17C52.11,50.72,53.15,51.99,54.66,51.99z"/>
+		<path d="M70.34,43.56c2.45,0,3.31,2.03,3.31,2.03h0.04c0,0-0.06-0.34-0.06-0.76v-4.54c0-0.32,0.18-0.5,0.5-0.5h0.38
+			c0.32,0,0.48,0.18,0.48,0.5v13.11c0,0.32-0.16,0.5-0.48,0.5h-0.34c-0.32,0-0.5-0.16-0.5-0.48v-0.76c0-0.36,0.08-0.62,0.08-0.62
+			h-0.04c0,0-0.86,2.11-3.51,2.11c-2.71,0-4.4-2.17-4.4-5.3C65.8,45.64,67.69,43.56,70.34,43.56z M70.4,52.91
+			c1.69,0,3.27-1.2,3.27-4.08c0-2.05-1.04-4.04-3.21-4.04c-1.79,0-3.25,1.49-3.25,4.04C67.21,51.33,68.51,52.91,70.4,52.91z"/>
+		<path d="M77.97,41.01v-0.72c0-0.32,0.16-0.5,0.48-0.5h0.5c0.32,0,0.48,0.18,0.48,0.5v0.72c0,0.32-0.16,0.48-0.48,0.48h-0.5
+			C78.13,41.49,77.97,41.33,77.97,41.01z M78.01,44.3c0-0.32,0.18-0.5,0.5-0.5h0.38c0.32,0,0.48,0.18,0.48,0.5v9.09
+			c0,0.32-0.16,0.5-0.48,0.5h-0.38c-0.32,0-0.5-0.18-0.5-0.5V44.3z"/>
+		<path d="M83.77,56.36c0.44,0.2,1.22,0.52,2.35,0.52c1.87,0,3.47-0.92,3.47-3.17v-1.04c0-0.38,0.06-0.72,0.06-0.72h-0.04
+			c-0.6,1.14-1.63,1.89-3.21,1.89c-2.71,0-4.5-2.13-4.5-5.24c0-2.97,1.65-5.04,4.46-5.04c2.61,0,3.29,1.85,3.29,1.85h0.04
+			c0,0-0.04-0.14-0.04-0.34v-0.82c0-0.26,0.16-0.44,0.48-0.44h0.32c0.32,0,0.5,0.18,0.5,0.5v9.35c0,3.21-2.39,4.46-4.8,4.46
+			c-1.04,0-2.07-0.22-2.91-0.6c-0.3-0.14-0.38-0.34-0.24-0.64l0.12-0.28C83.27,56.32,83.45,56.24,83.77,56.36z M89.61,48.7
+			c0-2.99-1.45-3.91-3.13-3.91c-2.05,0-3.17,1.45-3.17,3.77c0,2.53,1.3,4.06,3.29,4.06C88.21,52.61,89.61,51.63,89.61,48.7z"/>
+		<path d="M93.95,41.01v-0.72c0-0.32,0.16-0.5,0.48-0.5h0.5c0.32,0,0.48,0.18,0.48,0.5v0.72c0,0.32-0.16,0.48-0.48,0.48h-0.5
+			C94.11,41.49,93.95,41.33,93.95,41.01z M93.99,44.3c0-0.32,0.18-0.5,0.5-0.5h0.38c0.32,0,0.48,0.18,0.48,0.5v9.09
+			c0,0.32-0.16,0.5-0.48,0.5h-0.38c-0.32,0-0.5-0.18-0.5-0.5V44.3z"/>
+		<path d="M99.11,45.02h-0.84c-0.32,0-0.48-0.16-0.48-0.48v-0.16c0-0.32,0.16-0.5,0.48-0.5h0.86v-2.37c0-0.32,0.18-0.5,0.5-0.5h0.36
+			c0.32,0,0.48,0.18,0.48,0.5v2.37h2.05c0.32,0,0.5,0.18,0.5,0.5v0.16c0,0.32-0.18,0.48-0.5,0.48h-2.05v5.06
+			c0,2.33,1.43,2.61,2.21,2.65c0.4,0.04,0.54,0.16,0.54,0.5v0.26c0,0.32-0.16,0.48-0.56,0.48c-2.21,0-3.55-1.34-3.55-3.71V45.02z"/>
+		<path d="M110.87,47.71h0.58v-0.32c0-1.95-1.06-2.61-2.49-2.61c-1.12,0-1.99,0.42-2.45,0.7c-0.28,0.14-0.5,0.1-0.68-0.16l-0.12-0.2
+			c-0.16-0.26-0.12-0.52,0.14-0.68c0.52-0.32,1.65-0.88,3.21-0.88c2.41,0,3.75,1.34,3.75,3.87v5.96c0,0.32-0.16,0.5-0.48,0.5h-0.32
+			c-0.32,0-0.5-0.16-0.5-0.5v-0.8c0-0.46,0.06-0.76,0.06-0.76h-0.04c0.02,0-0.9,2.31-3.41,2.31c-1.71,0-3.41-1-3.41-2.95
+			C104.71,47.89,108.92,47.71,110.87,47.71z M108.36,52.99c1.95,0,3.09-2.01,3.09-3.77v-0.48h-0.56c-1.59,0-4.78,0.06-4.78,2.33
+			C106.11,52.01,106.85,52.99,108.36,52.99z"/>
+		<path d="M115.75,40.28c0-0.32,0.16-0.5,0.48-0.5h0.38c0.32,0,0.5,0.18,0.5,0.5v10.98c0,1.26,0.6,1.41,1.04,1.47
+			c0.24,0.02,0.42,0.14,0.42,0.44v0.3c0,0.3-0.14,0.5-0.52,0.5c-0.82,0-2.31-0.26-2.31-2.47V40.28z"/>
+		<path d="M124.36,40.28c0-0.32,0.16-0.5,0.48-0.5h0.42c0.3,0,0.48,0.18,0.48,0.5v5.92h8.19v-5.92c0-0.32,0.16-0.5,0.48-0.5h0.4
+			c0.32,0,0.5,0.18,0.5,0.5v13.11c0,0.32-0.18,0.5-0.5,0.5h-0.4c-0.32,0-0.48-0.18-0.48-0.5v-5.94h-8.19v5.94
+			c0,0.32-0.18,0.5-0.48,0.5h-0.42c-0.32,0-0.48-0.18-0.48-0.5V40.28z"/>
+		<path d="M138.37,44.3c0-0.32,0.16-0.5,0.48-0.5h0.38c0.32,0,0.5,0.18,0.5,0.5v5.56c0,1.59,0.24,2.99,2.19,2.99
+			c2.31,0,3.73-2.03,3.73-4.22V44.3c0-0.32,0.18-0.5,0.5-0.5h0.38c0.32,0,0.48,0.18,0.48,0.5v9.09c0,0.32-0.16,0.5-0.48,0.5h-0.36
+			c-0.32,0-0.48-0.18-0.48-0.5v-1.16c0-0.4,0.06-0.72,0.06-0.72h-0.04c-0.38,0.98-1.75,2.63-3.97,2.63c-2.39,0-3.37-1.28-3.37-3.91
+			V44.3z"/>
+		<path d="M150.12,40.28c0-0.32,0.16-0.5,0.48-0.5h0.38c0.32,0,0.5,0.18,0.5,0.5v4.52c0,0.46-0.08,0.82-0.08,0.82h0.04
+			c0,0,0.88-2.07,3.47-2.07c2.71,0,4.4,2.17,4.4,5.28c0,3.21-1.91,5.3-4.56,5.3c-2.45,0-3.37-2.11-3.37-2.11h-0.04
+			c0,0,0.08,0.3,0.08,0.74v0.66c0,0.28-0.18,0.46-0.5,0.46h-0.32c-0.32,0-0.48-0.18-0.48-0.5V40.28z M154.63,52.91
+			c1.81,0,3.27-1.49,3.27-4.05c0-2.47-1.32-4.06-3.19-4.06c-1.69,0-3.27,1.2-3.27,4.06C151.44,50.92,152.48,52.91,154.63,52.91z"/>
+	</g>
+</g>
+</svg></div>
+      </div>
+      <span class="fcard-tag">Desktop Klassiker</span>
+      <div class="fcard-name">Superbanner / Leaderboard</div>
+      <div class="fcard-size">728 × 90 px</div>
+      <div class="fcard-desc">Der bewährteste Standard im Online-Marketing. Platziert im Kopfbereich der Seite erzielt er höchste Sichtbarkeit beim Seitenaufruf – Above the fold.</div>
+    </div>
+
+    <!-- Half Page Ad -->
+    <div class="fcard">
+      <div class="fcard-preview" style="height:240px;">
+        <div class="mini-logo" style="width:55%;max-width:100px;"><svg version="1.1" id="NAVD_logo" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 166.39 65.2" style="enable-background:new 0 0 166.39 65.2;" xml:space="preserve">
+<style type="text/css">
+	.NAVD_st0{fill:url(#NAVD_SVGID_1_);}
+	.NAVD_st1{fill:url(#NAVD_SVGID_2_);}
+	.NAVD_st2{fill:url(#NAVD_SVGID_3_);}
+</style>
+<g>
+	<linearGradient id="NAVD_SVGID_1_" gradientUnits="userSpaceOnUse" x1="84.782" y1="5.7049" x2="55.5431" y2="35.9557">
+		<stop  offset="0.0186" style="stop-color:#FFDC00"/>
+		<stop  offset="0.1653" style="stop-color:#C8F064"/>
+		<stop  offset="0.4721" style="stop-color:#3DCDE6"/>
+		<stop  offset="0.7099" style="stop-color:#3595D2"/>
+		<stop  offset="0.8885" style="stop-color:#006CE5"/>
+	</linearGradient>
+	<path class="NAVD_st0" d="M74.62,18.78L55.61,30.47l3.09,5.68c0.28,0.16,0.69,0.16,1,0.16c0.61,0,1.17-0.46,1.94-1.27l15.6-16.27H74.62z
+		"/>
+	<linearGradient id="NAVD_SVGID_2_" gradientUnits="userSpaceOnUse" x1="66.0922" y1="48.2799" x2="38.8873" y2="11.4285">
+		<stop  offset="0.0186" style="stop-color:#FFDC00"/>
+		<stop  offset="0.2228" style="stop-color:#C8F064"/>
+		<stop  offset="0.6044" style="stop-color:#3DCDE6"/>
+		<stop  offset="1" style="stop-color:#006CE5"/>
+	</linearGradient>
+	<path class="NAVD_st1" d="M43.32,7.87l15.38,28.29L37.23,18.78l3.92-10.91c0.36-0.48,0.65-0.78,1.1-0.78
+		C42.81,7.09,43.04,7.44,43.32,7.87z"/>
+	<linearGradient id="NAVD_SVGID_3_" gradientUnits="userSpaceOnUse" x1="35.1623" y1="0.8092" x2="11.589" y2="65.5764">
+		<stop  offset="0.0186" style="stop-color:#FFDC00"/>
+		<stop  offset="0.2228" style="stop-color:#C8F064"/>
+		<stop  offset="0.5274" style="stop-color:#3DCDE6"/>
+		<stop  offset="1" style="stop-color:#006CE5"/>
+	</linearGradient>
+	<polygon class="NAVD_st2" points="41.16,7.87 7.08,53.86 24.62,53.86 	"/>
+	<g fill="#ffffff">
+		<path d="M38.04,44.5c0-0.54,0.3-0.84,0.84-0.84h0.64c0.54,0,0.82,0.3,0.82,0.7v0.46c0,0.22-0.02,0.4-0.02,0.4h0.04
+			c0,0,0.9-1.81,3.29-1.81c2.77,0,4.56,2.19,4.56,5.36c0,3.25-2.01,5.36-4.7,5.36c-2.13,0-2.95-1.57-2.95-1.57h-0.04
+			c0,0,0.06,0.36,0.06,0.88v3.61c0,0.56-0.28,0.84-0.84,0.84h-0.86c-0.54,0-0.84-0.28-0.84-0.84V44.5z M43.06,51.99
+			c1.41,0,2.57-1.14,2.57-3.17c0-1.95-1.04-3.21-2.53-3.21c-1.32,0-2.59,0.96-2.59,3.23C40.51,50.42,41.39,51.99,43.06,51.99z"/>
+		<path d="M54.18,43.42c2.25,0,2.99,1.47,2.99,1.47h0.04c0,0-0.04-0.26-0.04-0.58v-3.81c0-0.54,0.28-0.84,0.82-0.84h0.88
+			c0.54,0,0.82,0.3,0.82,0.84v12.57c0,0.56-0.28,0.84-0.82,0.84h-0.74c-0.54,0-0.82-0.26-0.82-0.76v-0.4c0-0.2,0.04-0.36,0.04-0.36
+			h-0.04c0,0-0.86,1.77-3.21,1.77c-2.77,0-4.56-2.19-4.56-5.36C49.54,45.52,51.47,43.42,54.18,43.42z M54.66,51.99
+			c1.32,0,2.57-0.96,2.57-3.23c0-1.59-0.82-3.15-2.55-3.15c-1.39,0-2.57,1.14-2.57,3.17C52.11,50.72,53.15,51.99,54.66,51.99z"/>
+		<path d="M70.34,43.56c2.45,0,3.31,2.03,3.31,2.03h0.04c0,0-0.06-0.34-0.06-0.76v-4.54c0-0.32,0.18-0.5,0.5-0.5h0.38
+			c0.32,0,0.48,0.18,0.48,0.5v13.11c0,0.32-0.16,0.5-0.48,0.5h-0.34c-0.32,0-0.5-0.16-0.5-0.48v-0.76c0-0.36,0.08-0.62,0.08-0.62
+			h-0.04c0,0-0.86,2.11-3.51,2.11c-2.71,0-4.4-2.17-4.4-5.3C65.8,45.64,67.69,43.56,70.34,43.56z M70.4,52.91
+			c1.69,0,3.27-1.2,3.27-4.08c0-2.05-1.04-4.04-3.21-4.04c-1.79,0-3.25,1.49-3.25,4.04C67.21,51.33,68.51,52.91,70.4,52.91z"/>
+		<path d="M77.97,41.01v-0.72c0-0.32,0.16-0.5,0.48-0.5h0.5c0.32,0,0.48,0.18,0.48,0.5v0.72c0,0.32-0.16,0.48-0.48,0.48h-0.5
+			C78.13,41.49,77.97,41.33,77.97,41.01z M78.01,44.3c0-0.32,0.18-0.5,0.5-0.5h0.38c0.32,0,0.48,0.18,0.48,0.5v9.09
+			c0,0.32-0.16,0.5-0.48,0.5h-0.38c-0.32,0-0.5-0.18-0.5-0.5V44.3z"/>
+		<path d="M83.77,56.36c0.44,0.2,1.22,0.52,2.35,0.52c1.87,0,3.47-0.92,3.47-3.17v-1.04c0-0.38,0.06-0.72,0.06-0.72h-0.04
+			c-0.6,1.14-1.63,1.89-3.21,1.89c-2.71,0-4.5-2.13-4.5-5.24c0-2.97,1.65-5.04,4.46-5.04c2.61,0,3.29,1.85,3.29,1.85h0.04
+			c0,0-0.04-0.14-0.04-0.34v-0.82c0-0.26,0.16-0.44,0.48-0.44h0.32c0.32,0,0.5,0.18,0.5,0.5v9.35c0,3.21-2.39,4.46-4.8,4.46
+			c-1.04,0-2.07-0.22-2.91-0.6c-0.3-0.14-0.38-0.34-0.24-0.64l0.12-0.28C83.27,56.32,83.45,56.24,83.77,56.36z M89.61,48.7
+			c0-2.99-1.45-3.91-3.13-3.91c-2.05,0-3.17,1.45-3.17,3.77c0,2.53,1.3,4.06,3.29,4.06C88.21,52.61,89.61,51.63,89.61,48.7z"/>
+		<path d="M93.95,41.01v-0.72c0-0.32,0.16-0.5,0.48-0.5h0.5c0.32,0,0.48,0.18,0.48,0.5v0.72c0,0.32-0.16,0.48-0.48,0.48h-0.5
+			C94.11,41.49,93.95,41.33,93.95,41.01z M93.99,44.3c0-0.32,0.18-0.5,0.5-0.5h0.38c0.32,0,0.48,0.18,0.48,0.5v9.09
+			c0,0.32-0.16,0.5-0.48,0.5h-0.38c-0.32,0-0.5-0.18-0.5-0.5V44.3z"/>
+		<path d="M99.11,45.02h-0.84c-0.32,0-0.48-0.16-0.48-0.48v-0.16c0-0.32,0.16-0.5,0.48-0.5h0.86v-2.37c0-0.32,0.18-0.5,0.5-0.5h0.36
+			c0.32,0,0.48,0.18,0.48,0.5v2.37h2.05c0.32,0,0.5,0.18,0.5,0.5v0.16c0,0.32-0.18,0.48-0.5,0.48h-2.05v5.06
+			c0,2.33,1.43,2.61,2.21,2.65c0.4,0.04,0.54,0.16,0.54,0.5v0.26c0,0.32-0.16,0.48-0.56,0.48c-2.21,0-3.55-1.34-3.55-3.71V45.02z"/>
+		<path d="M110.87,47.71h0.58v-0.32c0-1.95-1.06-2.61-2.49-2.61c-1.12,0-1.99,0.42-2.45,0.7c-0.28,0.14-0.5,0.1-0.68-0.16l-0.12-0.2
+			c-0.16-0.26-0.12-0.52,0.14-0.68c0.52-0.32,1.65-0.88,3.21-0.88c2.41,0,3.75,1.34,3.75,3.87v5.96c0,0.32-0.16,0.5-0.48,0.5h-0.32
+			c-0.32,0-0.5-0.16-0.5-0.5v-0.8c0-0.46,0.06-0.76,0.06-0.76h-0.04c0.02,0-0.9,2.31-3.41,2.31c-1.71,0-3.41-1-3.41-2.95
+			C104.71,47.89,108.92,47.71,110.87,47.71z M108.36,52.99c1.95,0,3.09-2.01,3.09-3.77v-0.48h-0.56c-1.59,0-4.78,0.06-4.78,2.33
+			C106.11,52.01,106.85,52.99,108.36,52.99z"/>
+		<path d="M115.75,40.28c0-0.32,0.16-0.5,0.48-0.5h0.38c0.32,0,0.5,0.18,0.5,0.5v10.98c0,1.26,0.6,1.41,1.04,1.47
+			c0.24,0.02,0.42,0.14,0.42,0.44v0.3c0,0.3-0.14,0.5-0.52,0.5c-0.82,0-2.31-0.26-2.31-2.47V40.28z"/>
+		<path d="M124.36,40.28c0-0.32,0.16-0.5,0.48-0.5h0.42c0.3,0,0.48,0.18,0.48,0.5v5.92h8.19v-5.92c0-0.32,0.16-0.5,0.48-0.5h0.4
+			c0.32,0,0.5,0.18,0.5,0.5v13.11c0,0.32-0.18,0.5-0.5,0.5h-0.4c-0.32,0-0.48-0.18-0.48-0.5v-5.94h-8.19v5.94
+			c0,0.32-0.18,0.5-0.48,0.5h-0.42c-0.32,0-0.48-0.18-0.48-0.5V40.28z"/>
+		<path d="M138.37,44.3c0-0.32,0.16-0.5,0.48-0.5h0.38c0.32,0,0.5,0.18,0.5,0.5v5.56c0,1.59,0.24,2.99,2.19,2.99
+			c2.31,0,3.73-2.03,3.73-4.22V44.3c0-0.32,0.18-0.5,0.5-0.5h0.38c0.32,0,0.48,0.18,0.48,0.5v9.09c0,0.32-0.16,0.5-0.48,0.5h-0.36
+			c-0.32,0-0.48-0.18-0.48-0.5v-1.16c0-0.4,0.06-0.72,0.06-0.72h-0.04c-0.38,0.98-1.75,2.63-3.97,2.63c-2.39,0-3.37-1.28-3.37-3.91
+			V44.3z"/>
+		<path d="M150.12,40.28c0-0.32,0.16-0.5,0.48-0.5h0.38c0.32,0,0.5,0.18,0.5,0.5v4.52c0,0.46-0.08,0.82-0.08,0.82h0.04
+			c0,0,0.88-2.07,3.47-2.07c2.71,0,4.4,2.17,4.4,5.28c0,3.21-1.91,5.3-4.56,5.3c-2.45,0-3.37-2.11-3.37-2.11h-0.04
+			c0,0,0.08,0.3,0.08,0.74v0.66c0,0.28-0.18,0.46-0.5,0.46h-0.32c-0.32,0-0.48-0.18-0.48-0.5V40.28z M154.63,52.91
+			c1.81,0,3.27-1.49,3.27-4.05c0-2.47-1.32-4.06-3.19-4.06c-1.69,0-3.27,1.2-3.27,4.06C151.44,50.92,152.48,52.91,154.63,52.91z"/>
+	</g>
+</g>
+</svg></div>
+      </div>
+      <span class="fcard-tag">Premium Sidebar</span>
+      <div class="fcard-name">Half Page Ad</div>
+      <div class="fcard-size">300 × 600 px</div>
+      <div class="fcard-desc">Eines der sichtbarkeitsstarken Formate überhaupt. Die große Fläche bietet Raum für kreative HTML5-Animationen und emotionale Markenkommunikation.</div>
+    </div>
+
+    <!-- Medium Rectangle -->
+    <div class="fcard">
+      <div class="fcard-preview" style="height:160px;">
+        <div class="mini-logo" style="width:65%;max-width:110px;"><svg version="1.1" id="NAVD_logo" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 166.39 65.2" style="enable-background:new 0 0 166.39 65.2;" xml:space="preserve">
+<style type="text/css">
+	.NAVD_st0{fill:url(#NAVD_SVGID_1_);}
+	.NAVD_st1{fill:url(#NAVD_SVGID_2_);}
+	.NAVD_st2{fill:url(#NAVD_SVGID_3_);}
+</style>
+<g>
+	<linearGradient id="NAVD_SVGID_1_" gradientUnits="userSpaceOnUse" x1="84.782" y1="5.7049" x2="55.5431" y2="35.9557">
+		<stop  offset="0.0186" style="stop-color:#FFDC00"/>
+		<stop  offset="0.1653" style="stop-color:#C8F064"/>
+		<stop  offset="0.4721" style="stop-color:#3DCDE6"/>
+		<stop  offset="0.7099" style="stop-color:#3595D2"/>
+		<stop  offset="0.8885" style="stop-color:#006CE5"/>
+	</linearGradient>
+	<path class="NAVD_st0" d="M74.62,18.78L55.61,30.47l3.09,5.68c0.28,0.16,0.69,0.16,1,0.16c0.61,0,1.17-0.46,1.94-1.27l15.6-16.27H74.62z
+		"/>
+	<linearGradient id="NAVD_SVGID_2_" gradientUnits="userSpaceOnUse" x1="66.0922" y1="48.2799" x2="38.8873" y2="11.4285">
+		<stop  offset="0.0186" style="stop-color:#FFDC00"/>
+		<stop  offset="0.2228" style="stop-color:#C8F064"/>
+		<stop  offset="0.6044" style="stop-color:#3DCDE6"/>
+		<stop  offset="1" style="stop-color:#006CE5"/>
+	</linearGradient>
+	<path class="NAVD_st1" d="M43.32,7.87l15.38,28.29L37.23,18.78l3.92-10.91c0.36-0.48,0.65-0.78,1.1-0.78
+		C42.81,7.09,43.04,7.44,43.32,7.87z"/>
+	<linearGradient id="NAVD_SVGID_3_" gradientUnits="userSpaceOnUse" x1="35.1623" y1="0.8092" x2="11.589" y2="65.5764">
+		<stop  offset="0.0186" style="stop-color:#FFDC00"/>
+		<stop  offset="0.2228" style="stop-color:#C8F064"/>
+		<stop  offset="0.5274" style="stop-color:#3DCDE6"/>
+		<stop  offset="1" style="stop-color:#006CE5"/>
+	</linearGradient>
+	<polygon class="NAVD_st2" points="41.16,7.87 7.08,53.86 24.62,53.86 	"/>
+	<g fill="#ffffff">
+		<path d="M38.04,44.5c0-0.54,0.3-0.84,0.84-0.84h0.64c0.54,0,0.82,0.3,0.82,0.7v0.46c0,0.22-0.02,0.4-0.02,0.4h0.04
+			c0,0,0.9-1.81,3.29-1.81c2.77,0,4.56,2.19,4.56,5.36c0,3.25-2.01,5.36-4.7,5.36c-2.13,0-2.95-1.57-2.95-1.57h-0.04
+			c0,0,0.06,0.36,0.06,0.88v3.61c0,0.56-0.28,0.84-0.84,0.84h-0.86c-0.54,0-0.84-0.28-0.84-0.84V44.5z M43.06,51.99
+			c1.41,0,2.57-1.14,2.57-3.17c0-1.95-1.04-3.21-2.53-3.21c-1.32,0-2.59,0.96-2.59,3.23C40.51,50.42,41.39,51.99,43.06,51.99z"/>
+		<path d="M54.18,43.42c2.25,0,2.99,1.47,2.99,1.47h0.04c0,0-0.04-0.26-0.04-0.58v-3.81c0-0.54,0.28-0.84,0.82-0.84h0.88
+			c0.54,0,0.82,0.3,0.82,0.84v12.57c0,0.56-0.28,0.84-0.82,0.84h-0.74c-0.54,0-0.82-0.26-0.82-0.76v-0.4c0-0.2,0.04-0.36,0.04-0.36
+			h-0.04c0,0-0.86,1.77-3.21,1.77c-2.77,0-4.56-2.19-4.56-5.36C49.54,45.52,51.47,43.42,54.18,43.42z M54.66,51.99
+			c1.32,0,2.57-0.96,2.57-3.23c0-1.59-0.82-3.15-2.55-3.15c-1.39,0-2.57,1.14-2.57,3.17C52.11,50.72,53.15,51.99,54.66,51.99z"/>
+		<path d="M70.34,43.56c2.45,0,3.31,2.03,3.31,2.03h0.04c0,0-0.06-0.34-0.06-0.76v-4.54c0-0.32,0.18-0.5,0.5-0.5h0.38
+			c0.32,0,0.48,0.18,0.48,0.5v13.11c0,0.32-0.16,0.5-0.48,0.5h-0.34c-0.32,0-0.5-0.16-0.5-0.48v-0.76c0-0.36,0.08-0.62,0.08-0.62
+			h-0.04c0,0-0.86,2.11-3.51,2.11c-2.71,0-4.4-2.17-4.4-5.3C65.8,45.64,67.69,43.56,70.34,43.56z M70.4,52.91
+			c1.69,0,3.27-1.2,3.27-4.08c0-2.05-1.04-4.04-3.21-4.04c-1.79,0-3.25,1.49-3.25,4.04C67.21,51.33,68.51,52.91,70.4,52.91z"/>
+		<path d="M77.97,41.01v-0.72c0-0.32,0.16-0.5,0.48-0.5h0.5c0.32,0,0.48,0.18,0.48,0.5v0.72c0,0.32-0.16,0.48-0.48,0.48h-0.5
+			C78.13,41.49,77.97,41.33,77.97,41.01z M78.01,44.3c0-0.32,0.18-0.5,0.5-0.5h0.38c0.32,0,0.48,0.18,0.48,0.5v9.09
+			c0,0.32-0.16,0.5-0.48,0.5h-0.38c-0.32,0-0.5-0.18-0.5-0.5V44.3z"/>
+		<path d="M83.77,56.36c0.44,0.2,1.22,0.52,2.35,0.52c1.87,0,3.47-0.92,3.47-3.17v-1.04c0-0.38,0.06-0.72,0.06-0.72h-0.04
+			c-0.6,1.14-1.63,1.89-3.21,1.89c-2.71,0-4.5-2.13-4.5-5.24c0-2.97,1.65-5.04,4.46-5.04c2.61,0,3.29,1.85,3.29,1.85h0.04
+			c0,0-0.04-0.14-0.04-0.34v-0.82c0-0.26,0.16-0.44,0.48-0.44h0.32c0.32,0,0.5,0.18,0.5,0.5v9.35c0,3.21-2.39,4.46-4.8,4.46
+			c-1.04,0-2.07-0.22-2.91-0.6c-0.3-0.14-0.38-0.34-0.24-0.64l0.12-0.28C83.27,56.32,83.45,56.24,83.77,56.36z M89.61,48.7
+			c0-2.99-1.45-3.91-3.13-3.91c-2.05,0-3.17,1.45-3.17,3.77c0,2.53,1.3,4.06,3.29,4.06C88.21,52.61,89.61,51.63,89.61,48.7z"/>
+		<path d="M93.95,41.01v-0.72c0-0.32,0.16-0.5,0.48-0.5h0.5c0.32,0,0.48,0.18,0.48,0.5v0.72c0,0.32-0.16,0.48-0.48,0.48h-0.5
+			C94.11,41.49,93.95,41.33,93.95,41.01z M93.99,44.3c0-0.32,0.18-0.5,0.5-0.5h0.38c0.32,0,0.48,0.18,0.48,0.5v9.09
+			c0,0.32-0.16,0.5-0.48,0.5h-0.38c-0.32,0-0.5-0.18-0.5-0.5V44.3z"/>
+		<path d="M99.11,45.02h-0.84c-0.32,0-0.48-0.16-0.48-0.48v-0.16c0-0.32,0.16-0.5,0.48-0.5h0.86v-2.37c0-0.32,0.18-0.5,0.5-0.5h0.36
+			c0.32,0,0.48,0.18,0.48,0.5v2.37h2.05c0.32,0,0.5,0.18,0.5,0.5v0.16c0,0.32-0.18,0.48-0.5,0.48h-2.05v5.06
+			c0,2.33,1.43,2.61,2.21,2.65c0.4,0.04,0.54,0.16,0.54,0.5v0.26c0,0.32-0.16,0.48-0.56,0.48c-2.21,0-3.55-1.34-3.55-3.71V45.02z"/>
+		<path d="M110.87,47.71h0.58v-0.32c0-1.95-1.06-2.61-2.49-2.61c-1.12,0-1.99,0.42-2.45,0.7c-0.28,0.14-0.5,0.1-0.68-0.16l-0.12-0.2
+			c-0.16-0.26-0.12-0.52,0.14-0.68c0.52-0.32,1.65-0.88,3.21-0.88c2.41,0,3.75,1.34,3.75,3.87v5.96c0,0.32-0.16,0.5-0.48,0.5h-0.32
+			c-0.32,0-0.5-0.16-0.5-0.5v-0.8c0-0.46,0.06-0.76,0.06-0.76h-0.04c0.02,0-0.9,2.31-3.41,2.31c-1.71,0-3.41-1-3.41-2.95
+			C104.71,47.89,108.92,47.71,110.87,47.71z M108.36,52.99c1.95,0,3.09-2.01,3.09-3.77v-0.48h-0.56c-1.59,0-4.78,0.06-4.78,2.33
+			C106.11,52.01,106.85,52.99,108.36,52.99z"/>
+		<path d="M115.75,40.28c0-0.32,0.16-0.5,0.48-0.5h0.38c0.32,0,0.5,0.18,0.5,0.5v10.98c0,1.26,0.6,1.41,1.04,1.47
+			c0.24,0.02,0.42,0.14,0.42,0.44v0.3c0,0.3-0.14,0.5-0.52,0.5c-0.82,0-2.31-0.26-2.31-2.47V40.28z"/>
+		<path d="M124.36,40.28c0-0.32,0.16-0.5,0.48-0.5h0.42c0.3,0,0.48,0.18,0.48,0.5v5.92h8.19v-5.92c0-0.32,0.16-0.5,0.48-0.5h0.4
+			c0.32,0,0.5,0.18,0.5,0.5v13.11c0,0.32-0.18,0.5-0.5,0.5h-0.4c-0.32,0-0.48-0.18-0.48-0.5v-5.94h-8.19v5.94
+			c0,0.32-0.18,0.5-0.48,0.5h-0.42c-0.32,0-0.48-0.18-0.48-0.5V40.28z"/>
+		<path d="M138.37,44.3c0-0.32,0.16-0.5,0.48-0.5h0.38c0.32,0,0.5,0.18,0.5,0.5v5.56c0,1.59,0.24,2.99,2.19,2.99
+			c2.31,0,3.73-2.03,3.73-4.22V44.3c0-0.32,0.18-0.5,0.5-0.5h0.38c0.32,0,0.48,0.18,0.48,0.5v9.09c0,0.32-0.16,0.5-0.48,0.5h-0.36
+			c-0.32,0-0.48-0.18-0.48-0.5v-1.16c0-0.4,0.06-0.72,0.06-0.72h-0.04c-0.38,0.98-1.75,2.63-3.97,2.63c-2.39,0-3.37-1.28-3.37-3.91
+			V44.3z"/>
+		<path d="M150.12,40.28c0-0.32,0.16-0.5,0.48-0.5h0.38c0.32,0,0.5,0.18,0.5,0.5v4.52c0,0.46-0.08,0.82-0.08,0.82h0.04
+			c0,0,0.88-2.07,3.47-2.07c2.71,0,4.4,2.17,4.4,5.28c0,3.21-1.91,5.3-4.56,5.3c-2.45,0-3.37-2.11-3.37-2.11h-0.04
+			c0,0,0.08,0.3,0.08,0.74v0.66c0,0.28-0.18,0.46-0.5,0.46h-0.32c-0.32,0-0.48-0.18-0.48-0.5V40.28z M154.63,52.91
+			c1.81,0,3.27-1.49,3.27-4.05c0-2.47-1.32-4.06-3.19-4.06c-1.69,0-3.27,1.2-3.27,4.06C151.44,50.92,152.48,52.91,154.63,52.91z"/>
+	</g>
+</g>
+</svg></div>
+      </div>
+      <span class="fcard-tag">Universalformat</span>
+      <div class="fcard-name">Medium Rectangle</div>
+      <div class="fcard-size">300 × 250 px</div>
+      <div class="fcard-desc">Das meistgebuchte Format weltweit. Flexibel im Einsatz – ob Sidebar, In-Content oder Mobile. Hohe Akzeptanz bei Nutzern und hohe Klickraten.</div>
+    </div>
+
+    <!-- Wide Skyscraper -->
+    <div class="fcard">
+      <div class="fcard-preview" style="height:300px;">
+        <div class="mini-logo" style="width:40%;max-width:70px;"><svg version="1.1" id="NAVD_logo" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 166.39 65.2" style="enable-background:new 0 0 166.39 65.2;" xml:space="preserve">
+<style type="text/css">
+	.NAVD_st0{fill:url(#NAVD_SVGID_1_);}
+	.NAVD_st1{fill:url(#NAVD_SVGID_2_);}
+	.NAVD_st2{fill:url(#NAVD_SVGID_3_);}
+</style>
+<g>
+	<linearGradient id="NAVD_SVGID_1_" gradientUnits="userSpaceOnUse" x1="84.782" y1="5.7049" x2="55.5431" y2="35.9557">
+		<stop  offset="0.0186" style="stop-color:#FFDC00"/>
+		<stop  offset="0.1653" style="stop-color:#C8F064"/>
+		<stop  offset="0.4721" style="stop-color:#3DCDE6"/>
+		<stop  offset="0.7099" style="stop-color:#3595D2"/>
+		<stop  offset="0.8885" style="stop-color:#006CE5"/>
+	</linearGradient>
+	<path class="NAVD_st0" d="M74.62,18.78L55.61,30.47l3.09,5.68c0.28,0.16,0.69,0.16,1,0.16c0.61,0,1.17-0.46,1.94-1.27l15.6-16.27H74.62z
+		"/>
+	<linearGradient id="NAVD_SVGID_2_" gradientUnits="userSpaceOnUse" x1="66.0922" y1="48.2799" x2="38.8873" y2="11.4285">
+		<stop  offset="0.0186" style="stop-color:#FFDC00"/>
+		<stop  offset="0.2228" style="stop-color:#C8F064"/>
+		<stop  offset="0.6044" style="stop-color:#3DCDE6"/>
+		<stop  offset="1" style="stop-color:#006CE5"/>
+	</linearGradient>
+	<path class="NAVD_st1" d="M43.32,7.87l15.38,28.29L37.23,18.78l3.92-10.91c0.36-0.48,0.65-0.78,1.1-0.78
+		C42.81,7.09,43.04,7.44,43.32,7.87z"/>
+	<linearGradient id="NAVD_SVGID_3_" gradientUnits="userSpaceOnUse" x1="35.1623" y1="0.8092" x2="11.589" y2="65.5764">
+		<stop  offset="0.0186" style="stop-color:#FFDC00"/>
+		<stop  offset="0.2228" style="stop-color:#C8F064"/>
+		<stop  offset="0.5274" style="stop-color:#3DCDE6"/>
+		<stop  offset="1" style="stop-color:#006CE5"/>
+	</linearGradient>
+	<polygon class="NAVD_st2" points="41.16,7.87 7.08,53.86 24.62,53.86 	"/>
+	<g fill="#ffffff">
+		<path d="M38.04,44.5c0-0.54,0.3-0.84,0.84-0.84h0.64c0.54,0,0.82,0.3,0.82,0.7v0.46c0,0.22-0.02,0.4-0.02,0.4h0.04
+			c0,0,0.9-1.81,3.29-1.81c2.77,0,4.56,2.19,4.56,5.36c0,3.25-2.01,5.36-4.7,5.36c-2.13,0-2.95-1.57-2.95-1.57h-0.04
+			c0,0,0.06,0.36,0.06,0.88v3.61c0,0.56-0.28,0.84-0.84,0.84h-0.86c-0.54,0-0.84-0.28-0.84-0.84V44.5z M43.06,51.99
+			c1.41,0,2.57-1.14,2.57-3.17c0-1.95-1.04-3.21-2.53-3.21c-1.32,0-2.59,0.96-2.59,3.23C40.51,50.42,41.39,51.99,43.06,51.99z"/>
+		<path d="M54.18,43.42c2.25,0,2.99,1.47,2.99,1.47h0.04c0,0-0.04-0.26-0.04-0.58v-3.81c0-0.54,0.28-0.84,0.82-0.84h0.88
+			c0.54,0,0.82,0.3,0.82,0.84v12.57c0,0.56-0.28,0.84-0.82,0.84h-0.74c-0.54,0-0.82-0.26-0.82-0.76v-0.4c0-0.2,0.04-0.36,0.04-0.36
+			h-0.04c0,0-0.86,1.77-3.21,1.77c-2.77,0-4.56-2.19-4.56-5.36C49.54,45.52,51.47,43.42,54.18,43.42z M54.66,51.99
+			c1.32,0,2.57-0.96,2.57-3.23c0-1.59-0.82-3.15-2.55-3.15c-1.39,0-2.57,1.14-2.57,3.17C52.11,50.72,53.15,51.99,54.66,51.99z"/>
+		<path d="M70.34,43.56c2.45,0,3.31,2.03,3.31,2.03h0.04c0,0-0.06-0.34-0.06-0.76v-4.54c0-0.32,0.18-0.5,0.5-0.5h0.38
+			c0.32,0,0.48,0.18,0.48,0.5v13.11c0,0.32-0.16,0.5-0.48,0.5h-0.34c-0.32,0-0.5-0.16-0.5-0.48v-0.76c0-0.36,0.08-0.62,0.08-0.62
+			h-0.04c0,0-0.86,2.11-3.51,2.11c-2.71,0-4.4-2.17-4.4-5.3C65.8,45.64,67.69,43.56,70.34,43.56z M70.4,52.91
+			c1.69,0,3.27-1.2,3.27-4.08c0-2.05-1.04-4.04-3.21-4.04c-1.79,0-3.25,1.49-3.25,4.04C67.21,51.33,68.51,52.91,70.4,52.91z"/>
+		<path d="M77.97,41.01v-0.72c0-0.32,0.16-0.5,0.48-0.5h0.5c0.32,0,0.48,0.18,0.48,0.5v0.72c0,0.32-0.16,0.48-0.48,0.48h-0.5
+			C78.13,41.49,77.97,41.33,77.97,41.01z M78.01,44.3c0-0.32,0.18-0.5,0.5-0.5h0.38c0.32,0,0.48,0.18,0.48,0.5v9.09
+			c0,0.32-0.16,0.5-0.48,0.5h-0.38c-0.32,0-0.5-0.18-0.5-0.5V44.3z"/>
+		<path d="M83.77,56.36c0.44,0.2,1.22,0.52,2.35,0.52c1.87,0,3.47-0.92,3.47-3.17v-1.04c0-0.38,0.06-0.72,0.06-0.72h-0.04
+			c-0.6,1.14-1.63,1.89-3.21,1.89c-2.71,0-4.5-2.13-4.5-5.24c0-2.97,1.65-5.04,4.46-5.04c2.61,0,3.29,1.85,3.29,1.85h0.04
+			c0,0-0.04-0.14-0.04-0.34v-0.82c0-0.26,0.16-0.44,0.48-0.44h0.32c0.32,0,0.5,0.18,0.5,0.5v9.35c0,3.21-2.39,4.46-4.8,4.46
+			c-1.04,0-2.07-0.22-2.91-0.6c-0.3-0.14-0.38-0.34-0.24-0.64l0.12-0.28C83.27,56.32,83.45,56.24,83.77,56.36z M89.61,48.7
+			c0-2.99-1.45-3.91-3.13-3.91c-2.05,0-3.17,1.45-3.17,3.77c0,2.53,1.3,4.06,3.29,4.06C88.21,52.61,89.61,51.63,89.61,48.7z"/>
+		<path d="M93.95,41.01v-0.72c0-0.32,0.16-0.5,0.48-0.5h0.5c0.32,0,0.48,0.18,0.48,0.5v0.72c0,0.32-0.16,0.48-0.48,0.48h-0.5
+			C94.11,41.49,93.95,41.33,93.95,41.01z M93.99,44.3c0-0.32,0.18-0.5,0.5-0.5h0.38c0.32,0,0.48,0.18,0.48,0.5v9.09
+			c0,0.32-0.16,0.5-0.48,0.5h-0.38c-0.32,0-0.5-0.18-0.5-0.5V44.3z"/>
+		<path d="M99.11,45.02h-0.84c-0.32,0-0.48-0.16-0.48-0.48v-0.16c0-0.32,0.16-0.5,0.48-0.5h0.86v-2.37c0-0.32,0.18-0.5,0.5-0.5h0.36
+			c0.32,0,0.48,0.18,0.48,0.5v2.37h2.05c0.32,0,0.5,0.18,0.5,0.5v0.16c0,0.32-0.18,0.48-0.5,0.48h-2.05v5.06
+			c0,2.33,1.43,2.61,2.21,2.65c0.4,0.04,0.54,0.16,0.54,0.5v0.26c0,0.32-0.16,0.48-0.56,0.48c-2.21,0-3.55-1.34-3.55-3.71V45.02z"/>
+		<path d="M110.87,47.71h0.58v-0.32c0-1.95-1.06-2.61-2.49-2.61c-1.12,0-1.99,0.42-2.45,0.7c-0.28,0.14-0.5,0.1-0.68-0.16l-0.12-0.2
+			c-0.16-0.26-0.12-0.52,0.14-0.68c0.52-0.32,1.65-0.88,3.21-0.88c2.41,0,3.75,1.34,3.75,3.87v5.96c0,0.32-0.16,0.5-0.48,0.5h-0.32
+			c-0.32,0-0.5-0.16-0.5-0.5v-0.8c0-0.46,0.06-0.76,0.06-0.76h-0.04c0.02,0-0.9,2.31-3.41,2.31c-1.71,0-3.41-1-3.41-2.95
+			C104.71,47.89,108.92,47.71,110.87,47.71z M108.36,52.99c1.95,0,3.09-2.01,3.09-3.77v-0.48h-0.56c-1.59,0-4.78,0.06-4.78,2.33
+			C106.11,52.01,106.85,52.99,108.36,52.99z"/>
+		<path d="M115.75,40.28c0-0.32,0.16-0.5,0.48-0.5h0.38c0.32,0,0.5,0.18,0.5,0.5v10.98c0,1.26,0.6,1.41,1.04,1.47
+			c0.24,0.02,0.42,0.14,0.42,0.44v0.3c0,0.3-0.14,0.5-0.52,0.5c-0.82,0-2.31-0.26-2.31-2.47V40.28z"/>
+		<path d="M124.36,40.28c0-0.32,0.16-0.5,0.48-0.5h0.42c0.3,0,0.48,0.18,0.48,0.5v5.92h8.19v-5.92c0-0.32,0.16-0.5,0.48-0.5h0.4
+			c0.32,0,0.5,0.18,0.5,0.5v13.11c0,0.32-0.18,0.5-0.5,0.5h-0.4c-0.32,0-0.48-0.18-0.48-0.5v-5.94h-8.19v5.94
+			c0,0.32-0.18,0.5-0.48,0.5h-0.42c-0.32,0-0.48-0.18-0.48-0.5V40.28z"/>
+		<path d="M138.37,44.3c0-0.32,0.16-0.5,0.48-0.5h0.38c0.32,0,0.5,0.18,0.5,0.5v5.56c0,1.59,0.24,2.99,2.19,2.99
+			c2.31,0,3.73-2.03,3.73-4.22V44.3c0-0.32,0.18-0.5,0.5-0.5h0.38c0.32,0,0.48,0.18,0.48,0.5v9.09c0,0.32-0.16,0.5-0.48,0.5h-0.36
+			c-0.32,0-0.48-0.18-0.48-0.5v-1.16c0-0.4,0.06-0.72,0.06-0.72h-0.04c-0.38,0.98-1.75,2.63-3.97,2.63c-2.39,0-3.37-1.28-3.37-3.91
+			V44.3z"/>
+		<path d="M150.12,40.28c0-0.32,0.16-0.5,0.48-0.5h0.38c0.32,0,0.5,0.18,0.5,0.5v4.52c0,0.46-0.08,0.82-0.08,0.82h0.04
+			c0,0,0.88-2.07,3.47-2.07c2.71,0,4.4,2.17,4.4,5.28c0,3.21-1.91,5.3-4.56,5.3c-2.45,0-3.37-2.11-3.37-2.11h-0.04
+			c0,0,0.08,0.3,0.08,0.74v0.66c0,0.28-0.18,0.46-0.5,0.46h-0.32c-0.32,0-0.48-0.18-0.48-0.5V40.28z M154.63,52.91
+			c1.81,0,3.27-1.49,3.27-4.05c0-2.47-1.32-4.06-3.19-4.06c-1.69,0-3.27,1.2-3.27,4.06C151.44,50.92,152.48,52.91,154.63,52.91z"/>
+	</g>
+</g>
+</svg></div>
+      </div>
+      <span class="fcard-tag">Sidebar Persistent</span>
+      <div class="fcard-name">Wide Skyscraper</div>
+      <div class="fcard-size">160 × 600 px</div>
+      <div class="fcard-desc">Begleitet den Nutzer beim Scrollen durch die gesamte Seite. Durch die Scroll-Begleitung entsteht eine außergewöhnlich hohe Kontaktdauer mit Ihrer Werbebotschaft.</div>
+    </div>
+
+    <!-- Interscroller -->
+    <div class="fcard">
+      <div class="fcard-preview" style="height:200px;">
+        <div class="mini-logo" style="width:60%;max-width:100px;"><svg version="1.1" id="NAVD_logo" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 166.39 65.2" style="enable-background:new 0 0 166.39 65.2;" xml:space="preserve">
+<style type="text/css">
+	.NAVD_st0{fill:url(#NAVD_SVGID_1_);}
+	.NAVD_st1{fill:url(#NAVD_SVGID_2_);}
+	.NAVD_st2{fill:url(#NAVD_SVGID_3_);}
+</style>
+<g>
+	<linearGradient id="NAVD_SVGID_1_" gradientUnits="userSpaceOnUse" x1="84.782" y1="5.7049" x2="55.5431" y2="35.9557">
+		<stop  offset="0.0186" style="stop-color:#FFDC00"/>
+		<stop  offset="0.1653" style="stop-color:#C8F064"/>
+		<stop  offset="0.4721" style="stop-color:#3DCDE6"/>
+		<stop  offset="0.7099" style="stop-color:#3595D2"/>
+		<stop  offset="0.8885" style="stop-color:#006CE5"/>
+	</linearGradient>
+	<path class="NAVD_st0" d="M74.62,18.78L55.61,30.47l3.09,5.68c0.28,0.16,0.69,0.16,1,0.16c0.61,0,1.17-0.46,1.94-1.27l15.6-16.27H74.62z
+		"/>
+	<linearGradient id="NAVD_SVGID_2_" gradientUnits="userSpaceOnUse" x1="66.0922" y1="48.2799" x2="38.8873" y2="11.4285">
+		<stop  offset="0.0186" style="stop-color:#FFDC00"/>
+		<stop  offset="0.2228" style="stop-color:#C8F064"/>
+		<stop  offset="0.6044" style="stop-color:#3DCDE6"/>
+		<stop  offset="1" style="stop-color:#006CE5"/>
+	</linearGradient>
+	<path class="NAVD_st1" d="M43.32,7.87l15.38,28.29L37.23,18.78l3.92-10.91c0.36-0.48,0.65-0.78,1.1-0.78
+		C42.81,7.09,43.04,7.44,43.32,7.87z"/>
+	<linearGradient id="NAVD_SVGID_3_" gradientUnits="userSpaceOnUse" x1="35.1623" y1="0.8092" x2="11.589" y2="65.5764">
+		<stop  offset="0.0186" style="stop-color:#FFDC00"/>
+		<stop  offset="0.2228" style="stop-color:#C8F064"/>
+		<stop  offset="0.5274" style="stop-color:#3DCDE6"/>
+		<stop  offset="1" style="stop-color:#006CE5"/>
+	</linearGradient>
+	<polygon class="NAVD_st2" points="41.16,7.87 7.08,53.86 24.62,53.86 	"/>
+	<g fill="#ffffff">
+		<path d="M38.04,44.5c0-0.54,0.3-0.84,0.84-0.84h0.64c0.54,0,0.82,0.3,0.82,0.7v0.46c0,0.22-0.02,0.4-0.02,0.4h0.04
+			c0,0,0.9-1.81,3.29-1.81c2.77,0,4.56,2.19,4.56,5.36c0,3.25-2.01,5.36-4.7,5.36c-2.13,0-2.95-1.57-2.95-1.57h-0.04
+			c0,0,0.06,0.36,0.06,0.88v3.61c0,0.56-0.28,0.84-0.84,0.84h-0.86c-0.54,0-0.84-0.28-0.84-0.84V44.5z M43.06,51.99
+			c1.41,0,2.57-1.14,2.57-3.17c0-1.95-1.04-3.21-2.53-3.21c-1.32,0-2.59,0.96-2.59,3.23C40.51,50.42,41.39,51.99,43.06,51.99z"/>
+		<path d="M54.18,43.42c2.25,0,2.99,1.47,2.99,1.47h0.04c0,0-0.04-0.26-0.04-0.58v-3.81c0-0.54,0.28-0.84,0.82-0.84h0.88
+			c0.54,0,0.82,0.3,0.82,0.84v12.57c0,0.56-0.28,0.84-0.82,0.84h-0.74c-0.54,0-0.82-0.26-0.82-0.76v-0.4c0-0.2,0.04-0.36,0.04-0.36
+			h-0.04c0,0-0.86,1.77-3.21,1.77c-2.77,0-4.56-2.19-4.56-5.36C49.54,45.52,51.47,43.42,54.18,43.42z M54.66,51.99
+			c1.32,0,2.57-0.96,2.57-3.23c0-1.59-0.82-3.15-2.55-3.15c-1.39,0-2.57,1.14-2.57,3.17C52.11,50.72,53.15,51.99,54.66,51.99z"/>
+		<path d="M70.34,43.56c2.45,0,3.31,2.03,3.31,2.03h0.04c0,0-0.06-0.34-0.06-0.76v-4.54c0-0.32,0.18-0.5,0.5-0.5h0.38
+			c0.32,0,0.48,0.18,0.48,0.5v13.11c0,0.32-0.16,0.5-0.48,0.5h-0.34c-0.32,0-0.5-0.16-0.5-0.48v-0.76c0-0.36,0.08-0.62,0.08-0.62
+			h-0.04c0,0-0.86,2.11-3.51,2.11c-2.71,0-4.4-2.17-4.4-5.3C65.8,45.64,67.69,43.56,70.34,43.56z M70.4,52.91
+			c1.69,0,3.27-1.2,3.27-4.08c0-2.05-1.04-4.04-3.21-4.04c-1.79,0-3.25,1.49-3.25,4.04C67.21,51.33,68.51,52.91,70.4,52.91z"/>
+		<path d="M77.97,41.01v-0.72c0-0.32,0.16-0.5,0.48-0.5h0.5c0.32,0,0.48,0.18,0.48,0.5v0.72c0,0.32-0.16,0.48-0.48,0.48h-0.5
+			C78.13,41.49,77.97,41.33,77.97,41.01z M78.01,44.3c0-0.32,0.18-0.5,0.5-0.5h0.38c0.32,0,0.48,0.18,0.48,0.5v9.09
+			c0,0.32-0.16,0.5-0.48,0.5h-0.38c-0.32,0-0.5-0.18-0.5-0.5V44.3z"/>
+		<path d="M83.77,56.36c0.44,0.2,1.22,0.52,2.35,0.52c1.87,0,3.47-0.92,3.47-3.17v-1.04c0-0.38,0.06-0.72,0.06-0.72h-0.04
+			c-0.6,1.14-1.63,1.89-3.21,1.89c-2.71,0-4.5-2.13-4.5-5.24c0-2.97,1.65-5.04,4.46-5.04c2.61,0,3.29,1.85,3.29,1.85h0.04
+			c0,0-0.04-0.14-0.04-0.34v-0.82c0-0.26,0.16-0.44,0.48-0.44h0.32c0.32,0,0.5,0.18,0.5,0.5v9.35c0,3.21-2.39,4.46-4.8,4.46
+			c-1.04,0-2.07-0.22-2.91-0.6c-0.3-0.14-0.38-0.34-0.24-0.64l0.12-0.28C83.27,56.32,83.45,56.24,83.77,56.36z M89.61,48.7
+			c0-2.99-1.45-3.91-3.13-3.91c-2.05,0-3.17,1.45-3.17,3.77c0,2.53,1.3,4.06,3.29,4.06C88.21,52.61,89.61,51.63,89.61,48.7z"/>
+		<path d="M93.95,41.01v-0.72c0-0.32,0.16-0.5,0.48-0.5h0.5c0.32,0,0.48,0.18,0.48,0.5v0.72c0,0.32-0.16,0.48-0.48,0.48h-0.5
+			C94.11,41.49,93.95,41.33,93.95,41.01z M93.99,44.3c0-0.32,0.18-0.5,0.5-0.5h0.38c0.32,0,0.48,0.18,0.48,0.5v9.09
+			c0,0.32-0.16,0.5-0.48,0.5h-0.38c-0.32,0-0.5-0.18-0.5-0.5V44.3z"/>
+		<path d="M99.11,45.02h-0.84c-0.32,0-0.48-0.16-0.48-0.48v-0.16c0-0.32,0.16-0.5,0.48-0.5h0.86v-2.37c0-0.32,0.18-0.5,0.5-0.5h0.36
+			c0.32,0,0.48,0.18,0.48,0.5v2.37h2.05c0.32,0,0.5,0.18,0.5,0.5v0.16c0,0.32-0.18,0.48-0.5,0.48h-2.05v5.06
+			c0,2.33,1.43,2.61,2.21,2.65c0.4,0.04,0.54,0.16,0.54,0.5v0.26c0,0.32-0.16,0.48-0.56,0.48c-2.21,0-3.55-1.34-3.55-3.71V45.02z"/>
+		<path d="M110.87,47.71h0.58v-0.32c0-1.95-1.06-2.61-2.49-2.61c-1.12,0-1.99,0.42-2.45,0.7c-0.28,0.14-0.5,0.1-0.68-0.16l-0.12-0.2
+			c-0.16-0.26-0.12-0.52,0.14-0.68c0.52-0.32,1.65-0.88,3.21-0.88c2.41,0,3.75,1.34,3.75,3.87v5.96c0,0.32-0.16,0.5-0.48,0.5h-0.32
+			c-0.32,0-0.5-0.16-0.5-0.5v-0.8c0-0.46,0.06-0.76,0.06-0.76h-0.04c0.02,0-0.9,2.31-3.41,2.31c-1.71,0-3.41-1-3.41-2.95
+			C104.71,47.89,108.92,47.71,110.87,47.71z M108.36,52.99c1.95,0,3.09-2.01,3.09-3.77v-0.48h-0.56c-1.59,0-4.78,0.06-4.78,2.33
+			C106.11,52.01,106.85,52.99,108.36,52.99z"/>
+		<path d="M115.75,40.28c0-0.32,0.16-0.5,0.48-0.5h0.38c0.32,0,0.5,0.18,0.5,0.5v10.98c0,1.26,0.6,1.41,1.04,1.47
+			c0.24,0.02,0.42,0.14,0.42,0.44v0.3c0,0.3-0.14,0.5-0.52,0.5c-0.82,0-2.31-0.26-2.31-2.47V40.28z"/>
+		<path d="M124.36,40.28c0-0.32,0.16-0.5,0.48-0.5h0.42c0.3,0,0.48,0.18,0.48,0.5v5.92h8.19v-5.92c0-0.32,0.16-0.5,0.48-0.5h0.4
+			c0.32,0,0.5,0.18,0.5,0.5v13.11c0,0.32-0.18,0.5-0.5,0.5h-0.4c-0.32,0-0.48-0.18-0.48-0.5v-5.94h-8.19v5.94
+			c0,0.32-0.18,0.5-0.48,0.5h-0.42c-0.32,0-0.48-0.18-0.48-0.5V40.28z"/>
+		<path d="M138.37,44.3c0-0.32,0.16-0.5,0.48-0.5h0.38c0.32,0,0.5,0.18,0.5,0.5v5.56c0,1.59,0.24,2.99,2.19,2.99
+			c2.31,0,3.73-2.03,3.73-4.22V44.3c0-0.32,0.18-0.5,0.5-0.5h0.38c0.32,0,0.48,0.18,0.48,0.5v9.09c0,0.32-0.16,0.5-0.48,0.5h-0.36
+			c-0.32,0-0.48-0.18-0.48-0.5v-1.16c0-0.4,0.06-0.72,0.06-0.72h-0.04c-0.38,0.98-1.75,2.63-3.97,2.63c-2.39,0-3.37-1.28-3.37-3.91
+			V44.3z"/>
+		<path d="M150.12,40.28c0-0.32,0.16-0.5,0.48-0.5h0.38c0.32,0,0.5,0.18,0.5,0.5v4.52c0,0.46-0.08,0.82-0.08,0.82h0.04
+			c0,0,0.88-2.07,3.47-2.07c2.71,0,4.4,2.17,4.4,5.28c0,3.21-1.91,5.3-4.56,5.3c-2.45,0-3.37-2.11-3.37-2.11h-0.04
+			c0,0,0.08,0.3,0.08,0.74v0.66c0,0.28-0.18,0.46-0.5,0.46h-0.32c-0.32,0-0.48-0.18-0.48-0.5V40.28z M154.63,52.91
+			c1.81,0,3.27-1.49,3.27-4.05c0-2.47-1.32-4.06-3.19-4.06c-1.69,0-3.27,1.2-3.27,4.06C151.44,50.92,152.48,52.91,154.63,52.91z"/>
+	</g>
+</g>
+</svg></div>
+      </div>
+      <span class="fcard-tag">Mobile Premium</span>
+      <div class="fcard-name">Interscroller</div>
+      <div class="fcard-size">320 × 480 px</div>
+      <div class="fcard-desc">Das innovative Mobile-Format erscheint beim Scrollen zwischen Inhaltselementen. Quasi-Vollbild-Erlebnis auf dem Smartphone mit maximalem Impact.</div>
+    </div>
+
+    <!-- Mobile Banner -->
+    <div class="fcard">
+      <div class="fcard-preview" style="height:40px;">
+        <div class="mini-logo" style="width:40%;max-width:80px;"><svg version="1.1" id="NAVD_logo" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 166.39 65.2" style="enable-background:new 0 0 166.39 65.2;" xml:space="preserve">
+<style type="text/css">
+	.NAVD_st0{fill:url(#NAVD_SVGID_1_);}
+	.NAVD_st1{fill:url(#NAVD_SVGID_2_);}
+	.NAVD_st2{fill:url(#NAVD_SVGID_3_);}
+</style>
+<g>
+	<linearGradient id="NAVD_SVGID_1_" gradientUnits="userSpaceOnUse" x1="84.782" y1="5.7049" x2="55.5431" y2="35.9557">
+		<stop  offset="0.0186" style="stop-color:#FFDC00"/>
+		<stop  offset="0.1653" style="stop-color:#C8F064"/>
+		<stop  offset="0.4721" style="stop-color:#3DCDE6"/>
+		<stop  offset="0.7099" style="stop-color:#3595D2"/>
+		<stop  offset="0.8885" style="stop-color:#006CE5"/>
+	</linearGradient>
+	<path class="NAVD_st0" d="M74.62,18.78L55.61,30.47l3.09,5.68c0.28,0.16,0.69,0.16,1,0.16c0.61,0,1.17-0.46,1.94-1.27l15.6-16.27H74.62z
+		"/>
+	<linearGradient id="NAVD_SVGID_2_" gradientUnits="userSpaceOnUse" x1="66.0922" y1="48.2799" x2="38.8873" y2="11.4285">
+		<stop  offset="0.0186" style="stop-color:#FFDC00"/>
+		<stop  offset="0.2228" style="stop-color:#C8F064"/>
+		<stop  offset="0.6044" style="stop-color:#3DCDE6"/>
+		<stop  offset="1" style="stop-color:#006CE5"/>
+	</linearGradient>
+	<path class="NAVD_st1" d="M43.32,7.87l15.38,28.29L37.23,18.78l3.92-10.91c0.36-0.48,0.65-0.78,1.1-0.78
+		C42.81,7.09,43.04,7.44,43.32,7.87z"/>
+	<linearGradient id="NAVD_SVGID_3_" gradientUnits="userSpaceOnUse" x1="35.1623" y1="0.8092" x2="11.589" y2="65.5764">
+		<stop  offset="0.0186" style="stop-color:#FFDC00"/>
+		<stop  offset="0.2228" style="stop-color:#C8F064"/>
+		<stop  offset="0.5274" style="stop-color:#3DCDE6"/>
+		<stop  offset="1" style="stop-color:#006CE5"/>
+	</linearGradient>
+	<polygon class="NAVD_st2" points="41.16,7.87 7.08,53.86 24.62,53.86 	"/>
+	<g fill="#ffffff">
+		<path d="M38.04,44.5c0-0.54,0.3-0.84,0.84-0.84h0.64c0.54,0,0.82,0.3,0.82,0.7v0.46c0,0.22-0.02,0.4-0.02,0.4h0.04
+			c0,0,0.9-1.81,3.29-1.81c2.77,0,4.56,2.19,4.56,5.36c0,3.25-2.01,5.36-4.7,5.36c-2.13,0-2.95-1.57-2.95-1.57h-0.04
+			c0,0,0.06,0.36,0.06,0.88v3.61c0,0.56-0.28,0.84-0.84,0.84h-0.86c-0.54,0-0.84-0.28-0.84-0.84V44.5z M43.06,51.99
+			c1.41,0,2.57-1.14,2.57-3.17c0-1.95-1.04-3.21-2.53-3.21c-1.32,0-2.59,0.96-2.59,3.23C40.51,50.42,41.39,51.99,43.06,51.99z"/>
+		<path d="M54.18,43.42c2.25,0,2.99,1.47,2.99,1.47h0.04c0,0-0.04-0.26-0.04-0.58v-3.81c0-0.54,0.28-0.84,0.82-0.84h0.88
+			c0.54,0,0.82,0.3,0.82,0.84v12.57c0,0.56-0.28,0.84-0.82,0.84h-0.74c-0.54,0-0.82-0.26-0.82-0.76v-0.4c0-0.2,0.04-0.36,0.04-0.36
+			h-0.04c0,0-0.86,1.77-3.21,1.77c-2.77,0-4.56-2.19-4.56-5.36C49.54,45.52,51.47,43.42,54.18,43.42z M54.66,51.99
+			c1.32,0,2.57-0.96,2.57-3.23c0-1.59-0.82-3.15-2.55-3.15c-1.39,0-2.57,1.14-2.57,3.17C52.11,50.72,53.15,51.99,54.66,51.99z"/>
+		<path d="M70.34,43.56c2.45,0,3.31,2.03,3.31,2.03h0.04c0,0-0.06-0.34-0.06-0.76v-4.54c0-0.32,0.18-0.5,0.5-0.5h0.38
+			c0.32,0,0.48,0.18,0.48,0.5v13.11c0,0.32-0.16,0.5-0.48,0.5h-0.34c-0.32,0-0.5-0.16-0.5-0.48v-0.76c0-0.36,0.08-0.62,0.08-0.62
+			h-0.04c0,0-0.86,2.11-3.51,2.11c-2.71,0-4.4-2.17-4.4-5.3C65.8,45.64,67.69,43.56,70.34,43.56z M70.4,52.91
+			c1.69,0,3.27-1.2,3.27-4.08c0-2.05-1.04-4.04-3.21-4.04c-1.79,0-3.25,1.49-3.25,4.04C67.21,51.33,68.51,52.91,70.4,52.91z"/>
+		<path d="M77.97,41.01v-0.72c0-0.32,0.16-0.5,0.48-0.5h0.5c0.32,0,0.48,0.18,0.48,0.5v0.72c0,0.32-0.16,0.48-0.48,0.48h-0.5
+			C78.13,41.49,77.97,41.33,77.97,41.01z M78.01,44.3c0-0.32,0.18-0.5,0.5-0.5h0.38c0.32,0,0.48,0.18,0.48,0.5v9.09
+			c0,0.32-0.16,0.5-0.48,0.5h-0.38c-0.32,0-0.5-0.18-0.5-0.5V44.3z"/>
+		<path d="M83.77,56.36c0.44,0.2,1.22,0.52,2.35,0.52c1.87,0,3.47-0.92,3.47-3.17v-1.04c0-0.38,0.06-0.72,0.06-0.72h-0.04
+			c-0.6,1.14-1.63,1.89-3.21,1.89c-2.71,0-4.5-2.13-4.5-5.24c0-2.97,1.65-5.04,4.46-5.04c2.61,0,3.29,1.85,3.29,1.85h0.04
+			c0,0-0.04-0.14-0.04-0.34v-0.82c0-0.26,0.16-0.44,0.48-0.44h0.32c0.32,0,0.5,0.18,0.5,0.5v9.35c0,3.21-2.39,4.46-4.8,4.46
+			c-1.04,0-2.07-0.22-2.91-0.6c-0.3-0.14-0.38-0.34-0.24-0.64l0.12-0.28C83.27,56.32,83.45,56.24,83.77,56.36z M89.61,48.7
+			c0-2.99-1.45-3.91-3.13-3.91c-2.05,0-3.17,1.45-3.17,3.77c0,2.53,1.3,4.06,3.29,4.06C88.21,52.61,89.61,51.63,89.61,48.7z"/>
+		<path d="M93.95,41.01v-0.72c0-0.32,0.16-0.5,0.48-0.5h0.5c0.32,0,0.48,0.18,0.48,0.5v0.72c0,0.32-0.16,0.48-0.48,0.48h-0.5
+			C94.11,41.49,93.95,41.33,93.95,41.01z M93.99,44.3c0-0.32,0.18-0.5,0.5-0.5h0.38c0.32,0,0.48,0.18,0.48,0.5v9.09
+			c0,0.32-0.16,0.5-0.48,0.5h-0.38c-0.32,0-0.5-0.18-0.5-0.5V44.3z"/>
+		<path d="M99.11,45.02h-0.84c-0.32,0-0.48-0.16-0.48-0.48v-0.16c0-0.32,0.16-0.5,0.48-0.5h0.86v-2.37c0-0.32,0.18-0.5,0.5-0.5h0.36
+			c0.32,0,0.48,0.18,0.48,0.5v2.37h2.05c0.32,0,0.5,0.18,0.5,0.5v0.16c0,0.32-0.18,0.48-0.5,0.48h-2.05v5.06
+			c0,2.33,1.43,2.61,2.21,2.65c0.4,0.04,0.54,0.16,0.54,0.5v0.26c0,0.32-0.16,0.48-0.56,0.48c-2.21,0-3.55-1.34-3.55-3.71V45.02z"/>
+		<path d="M110.87,47.71h0.58v-0.32c0-1.95-1.06-2.61-2.49-2.61c-1.12,0-1.99,0.42-2.45,0.7c-0.28,0.14-0.5,0.1-0.68-0.16l-0.12-0.2
+			c-0.16-0.26-0.12-0.52,0.14-0.68c0.52-0.32,1.65-0.88,3.21-0.88c2.41,0,3.75,1.34,3.75,3.87v5.96c0,0.32-0.16,0.5-0.48,0.5h-0.32
+			c-0.32,0-0.5-0.16-0.5-0.5v-0.8c0-0.46,0.06-0.76,0.06-0.76h-0.04c0.02,0-0.9,2.31-3.41,2.31c-1.71,0-3.41-1-3.41-2.95
+			C104.71,47.89,108.92,47.71,110.87,47.71z M108.36,52.99c1.95,0,3.09-2.01,3.09-3.77v-0.48h-0.56c-1.59,0-4.78,0.06-4.78,2.33
+			C106.11,52.01,106.85,52.99,108.36,52.99z"/>
+		<path d="M115.75,40.28c0-0.32,0.16-0.5,0.48-0.5h0.38c0.32,0,0.5,0.18,0.5,0.5v10.98c0,1.26,0.6,1.41,1.04,1.47
+			c0.24,0.02,0.42,0.14,0.42,0.44v0.3c0,0.3-0.14,0.5-0.52,0.5c-0.82,0-2.31-0.26-2.31-2.47V40.28z"/>
+		<path d="M124.36,40.28c0-0.32,0.16-0.5,0.48-0.5h0.42c0.3,0,0.48,0.18,0.48,0.5v5.92h8.19v-5.92c0-0.32,0.16-0.5,0.48-0.5h0.4
+			c0.32,0,0.5,0.18,0.5,0.5v13.11c0,0.32-0.18,0.5-0.5,0.5h-0.4c-0.32,0-0.48-0.18-0.48-0.5v-5.94h-8.19v5.94
+			c0,0.32-0.18,0.5-0.48,0.5h-0.42c-0.32,0-0.48-0.18-0.48-0.5V40.28z"/>
+		<path d="M138.37,44.3c0-0.32,0.16-0.5,0.48-0.5h0.38c0.32,0,0.5,0.18,0.5,0.5v5.56c0,1.59,0.24,2.99,2.19,2.99
+			c2.31,0,3.73-2.03,3.73-4.22V44.3c0-0.32,0.18-0.5,0.5-0.5h0.38c0.32,0,0.48,0.18,0.48,0.5v9.09c0,0.32-0.16,0.5-0.48,0.5h-0.36
+			c-0.32,0-0.48-0.18-0.48-0.5v-1.16c0-0.4,0.06-0.72,0.06-0.72h-0.04c-0.38,0.98-1.75,2.63-3.97,2.63c-2.39,0-3.37-1.28-3.37-3.91
+			V44.3z"/>
+		<path d="M150.12,40.28c0-0.32,0.16-0.5,0.48-0.5h0.38c0.32,0,0.5,0.18,0.5,0.5v4.52c0,0.46-0.08,0.82-0.08,0.82h0.04
+			c0,0,0.88-2.07,3.47-2.07c2.71,0,4.4,2.17,4.4,5.28c0,3.21-1.91,5.3-4.56,5.3c-2.45,0-3.37-2.11-3.37-2.11h-0.04
+			c0,0,0.08,0.3,0.08,0.74v0.66c0,0.28-0.18,0.46-0.5,0.46h-0.32c-0.32,0-0.48-0.18-0.48-0.5V40.28z M154.63,52.91
+			c1.81,0,3.27-1.49,3.27-4.05c0-2.47-1.32-4.06-3.19-4.06c-1.69,0-3.27,1.2-3.27,4.06C151.44,50.92,152.48,52.91,154.63,52.91z"/>
+	</g>
+</g>
+</svg></div>
+      </div>
+      <span class="fcard-tag">Mobile Standard</span>
+      <div class="fcard-name">Mobile Banner</div>
+      <div class="fcard-size">320 × 50 px</div>
+      <div class="fcard-desc">Der persistente Mobile-Footer-Banner. Kleines Format, große Wirkung: dauerhaft sichtbar während der gesamten mobilen Nutzungssession.</div>
+    </div>
+
+    <!-- Wallpaper -->
+    <div class="fcard">
+      <div class="fcard-preview" style="height:120px; background:linear-gradient(90deg,rgba(26,127,212,0.25) 0%,rgba(61,205,230,0.05) 15%,rgba(61,205,230,0.05) 85%,rgba(26,127,212,0.25) 100%);">
+        <div class="mini-logo" style="width:40%;max-width:90px;"><svg version="1.1" id="NAVD_logo" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 166.39 65.2" style="enable-background:new 0 0 166.39 65.2;" xml:space="preserve">
+<style type="text/css">
+	.NAVD_st0{fill:url(#NAVD_SVGID_1_);}
+	.NAVD_st1{fill:url(#NAVD_SVGID_2_);}
+	.NAVD_st2{fill:url(#NAVD_SVGID_3_);}
+</style>
+<g>
+	<linearGradient id="NAVD_SVGID_1_" gradientUnits="userSpaceOnUse" x1="84.782" y1="5.7049" x2="55.5431" y2="35.9557">
+		<stop  offset="0.0186" style="stop-color:#FFDC00"/>
+		<stop  offset="0.1653" style="stop-color:#C8F064"/>
+		<stop  offset="0.4721" style="stop-color:#3DCDE6"/>
+		<stop  offset="0.7099" style="stop-color:#3595D2"/>
+		<stop  offset="0.8885" style="stop-color:#006CE5"/>
+	</linearGradient>
+	<path class="NAVD_st0" d="M74.62,18.78L55.61,30.47l3.09,5.68c0.28,0.16,0.69,0.16,1,0.16c0.61,0,1.17-0.46,1.94-1.27l15.6-16.27H74.62z
+		"/>
+	<linearGradient id="NAVD_SVGID_2_" gradientUnits="userSpaceOnUse" x1="66.0922" y1="48.2799" x2="38.8873" y2="11.4285">
+		<stop  offset="0.0186" style="stop-color:#FFDC00"/>
+		<stop  offset="0.2228" style="stop-color:#C8F064"/>
+		<stop  offset="0.6044" style="stop-color:#3DCDE6"/>
+		<stop  offset="1" style="stop-color:#006CE5"/>
+	</linearGradient>
+	<path class="NAVD_st1" d="M43.32,7.87l15.38,28.29L37.23,18.78l3.92-10.91c0.36-0.48,0.65-0.78,1.1-0.78
+		C42.81,7.09,43.04,7.44,43.32,7.87z"/>
+	<linearGradient id="NAVD_SVGID_3_" gradientUnits="userSpaceOnUse" x1="35.1623" y1="0.8092" x2="11.589" y2="65.5764">
+		<stop  offset="0.0186" style="stop-color:#FFDC00"/>
+		<stop  offset="0.2228" style="stop-color:#C8F064"/>
+		<stop  offset="0.5274" style="stop-color:#3DCDE6"/>
+		<stop  offset="1" style="stop-color:#006CE5"/>
+	</linearGradient>
+	<polygon class="NAVD_st2" points="41.16,7.87 7.08,53.86 24.62,53.86 	"/>
+	<g fill="#ffffff">
+		<path d="M38.04,44.5c0-0.54,0.3-0.84,0.84-0.84h0.64c0.54,0,0.82,0.3,0.82,0.7v0.46c0,0.22-0.02,0.4-0.02,0.4h0.04
+			c0,0,0.9-1.81,3.29-1.81c2.77,0,4.56,2.19,4.56,5.36c0,3.25-2.01,5.36-4.7,5.36c-2.13,0-2.95-1.57-2.95-1.57h-0.04
+			c0,0,0.06,0.36,0.06,0.88v3.61c0,0.56-0.28,0.84-0.84,0.84h-0.86c-0.54,0-0.84-0.28-0.84-0.84V44.5z M43.06,51.99
+			c1.41,0,2.57-1.14,2.57-3.17c0-1.95-1.04-3.21-2.53-3.21c-1.32,0-2.59,0.96-2.59,3.23C40.51,50.42,41.39,51.99,43.06,51.99z"/>
+		<path d="M54.18,43.42c2.25,0,2.99,1.47,2.99,1.47h0.04c0,0-0.04-0.26-0.04-0.58v-3.81c0-0.54,0.28-0.84,0.82-0.84h0.88
+			c0.54,0,0.82,0.3,0.82,0.84v12.57c0,0.56-0.28,0.84-0.82,0.84h-0.74c-0.54,0-0.82-0.26-0.82-0.76v-0.4c0-0.2,0.04-0.36,0.04-0.36
+			h-0.04c0,0-0.86,1.77-3.21,1.77c-2.77,0-4.56-2.19-4.56-5.36C49.54,45.52,51.47,43.42,54.18,43.42z M54.66,51.99
+			c1.32,0,2.57-0.96,2.57-3.23c0-1.59-0.82-3.15-2.55-3.15c-1.39,0-2.57,1.14-2.57,3.17C52.11,50.72,53.15,51.99,54.66,51.99z"/>
+		<path d="M70.34,43.56c2.45,0,3.31,2.03,3.31,2.03h0.04c0,0-0.06-0.34-0.06-0.76v-4.54c0-0.32,0.18-0.5,0.5-0.5h0.38
+			c0.32,0,0.48,0.18,0.48,0.5v13.11c0,0.32-0.16,0.5-0.48,0.5h-0.34c-0.32,0-0.5-0.16-0.5-0.48v-0.76c0-0.36,0.08-0.62,0.08-0.62
+			h-0.04c0,0-0.86,2.11-3.51,2.11c-2.71,0-4.4-2.17-4.4-5.3C65.8,45.64,67.69,43.56,70.34,43.56z M70.4,52.91
+			c1.69,0,3.27-1.2,3.27-4.08c0-2.05-1.04-4.04-3.21-4.04c-1.79,0-3.25,1.49-3.25,4.04C67.21,51.33,68.51,52.91,70.4,52.91z"/>
+		<path d="M77.97,41.01v-0.72c0-0.32,0.16-0.5,0.48-0.5h0.5c0.32,0,0.48,0.18,0.48,0.5v0.72c0,0.32-0.16,0.48-0.48,0.48h-0.5
+			C78.13,41.49,77.97,41.33,77.97,41.01z M78.01,44.3c0-0.32,0.18-0.5,0.5-0.5h0.38c0.32,0,0.48,0.18,0.48,0.5v9.09
+			c0,0.32-0.16,0.5-0.48,0.5h-0.38c-0.32,0-0.5-0.18-0.5-0.5V44.3z"/>
+		<path d="M83.77,56.36c0.44,0.2,1.22,0.52,2.35,0.52c1.87,0,3.47-0.92,3.47-3.17v-1.04c0-0.38,0.06-0.72,0.06-0.72h-0.04
+			c-0.6,1.14-1.63,1.89-3.21,1.89c-2.71,0-4.5-2.13-4.5-5.24c0-2.97,1.65-5.04,4.46-5.04c2.61,0,3.29,1.85,3.29,1.85h0.04
+			c0,0-0.04-0.14-0.04-0.34v-0.82c0-0.26,0.16-0.44,0.48-0.44h0.32c0.32,0,0.5,0.18,0.5,0.5v9.35c0,3.21-2.39,4.46-4.8,4.46
+			c-1.04,0-2.07-0.22-2.91-0.6c-0.3-0.14-0.38-0.34-0.24-0.64l0.12-0.28C83.27,56.32,83.45,56.24,83.77,56.36z M89.61,48.7
+			c0-2.99-1.45-3.91-3.13-3.91c-2.05,0-3.17,1.45-3.17,3.77c0,2.53,1.3,4.06,3.29,4.06C88.21,52.61,89.61,51.63,89.61,48.7z"/>
+		<path d="M93.95,41.01v-0.72c0-0.32,0.16-0.5,0.48-0.5h0.5c0.32,0,0.48,0.18,0.48,0.5v0.72c0,0.32-0.16,0.48-0.48,0.48h-0.5
+			C94.11,41.49,93.95,41.33,93.95,41.01z M93.99,44.3c0-0.32,0.18-0.5,0.5-0.5h0.38c0.32,0,0.48,0.18,0.48,0.5v9.09
+			c0,0.32-0.16,0.5-0.48,0.5h-0.38c-0.32,0-0.5-0.18-0.5-0.5V44.3z"/>
+		<path d="M99.11,45.02h-0.84c-0.32,0-0.48-0.16-0.48-0.48v-0.16c0-0.32,0.16-0.5,0.48-0.5h0.86v-2.37c0-0.32,0.18-0.5,0.5-0.5h0.36
+			c0.32,0,0.48,0.18,0.48,0.5v2.37h2.05c0.32,0,0.5,0.18,0.5,0.5v0.16c0,0.32-0.18,0.48-0.5,0.48h-2.05v5.06
+			c0,2.33,1.43,2.61,2.21,2.65c0.4,0.04,0.54,0.16,0.54,0.5v0.26c0,0.32-0.16,0.48-0.56,0.48c-2.21,0-3.55-1.34-3.55-3.71V45.02z"/>
+		<path d="M110.87,47.71h0.58v-0.32c0-1.95-1.06-2.61-2.49-2.61c-1.12,0-1.99,0.42-2.45,0.7c-0.28,0.14-0.5,0.1-0.68-0.16l-0.12-0.2
+			c-0.16-0.26-0.12-0.52,0.14-0.68c0.52-0.32,1.65-0.88,3.21-0.88c2.41,0,3.75,1.34,3.75,3.87v5.96c0,0.32-0.16,0.5-0.48,0.5h-0.32
+			c-0.32,0-0.5-0.16-0.5-0.5v-0.8c0-0.46,0.06-0.76,0.06-0.76h-0.04c0.02,0-0.9,2.31-3.41,2.31c-1.71,0-3.41-1-3.41-2.95
+			C104.71,47.89,108.92,47.71,110.87,47.71z M108.36,52.99c1.95,0,3.09-2.01,3.09-3.77v-0.48h-0.56c-1.59,0-4.78,0.06-4.78,2.33
+			C106.11,52.01,106.85,52.99,108.36,52.99z"/>
+		<path d="M115.75,40.28c0-0.32,0.16-0.5,0.48-0.5h0.38c0.32,0,0.5,0.18,0.5,0.5v10.98c0,1.26,0.6,1.41,1.04,1.47
+			c0.24,0.02,0.42,0.14,0.42,0.44v0.3c0,0.3-0.14,0.5-0.52,0.5c-0.82,0-2.31-0.26-2.31-2.47V40.28z"/>
+		<path d="M124.36,40.28c0-0.32,0.16-0.5,0.48-0.5h0.42c0.3,0,0.48,0.18,0.48,0.5v5.92h8.19v-5.92c0-0.32,0.16-0.5,0.48-0.5h0.4
+			c0.32,0,0.5,0.18,0.5,0.5v13.11c0,0.32-0.18,0.5-0.5,0.5h-0.4c-0.32,0-0.48-0.18-0.48-0.5v-5.94h-8.19v5.94
+			c0,0.32-0.18,0.5-0.48,0.5h-0.42c-0.32,0-0.48-0.18-0.48-0.5V40.28z"/>
+		<path d="M138.37,44.3c0-0.32,0.16-0.5,0.48-0.5h0.38c0.32,0,0.5,0.18,0.5,0.5v5.56c0,1.59,0.24,2.99,2.19,2.99
+			c2.31,0,3.73-2.03,3.73-4.22V44.3c0-0.32,0.18-0.5,0.5-0.5h0.38c0.32,0,0.48,0.18,0.48,0.5v9.09c0,0.32-0.16,0.5-0.48,0.5h-0.36
+			c-0.32,0-0.48-0.18-0.48-0.5v-1.16c0-0.4,0.06-0.72,0.06-0.72h-0.04c-0.38,0.98-1.75,2.63-3.97,2.63c-2.39,0-3.37-1.28-3.37-3.91
+			V44.3z"/>
+		<path d="M150.12,40.28c0-0.32,0.16-0.5,0.48-0.5h0.38c0.32,0,0.5,0.18,0.5,0.5v4.52c0,0.46-0.08,0.82-0.08,0.82h0.04
+			c0,0,0.88-2.07,3.47-2.07c2.71,0,4.4,2.17,4.4,5.28c0,3.21-1.91,5.3-4.56,5.3c-2.45,0-3.37-2.11-3.37-2.11h-0.04
+			c0,0,0.08,0.3,0.08,0.74v0.66c0,0.28-0.18,0.46-0.5,0.46h-0.32c-0.32,0-0.48-0.18-0.48-0.5V40.28z M154.63,52.91
+			c1.81,0,3.27-1.49,3.27-4.05c0-2.47-1.32-4.06-3.19-4.06c-1.69,0-3.27,1.2-3.27,4.06C151.44,50.92,152.48,52.91,154.63,52.91z"/>
+	</g>
+</g>
+</svg></div>
+      </div>
+      <span class="fcard-tag">Sonderformat</span>
+      <div class="fcard-name">Wallpaper / Skin</div>
+      <div class="fcard-size">1680 px Gesamtbreite</div>
+      <div class="fcard-desc">Das Premium-Sonderformat kleidet die gesamte Seite in Ihre Marke ein. Kombination aus Superbanner und beidseitigen Side-Ads für maximale Brand Immersion.</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- DEMO -->
+<section class="demo">
+  <div class="demo-inner">
+    <p class="sec-label">Live-Demo</p>
+    <h2 class="demo-h2">Sehen Sie es in Aktion.</h2>
+    <p class="demo-p">
+      Unser Half Page Ad Demo-Banner zeigt, was HTML5-Animation
+      im professionellen Einsatz leisten kann.
+    </p>
+    <a href="../banners/half-page-ad-300x600.html" target="_blank" class="demo-link">
+      Demo öffnen
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M6 3h7v7M13 3L4 12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
+    </a>
+    <div class="demo-mockup">
+      <iframe src="../banners/half-page-ad-300x600.html" title="Half Page Ad Demo" loading="lazy"></iframe>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-sec" id="kontakt">
+  <div class="cta-bg"></div>
+  <div class="cta-inner">
+    <h2 class="cta-h2">Bereit loszulegen?</h2>
+    <p class="cta-p">
+      Sprechen Sie uns an – wir entwickeln Ihr individuelles
+      Werbemittel-Set schnell und professionell.
+    </p>
+    <a href="https://www.pddigital.de" target="_blank" class="cta-btn">
+      Jetzt Kontakt aufnehmen
+    </a>
+    <p class="cta-url">www.pddigital.de</p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div style="height:20px;width:auto;opacity:0.4;"><svg version="1.1" id="FTR_logo" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 166.39 65.2" style="enable-background:new 0 0 166.39 65.2;" xml:space="preserve">
+<style type="text/css">
+	.FTR_st0{fill:url(#FTR_SVGID_1_);}
+	.FTR_st1{fill:url(#FTR_SVGID_2_);}
+	.FTR_st2{fill:url(#FTR_SVGID_3_);}
+</style>
+<g>
+	<linearGradient id="FTR_SVGID_1_" gradientUnits="userSpaceOnUse" x1="84.782" y1="5.7049" x2="55.5431" y2="35.9557">
+		<stop  offset="0.0186" style="stop-color:#FFDC00"/>
+		<stop  offset="0.1653" style="stop-color:#C8F064"/>
+		<stop  offset="0.4721" style="stop-color:#3DCDE6"/>
+		<stop  offset="0.7099" style="stop-color:#3595D2"/>
+		<stop  offset="0.8885" style="stop-color:#006CE5"/>
+	</linearGradient>
+	<path class="FTR_st0" d="M74.62,18.78L55.61,30.47l3.09,5.68c0.28,0.16,0.69,0.16,1,0.16c0.61,0,1.17-0.46,1.94-1.27l15.6-16.27H74.62z
+		"/>
+	<linearGradient id="FTR_SVGID_2_" gradientUnits="userSpaceOnUse" x1="66.0922" y1="48.2799" x2="38.8873" y2="11.4285">
+		<stop  offset="0.0186" style="stop-color:#FFDC00"/>
+		<stop  offset="0.2228" style="stop-color:#C8F064"/>
+		<stop  offset="0.6044" style="stop-color:#3DCDE6"/>
+		<stop  offset="1" style="stop-color:#006CE5"/>
+	</linearGradient>
+	<path class="FTR_st1" d="M43.32,7.87l15.38,28.29L37.23,18.78l3.92-10.91c0.36-0.48,0.65-0.78,1.1-0.78
+		C42.81,7.09,43.04,7.44,43.32,7.87z"/>
+	<linearGradient id="FTR_SVGID_3_" gradientUnits="userSpaceOnUse" x1="35.1623" y1="0.8092" x2="11.589" y2="65.5764">
+		<stop  offset="0.0186" style="stop-color:#FFDC00"/>
+		<stop  offset="0.2228" style="stop-color:#C8F064"/>
+		<stop  offset="0.5274" style="stop-color:#3DCDE6"/>
+		<stop  offset="1" style="stop-color:#006CE5"/>
+	</linearGradient>
+	<polygon class="FTR_st2" points="41.16,7.87 7.08,53.86 24.62,53.86 	"/>
+	<g fill="#ffffff">
+		<path d="M38.04,44.5c0-0.54,0.3-0.84,0.84-0.84h0.64c0.54,0,0.82,0.3,0.82,0.7v0.46c0,0.22-0.02,0.4-0.02,0.4h0.04
+			c0,0,0.9-1.81,3.29-1.81c2.77,0,4.56,2.19,4.56,5.36c0,3.25-2.01,5.36-4.7,5.36c-2.13,0-2.95-1.57-2.95-1.57h-0.04
+			c0,0,0.06,0.36,0.06,0.88v3.61c0,0.56-0.28,0.84-0.84,0.84h-0.86c-0.54,0-0.84-0.28-0.84-0.84V44.5z M43.06,51.99
+			c1.41,0,2.57-1.14,2.57-3.17c0-1.95-1.04-3.21-2.53-3.21c-1.32,0-2.59,0.96-2.59,3.23C40.51,50.42,41.39,51.99,43.06,51.99z"/>
+		<path d="M54.18,43.42c2.25,0,2.99,1.47,2.99,1.47h0.04c0,0-0.04-0.26-0.04-0.58v-3.81c0-0.54,0.28-0.84,0.82-0.84h0.88
+			c0.54,0,0.82,0.3,0.82,0.84v12.57c0,0.56-0.28,0.84-0.82,0.84h-0.74c-0.54,0-0.82-0.26-0.82-0.76v-0.4c0-0.2,0.04-0.36,0.04-0.36
+			h-0.04c0,0-0.86,1.77-3.21,1.77c-2.77,0-4.56-2.19-4.56-5.36C49.54,45.52,51.47,43.42,54.18,43.42z M54.66,51.99
+			c1.32,0,2.57-0.96,2.57-3.23c0-1.59-0.82-3.15-2.55-3.15c-1.39,0-2.57,1.14-2.57,3.17C52.11,50.72,53.15,51.99,54.66,51.99z"/>
+		<path d="M70.34,43.56c2.45,0,3.31,2.03,3.31,2.03h0.04c0,0-0.06-0.34-0.06-0.76v-4.54c0-0.32,0.18-0.5,0.5-0.5h0.38
+			c0.32,0,0.48,0.18,0.48,0.5v13.11c0,0.32-0.16,0.5-0.48,0.5h-0.34c-0.32,0-0.5-0.16-0.5-0.48v-0.76c0-0.36,0.08-0.62,0.08-0.62
+			h-0.04c0,0-0.86,2.11-3.51,2.11c-2.71,0-4.4-2.17-4.4-5.3C65.8,45.64,67.69,43.56,70.34,43.56z M70.4,52.91
+			c1.69,0,3.27-1.2,3.27-4.08c0-2.05-1.04-4.04-3.21-4.04c-1.79,0-3.25,1.49-3.25,4.04C67.21,51.33,68.51,52.91,70.4,52.91z"/>
+		<path d="M77.97,41.01v-0.72c0-0.32,0.16-0.5,0.48-0.5h0.5c0.32,0,0.48,0.18,0.48,0.5v0.72c0,0.32-0.16,0.48-0.48,0.48h-0.5
+			C78.13,41.49,77.97,41.33,77.97,41.01z M78.01,44.3c0-0.32,0.18-0.5,0.5-0.5h0.38c0.32,0,0.48,0.18,0.48,0.5v9.09
+			c0,0.32-0.16,0.5-0.48,0.5h-0.38c-0.32,0-0.5-0.18-0.5-0.5V44.3z"/>
+		<path d="M83.77,56.36c0.44,0.2,1.22,0.52,2.35,0.52c1.87,0,3.47-0.92,3.47-3.17v-1.04c0-0.38,0.06-0.72,0.06-0.72h-0.04
+			c-0.6,1.14-1.63,1.89-3.21,1.89c-2.71,0-4.5-2.13-4.5-5.24c0-2.97,1.65-5.04,4.46-5.04c2.61,0,3.29,1.85,3.29,1.85h0.04
+			c0,0-0.04-0.14-0.04-0.34v-0.82c0-0.26,0.16-0.44,0.48-0.44h0.32c0.32,0,0.5,0.18,0.5,0.5v9.35c0,3.21-2.39,4.46-4.8,4.46
+			c-1.04,0-2.07-0.22-2.91-0.6c-0.3-0.14-0.38-0.34-0.24-0.64l0.12-0.28C83.27,56.32,83.45,56.24,83.77,56.36z M89.61,48.7
+			c0-2.99-1.45-3.91-3.13-3.91c-2.05,0-3.17,1.45-3.17,3.77c0,2.53,1.3,4.06,3.29,4.06C88.21,52.61,89.61,51.63,89.61,48.7z"/>
+		<path d="M93.95,41.01v-0.72c0-0.32,0.16-0.5,0.48-0.5h0.5c0.32,0,0.48,0.18,0.48,0.5v0.72c0,0.32-0.16,0.48-0.48,0.48h-0.5
+			C94.11,41.49,93.95,41.33,93.95,41.01z M93.99,44.3c0-0.32,0.18-0.5,0.5-0.5h0.38c0.32,0,0.48,0.18,0.48,0.5v9.09
+			c0,0.32-0.16,0.5-0.48,0.5h-0.38c-0.32,0-0.5-0.18-0.5-0.5V44.3z"/>
+		<path d="M99.11,45.02h-0.84c-0.32,0-0.48-0.16-0.48-0.48v-0.16c0-0.32,0.16-0.5,0.48-0.5h0.86v-2.37c0-0.32,0.18-0.5,0.5-0.5h0.36
+			c0.32,0,0.48,0.18,0.48,0.5v2.37h2.05c0.32,0,0.5,0.18,0.5,0.5v0.16c0,0.32-0.18,0.48-0.5,0.48h-2.05v5.06
+			c0,2.33,1.43,2.61,2.21,2.65c0.4,0.04,0.54,0.16,0.54,0.5v0.26c0,0.32-0.16,0.48-0.56,0.48c-2.21,0-3.55-1.34-3.55-3.71V45.02z"/>
+		<path d="M110.87,47.71h0.58v-0.32c0-1.95-1.06-2.61-2.49-2.61c-1.12,0-1.99,0.42-2.45,0.7c-0.28,0.14-0.5,0.1-0.68-0.16l-0.12-0.2
+			c-0.16-0.26-0.12-0.52,0.14-0.68c0.52-0.32,1.65-0.88,3.21-0.88c2.41,0,3.75,1.34,3.75,3.87v5.96c0,0.32-0.16,0.5-0.48,0.5h-0.32
+			c-0.32,0-0.5-0.16-0.5-0.5v-0.8c0-0.46,0.06-0.76,0.06-0.76h-0.04c0.02,0-0.9,2.31-3.41,2.31c-1.71,0-3.41-1-3.41-2.95
+			C104.71,47.89,108.92,47.71,110.87,47.71z M108.36,52.99c1.95,0,3.09-2.01,3.09-3.77v-0.48h-0.56c-1.59,0-4.78,0.06-4.78,2.33
+			C106.11,52.01,106.85,52.99,108.36,52.99z"/>
+		<path d="M115.75,40.28c0-0.32,0.16-0.5,0.48-0.5h0.38c0.32,0,0.5,0.18,0.5,0.5v10.98c0,1.26,0.6,1.41,1.04,1.47
+			c0.24,0.02,0.42,0.14,0.42,0.44v0.3c0,0.3-0.14,0.5-0.52,0.5c-0.82,0-2.31-0.26-2.31-2.47V40.28z"/>
+		<path d="M124.36,40.28c0-0.32,0.16-0.5,0.48-0.5h0.42c0.3,0,0.48,0.18,0.48,0.5v5.92h8.19v-5.92c0-0.32,0.16-0.5,0.48-0.5h0.4
+			c0.32,0,0.5,0.18,0.5,0.5v13.11c0,0.32-0.18,0.5-0.5,0.5h-0.4c-0.32,0-0.48-0.18-0.48-0.5v-5.94h-8.19v5.94
+			c0,0.32-0.18,0.5-0.48,0.5h-0.42c-0.32,0-0.48-0.18-0.48-0.5V40.28z"/>
+		<path d="M138.37,44.3c0-0.32,0.16-0.5,0.48-0.5h0.38c0.32,0,0.5,0.18,0.5,0.5v5.56c0,1.59,0.24,2.99,2.19,2.99
+			c2.31,0,3.73-2.03,3.73-4.22V44.3c0-0.32,0.18-0.5,0.5-0.5h0.38c0.32,0,0.48,0.18,0.48,0.5v9.09c0,0.32-0.16,0.5-0.48,0.5h-0.36
+			c-0.32,0-0.48-0.18-0.48-0.5v-1.16c0-0.4,0.06-0.72,0.06-0.72h-0.04c-0.38,0.98-1.75,2.63-3.97,2.63c-2.39,0-3.37-1.28-3.37-3.91
+			V44.3z"/>
+		<path d="M150.12,40.28c0-0.32,0.16-0.5,0.48-0.5h0.38c0.32,0,0.5,0.18,0.5,0.5v4.52c0,0.46-0.08,0.82-0.08,0.82h0.04
+			c0,0,0.88-2.07,3.47-2.07c2.71,0,4.4,2.17,4.4,5.28c0,3.21-1.91,5.3-4.56,5.3c-2.45,0-3.37-2.11-3.37-2.11h-0.04
+			c0,0,0.08,0.3,0.08,0.74v0.66c0,0.28-0.18,0.46-0.5,0.46h-0.32c-0.32,0-0.48-0.18-0.48-0.5V40.28z M154.63,52.91
+			c1.81,0,3.27-1.49,3.27-4.05c0-2.47-1.32-4.06-3.19-4.06c-1.69,0-3.27,1.2-3.27,4.06C151.44,50.92,152.48,52.91,154.63,52.91z"/>
+	</g>
+</g>
+</svg></div>
+  <p class="footer-txt">© 2025 pd digital Hub · www.pddigital.de</p>
+</footer>
+
+<script>
+// ── NAV scroll ───────────────────────────────
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 60);
+}, {passive:true});
+
+// ── Parallax hero geo shapes ─────────────────
+const heroContent = document.getElementById('hero-content');
+const geos = document.querySelectorAll('.geo');
+window.addEventListener('scroll', () => {
+  const y = window.scrollY;
+  geos.forEach(g => {
+    const speed = parseFloat(g.dataset.speed || 0.3);
+    g.style.transform = `translateY(${y * speed}px)`;
+  });
+  if (heroContent) {
+    heroContent.style.transform = `translateY(${y * 0.15}px)`;
+  }
+}, {passive:true});
+
+// ── IntersectionObserver for scroll reveals ──
+const revealEls = document.querySelectorAll(
+  '.num-item,.sec-label,.intro-h2,.intro-p,' +
+  '.formats-h2,.formats-sub,.fcard,.demo-h2,.demo-p,.demo-link,.demo-mockup,' +
+  '.cta-h2,.cta-p,.cta-btn,.cta-url'
+);
+
+const io = new IntersectionObserver((entries) => {
+  entries.forEach((e, i) => {
+    if (e.isIntersecting) {
+      // stagger fcard children
+      const delay = e.target.classList.contains('fcard')
+        ? [...document.querySelectorAll('.fcard')].indexOf(e.target) * 80
+        : 0;
+      setTimeout(() => e.target.classList.add('visible'), delay);
+      io.unobserve(e.target);
+    }
+  });
+}, {threshold:0.12, rootMargin:'0px 0px -40px 0px'});
+
+revealEls.forEach(el => io.observe(el));
+</script>
+
+</body>
+</html>
