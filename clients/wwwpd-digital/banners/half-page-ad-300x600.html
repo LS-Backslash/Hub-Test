@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Half Page Ad – 300×600 | pd digital Hub</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #111;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      font-family: sans-serif;
+    }
+
+    /* ── Banner shell ─────────────────────────────── */
+    .banner {
+      position: relative;
+      width: 300px;
+      height: 600px;
+      background: #0d1b2e;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    /* ── Background gradient overlay ─────────────── */
+    .bg-gradient {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 20% 10%, rgba(26,127,212,0.18) 0%, transparent 60%),
+                  radial-gradient(ellipse at 80% 90%, rgba(79,200,200,0.12) 0%, transparent 55%);
+      opacity: 0;
+      animation: fadeIn 0.8s ease forwards;
+    }
+
+    /* ── Decorative background geometry ──────────── */
+    .bg-geo {
+      position: absolute;
+      width: 320px;
+      height: 320px;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(0deg);
+      opacity: 0;
+      animation: fadeIn 1.2s 0.4s ease forwards, slowRotate 28s 1.2s linear infinite;
+    }
+
+    .bg-geo svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* ── Logo ─────────────────────────────────────── */
+    .logo-wrap {
+      position: absolute;
+      top: 82px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-18px);
+      width: 220px;
+      opacity: 0;
+      animation: logoEnter 0.9s 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    .logo-wrap img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    /* ── Divider line ─────────────────────────────── */
+    .divider {
+      position: absolute;
+      top: 212px;
+      left: 30px;
+      width: 0;
+      height: 1px;
+      background: linear-gradient(90deg, #1a7fd4, #4fc8c8, #b8e04a);
+      animation: drawLine 0.5s 1.85s ease forwards;
+    }
+
+    /* ── Banner name ──────────────────────────────── */
+    .banner-name {
+      position: absolute;
+      top: 232px;
+      left: 0;
+      width: 300px;
+      text-align: center;
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: 0.55em;
+      color: #ffffff;
+      text-transform: uppercase;
+      opacity: 0;
+      filter: blur(4px);
+      animation: textReveal 0.8s 2.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    /* ── Dimensions label ─────────────────────────── */
+    .dimensions {
+      position: absolute;
+      top: 270px;
+      left: 0;
+      width: 300px;
+      text-align: center;
+      font-size: 12px;
+      font-weight: 400;
+      letter-spacing: 0.3em;
+      color: #4fc8c8;
+      text-transform: uppercase;
+      opacity: 0;
+      animation: fadeSlideUp 0.6s 3.05s ease forwards;
+    }
+
+    /* ── URL / CTA area ───────────────────────────── */
+    .cta-wrap {
+      position: absolute;
+      bottom: 52px;
+      left: 0;
+      width: 300px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      opacity: 0;
+      animation: fadeSlideUp 0.7s 3.6s ease forwards;
+    }
+
+    .url-text {
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      color: rgba(255,255,255,0.5);
+      text-transform: lowercase;
+    }
+
+    .cta-btn {
+      display: inline-block;
+      padding: 9px 28px;
+      border: 1px solid rgba(79, 200, 200, 0.55);
+      border-radius: 2px;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.22em;
+      color: #4fc8c8;
+      text-transform: uppercase;
+      animation: pulse 2.8s 4.4s ease-in-out infinite;
+    }
+
+    /* ── Corner accent ────────────────────────────── */
+    .corner-tl,
+    .corner-br {
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      opacity: 0;
+      animation: fadeIn 0.6s 4.1s ease forwards;
+    }
+
+    .corner-tl {
+      top: 16px;
+      left: 16px;
+      border-top: 1px solid rgba(26,127,212,0.6);
+      border-left: 1px solid rgba(26,127,212,0.6);
+    }
+
+    .corner-br {
+      bottom: 16px;
+      right: 16px;
+      border-bottom: 1px solid rgba(79,200,200,0.6);
+      border-right: 1px solid rgba(79,200,200,0.6);
+    }
+
+    /* ── Scan line (subtle) ───────────────────────── */
+    .scanline {
+      position: absolute;
+      left: 0;
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(79,200,200,0.15), transparent);
+      top: -1px;
+      animation: scan 6s 1s linear infinite;
+    }
+
+    /* ════════════════════════════════════════════════
+       Keyframes
+    ════════════════════════════════════════════════ */
+    @keyframes fadeIn {
+      to { opacity: 1; }
+    }
+
+    @keyframes logoEnter {
+      to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+    }
+
+    @keyframes drawLine {
+      to { width: 240px; }
+    }
+
+    @keyframes textReveal {
+      to {
+        opacity: 1;
+        filter: blur(0px);
+        letter-spacing: 0.32em;
+      }
+    }
+
+    @keyframes fadeSlideUp {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(79,200,200,0); border-color: rgba(79,200,200,0.55); }
+      50%       { box-shadow: 0 0 14px 2px rgba(79,200,200,0.18); border-color: rgba(79,200,200,0.9); }
+    }
+
+    @keyframes slowRotate {
+      from { transform: translate(-50%, -50%) rotate(0deg); }
+      to   { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+
+    @keyframes scan {
+      from { top: -1px; opacity: 0; }
+      10%  { opacity: 1; }
+      90%  { opacity: 1; }
+      to   { top: 600px; opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="banner">
+
+  <!-- Background -->
+  <div class="bg-gradient"></div>
+
+  <!-- Decorative background geometry (triangle echo from logo) -->
+  <div class="bg-geo">
+    <svg viewBox="0 0 320 320" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <polygon points="160,30 40,280 280,280"
+        stroke="url(#geoGrad)" stroke-width="0.8" fill="none" opacity="0.22"/>
+      <polygon points="160,70 75,260 245,260"
+        stroke="url(#geoGrad)" stroke-width="0.5" fill="none" opacity="0.14"/>
+      <defs>
+        <linearGradient id="geoGrad" x1="0" y1="0" x2="320" y2="320" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#b8e04a"/>
+          <stop offset="50%" stop-color="#4fc8c8"/>
+          <stop offset="100%" stop-color="#1a7fd4"/>
+        </linearGradient>
+      </defs>
+    </svg>
+  </div>
+
+  <!-- Scan line -->
+  <div class="scanline"></div>
+
+  <!-- Logo -->
+  <div class="logo-wrap">
+    <img src="../assets/logo/logo.png" alt="pd digital Hub">
+  </div>
+
+  <!-- Divider -->
+  <div class="divider"></div>
+
+  <!-- Banner name -->
+  <div class="banner-name">Half Page Ad</div>
+
+  <!-- Dimensions -->
+  <div class="dimensions">300 &times; 600 px</div>
+
+  <!-- CTA / URL -->
+  <div class="cta-wrap">
+    <span class="url-text">wwwpd-digital.de</span>
+    <span class="cta-btn">Mehr erfahren</span>
+  </div>
+
+  <!-- Corner accents -->
+  <div class="corner-tl"></div>
+  <div class="corner-br"></div>
+
+</div>
+
+</body>
+</html>
