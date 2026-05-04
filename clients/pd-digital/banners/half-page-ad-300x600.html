@@ -48,15 +48,18 @@
 
     .logo-wrap {
       position: absolute;
-      top: 82px;
+      top: 72px;
       left: 50%;
       transform: translateX(-50%) translateY(-18px);
       width: 220px;
+      background: rgba(255,255,255,0.96);
+      border-radius: 6px;
+      padding: 10px 14px;
       opacity: 0;
       animation: logoEnter 0.9s 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
     }
 
-    .logo-wrap svg {
+    .logo-wrap img {
       width: 100%;
       height: auto;
       display: block;
@@ -219,47 +222,9 @@
 
   <div class="scanline"></div>
 
-  <!-- Logo (inline SVG – no external file needed) -->
+  <!-- Logo -->
   <div class="logo-wrap">
-    <svg viewBox="0 0 580 195" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <!-- Left mountain gradient: yellow-green → teal → blue -->
-        <linearGradient id="mGrad" x1="0.7" y1="0" x2="0" y2="1">
-          <stop offset="0%"   stop-color="#c8e63d"/>
-          <stop offset="42%"  stop-color="#3ecfc8"/>
-          <stop offset="100%" stop-color="#1a7fd4"/>
-        </linearGradient>
-        <!-- Right chevron gradient: teal → blue -->
-        <linearGradient id="cGrad" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%"   stop-color="#4fcfc8"/>
-          <stop offset="100%" stop-color="#1a7fd4"/>
-        </linearGradient>
-      </defs>
-
-      <!-- Left mountain – front face (bright) -->
-      <path d="M4,178 L72,6 L90,6 L34,162 Z" fill="url(#mGrad)"/>
-      <!-- Left mountain – inner face (ribbon fold, slightly darker) -->
-      <path d="M34,162 L90,6 L112,34 L68,178 Z" fill="url(#mGrad)" opacity="0.6"/>
-
-      <!-- Right chevron – front blade -->
-      <path d="M88,72 L124,168 L142,160 L108,66 Z" fill="url(#cGrad)"/>
-      <!-- Right chevron – back blade -->
-      <path d="M108,66 L142,160 L170,132 L132,50 Z" fill="url(#cGrad)" opacity="0.82"/>
-
-      <!-- Text: "pd" bold -->
-      <text x="198" y="148"
-            font-family="'Helvetica Neue',Helvetica,Arial,sans-serif"
-            font-size="86"
-            font-weight="800"
-            fill="#ffffff">pd</text>
-
-      <!-- Text: " digital Hub" regular -->
-      <text x="298" y="148"
-            font-family="'Helvetica Neue',Helvetica,Arial,sans-serif"
-            font-size="86"
-            font-weight="400"
-            fill="#ffffff"> digital Hub</text>
-    </svg>
+    <img src="../assets/logo/logo.png" alt="pd digital Hub">
   </div>
 
   <div class="divider"></div>
