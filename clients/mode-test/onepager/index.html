@@ -4,7 +4,7 @@
   Layout: Card-Grid + Comparison Table
   Farben: Main #084F82 | Secondary #00B1DE | Typo #2a2a2a
   Schriften: Newsreader (Headlines) + Roboto (Body)
-  Status: FINAL — bereit für Bildeinbindung
+  Status: FINAL — Bilder eingebunden (PNG)
 -->
 
 <style>
@@ -734,12 +734,8 @@
     ══════════════════════════════════════════════════════ -->
     <section class="op-hero" aria-labelledby="op-headline">
 
-      <!-- Hero-Bild
-           TODO: Klasse "has-image" hinzufügen + <img> einsetzen
-           Bildprompt → BILD_PROMPTS.md → Bild 1
-      -->
-      <div class="op-hero__image-wrap" role="img" aria-label="Zwei ikonische Luxus-Handtaschen nebeneinander – ein Vergleich zwischen minimalistischem und glamourösem Designerstil">
-        <!-- <img src="../assets/hero.jpg" alt="Luxushandtaschen im Vergleich: minimalistisches Saffiano-Leder neben ornament-reichem Monogramm-Canvas" width="1600" height="500" loading="eager"> -->
+      <div class="op-hero__image-wrap has-image" role="img" aria-label="Zwei ikonische Luxus-Handtaschen nebeneinander – ein Vergleich zwischen minimalistischem und glamourösem Designerstil">
+        <img src="../assets/hero.png" alt="Luxushandtaschen im Vergleich: minimalistisches Saffiano-Leder neben ornament-reichem Monogramm-Canvas" width="1600" height="500" loading="eager">
       </div>
 
       <!-- VS-Badge -->
@@ -852,11 +848,10 @@
         <!-- ── KARTE 1: PRADA ──────────────────────────── -->
         <article class="op-card op-card--prada" role="listitem" aria-labelledby="op-card1-title">
           <!-- Bild: Prada-Handtaschen — BILD_PROMPTS.md → Bild 2 -->
-          <div class="op-card__image-wrap"
-               data-hint="Prada-Karte: Bild einsetzen — Prompt in BILD_PROMPTS.md → Bild 2"
+          <div class="op-card__image-wrap has-image"
                role="img"
                aria-label="Strukturierte Prada-Handtasche aus Saffiano-Leder auf elegantem Untergrund">
-            <!-- <img src="../assets/karte-prada.jpg" alt="Prada Galleria Tasche aus schwarzem Saffiano-Leder auf Marmorunterlage" width="600" height="450" loading="lazy"> -->
+            <img src="../assets/karte-prada.png" alt="Prada Galleria Tasche aus schwarzem Saffiano-Leder auf Marmorunterlage" width="600" height="450" loading="lazy">
           </div>
           <div class="op-card__body">
             <p class="op-card__eyebrow">Prada</p>
@@ -884,11 +879,10 @@
         <!-- ── KARTE 2: GUCCI ──────────────────────────── -->
         <article class="op-card op-card--gucci" role="listitem" aria-labelledby="op-card2-title">
           <!-- Bild: Gucci-Handtaschen — BILD_PROMPTS.md → Bild 3 -->
-          <div class="op-card__image-wrap"
-               data-hint="Gucci-Karte: Bild einsetzen — Prompt in BILD_PROMPTS.md → Bild 3"
+          <div class="op-card__image-wrap has-image"
                role="img"
                aria-label="Ornamentreiche Gucci-Handtasche mit Monogramm-Canvas in warmem, luxuriösem Setting">
-            <!-- <img src="../assets/karte-gucci.jpg" alt="Gucci Horsebit 1955 Tasche in Beige-Canvas mit goldener Trense auf Holzoberfläche" width="600" height="450" loading="lazy"> -->
+            <img src="../assets/karte-gucci.png" alt="Gucci Horsebit 1955 Tasche in Beige-Canvas mit goldener Trense auf Holzoberfläche" width="600" height="450" loading="lazy">
           </div>
           <div class="op-card__body">
             <p class="op-card__eyebrow">Gucci</p>
@@ -916,11 +910,10 @@
         <!-- ── KARTE 3: QUALITÄT ────────────────────────── -->
         <article class="op-card op-card--neutral" role="listitem" aria-labelledby="op-card3-title">
           <!-- Bild: Materialdetail / Handwerkskunst — BILD_PROMPTS.md → Bild 4 -->
-          <div class="op-card__image-wrap"
-               data-hint="Qualitäts-Karte: Bild einsetzen — Prompt in BILD_PROMPTS.md → Bild 4"
+          <div class="op-card__image-wrap has-image"
                role="img"
                aria-label="Nahaufnahme von Lederverarbeitung und Nähten – Handwerkskunst im Luxussegment">
-            <!-- <img src="../assets/karte-qualitaet.jpg" alt="Makro-Aufnahme feiner Saffiano-Lederprägung und handgenähter Ziernähte" width="600" height="450" loading="lazy"> -->
+            <img src="../assets/karte-qualitaet.png" alt="Makro-Aufnahme feiner Saffiano-Lederprägung und handgenähter Ziernähte" width="600" height="450" loading="lazy">
           </div>
           <div class="op-card__body">
             <p class="op-card__eyebrow">Vergleich</p>
@@ -937,11 +930,10 @@
         <!-- ── KARTE 4: TIPPS ───────────────────────────── -->
         <article class="op-card op-card--tips" role="listitem" aria-labelledby="op-card4-title">
           <!-- Bild: Boutique / Shopping — BILD_PROMPTS.md → Bild 5 -->
-          <div class="op-card__image-wrap"
-               data-hint="Tipps-Karte: Bild einsetzen — Prompt in BILD_PROMPTS.md → Bild 5"
+          <div class="op-card__image-wrap has-image"
                role="img"
                aria-label="Person betrachtet Designertaschen in einem eleganten Luxusboutique">
-            <!-- <img src="../assets/karte-tipps.jpg" alt="Elegante Frau wählt in einer hellen Luxusboutique zwischen verschiedenen Designerhandtaschen" width="600" height="450" loading="lazy"> -->
+            <img src="../assets/karte-tipps.png" alt="Elegante Frau wählt in einer hellen Luxusboutique zwischen verschiedenen Designerhandtaschen" width="600" height="450" loading="lazy">
           </div>
           <div class="op-card__body">
             <p class="op-card__eyebrow">Kaufberatung</p>
