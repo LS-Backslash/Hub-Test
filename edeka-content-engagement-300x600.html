@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="ad.size" content="width=300,height=600">
+<meta name="ad.clickLabel" content="default">
+<title>EDEKA – Aktuelle Angebote</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,400;0,6..12,600;0,6..12,700;0,6..12,800;0,6..12,900;1,6..12,400&display=swap');
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --red:#E2001A;
+  --red-dark:#C00016;
+  --yellow:#FFD000;
+  --dark:#1A1A1A;
+  --white:#FFFFFF;
+  --light:#F7F7F7;
+  --gray:#7A7A7A;
+  --border:#E8E8E8;
+  --font:'Nunito Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;
+  --radius:8px;
+  --shadow:0 2px 10px rgba(0,0,0,.10);
+}
+
+html,body{width:300px;height:600px;overflow:hidden;background:#fff;}
+
+body{
+  font-family:var(--font);
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  user-select:none;
+  -webkit-user-select:none;
+}
+
+#ad{
+  position:relative;
+  width:300px;height:600px;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  border:1px solid var(--border);
+  background:var(--white);
+}
+
+/* ── HEADER ── */
+#hdr{
+  height:48px;
+  background:var(--red);
+  flex-shrink:0;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 12px;
+  z-index:20;
+}
+
+.logo-block{display:flex;flex-direction:column;gap:1px;}
+.logo-name{
+  font-size:23px;font-weight:900;color:var(--white);
+  letter-spacing:-0.5px;line-height:1;
+}
+.logo-sub{font-size:7px;color:rgba(255,255,255,.78);font-weight:600;text-transform:uppercase;letter-spacing:.6px;}
+
+.hdr-right{text-align:right;}
+.hdr-label{font-size:9px;color:var(--yellow);font-weight:800;text-transform:uppercase;letter-spacing:.5px;line-height:1;}
+.hdr-dates{font-size:7.5px;color:rgba(255,255,255,.68);margin-top:2px;font-weight:500;}
+
+/* ── SLIDE VIEWPORT ── */
+#viewport{
+  flex:1;
+  position:relative;
+  overflow:hidden;
+}
+
+#track{
+  display:flex;
+  height:100%;
+  will-change:transform;
+  transition:transform 380ms cubic-bezier(.25,.46,.45,.94);
+}
+@media(prefers-reduced-motion:reduce){
+  #track{transition:none;}
+  .hero-week,.hero-h1,.hero-sub,.hero-badge-row,.hcard{animation:none!important;opacity:1!important;transform:none!important;}
+}
+
+.slide{flex:0 0 300px;height:100%;overflow:hidden;position:relative;}
+
+/* ── SLIDE 1: HERO ── */
+#s1{display:flex;flex-direction:column;background:var(--white);}
+
+.hero-banner{
+  height:206px;flex-shrink:0;
+  background:linear-gradient(145deg,var(--red) 0%,var(--red-dark) 100%);
+  position:relative;overflow:hidden;
+  display:flex;flex-direction:column;justify-content:flex-end;
+  padding:16px 16px 14px;
+}
+.hb-circle1{
+  position:absolute;top:-40px;right:-40px;
+  width:180px;height:180px;border-radius:50%;
+  background:rgba(255,255,255,.055);
+}
+.hb-circle2{
+  position:absolute;top:20px;right:50px;
+  width:90px;height:90px;border-radius:50%;
+  background:rgba(255,208,0,.08);
+}
+.hb-circle3{
+  position:absolute;bottom:-30px;left:-20px;
+  width:120px;height:120px;border-radius:50%;
+  background:rgba(255,255,255,.04);
+}
+
+.hero-week{
+  font-size:10px;font-weight:700;color:var(--yellow);letter-spacing:1.2px;text-transform:uppercase;
+  opacity:0;animation:fadeUp .4s ease .1s forwards;position:relative;z-index:1;
+}
+.hero-h1{
+  font-size:27px;font-weight:900;color:var(--white);line-height:1.05;margin-top:5px;
+  opacity:0;animation:fadeUp .45s ease .28s forwards;position:relative;z-index:1;
+}
+.hero-sub{
+  font-size:12px;font-weight:600;color:rgba(255,255,255,.82);margin-top:4px;
+  opacity:0;animation:fadeUp .4s ease .45s forwards;position:relative;z-index:1;
+}
+.hero-badge-row{
+  margin-top:12px;position:relative;z-index:1;
+  opacity:0;animation:fadeUp .4s ease .6s forwards;
+  display:flex;align-items:center;gap:8px;
+}
+.hbadge{
+  display:inline-flex;align-items:center;gap:5px;
+  background:var(--yellow);color:var(--dark);
+  font-size:11px;font-weight:800;padding:5px 12px;border-radius:20px;
+  cursor:pointer;transition:transform .15s ease,box-shadow .15s ease;
+}
+.hbadge:hover{transform:scale(1.03);box-shadow:0 2px 10px rgba(255,208,0,.4);}
+.hbadge svg{flex-shrink:0;}
+
+.hero-products{
+  flex:1;display:flex;gap:8px;padding:8px 8px 0;min-height:0;
+}
+
+.hcard{
+  flex:1;background:var(--white);border-radius:var(--radius);
+  overflow:hidden;cursor:pointer;display:flex;flex-direction:column;
+  box-shadow:var(--shadow);border:1px solid var(--border);
+  transition:transform .15s ease;
+  opacity:0;animation:fadeUp .45s ease .8s forwards;
+}
+.hcard:nth-child(2){animation-delay:.95s;}
+.hcard:hover{transform:translateY(-2px);}
+
+.hcard-img{
+  flex:1;position:relative;overflow:hidden;min-height:0;
+  display:flex;align-items:center;justify-content:center;
+}
+.hcard-badge{
+  position:absolute;top:6px;left:6px;z-index:2;
+  font-size:8px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;
+  padding:2px 7px;border-radius:4px;
+  background:var(--red);color:var(--white);
+}
+.hcard-badge.y{background:var(--yellow);color:var(--dark);}
+
+.hcard-info{
+  padding:7px 8px 8px;
+  border-top:1px solid var(--border);
+  background:var(--white);
+  flex-shrink:0;
+}
+.hcard-name{font-size:11px;font-weight:700;color:var(--dark);line-height:1.2;}
+.hcard-pack{font-size:9px;color:var(--gray);margin-top:1px;}
+.hcard-price{font-size:20px;font-weight:900;color:var(--red);line-height:1;margin-top:4px;}
+.hcard-old{display:block;font-size:9px;color:var(--gray);text-decoration:line-through;margin-top:1px;}
+
+/* ── PRODUCT SLIDES (2-4) ── */
+.pslide{display:flex;flex-direction:column;background:var(--white);}
+
+.cat-hdr{
+  height:44px;flex-shrink:0;
+  display:flex;align-items:center;gap:10px;padding:0 14px;
+}
+.cat-icon{width:22px;height:22px;fill:var(--white);}
+.cat-label{font-size:14px;font-weight:800;color:var(--white);}
+
+.pgrid{
+  flex:1;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  grid-template-rows:1fr 1fr;
+  gap:5px;padding:5px;
+  min-height:0;
+}
+
+.pcard{
+  background:var(--light);border-radius:var(--radius);
+  overflow:hidden;cursor:pointer;
+  display:flex;flex-direction:column;
+  border:1px solid var(--border);
+  transition:transform .15s ease;
+}
+.pcard:hover{transform:scale(1.015);}
+
+.pcard-img{
+  flex:1;position:relative;
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;min-height:0;
+}
+.pbadge{
+  position:absolute;top:5px;left:5px;z-index:2;
+  font-size:7.5px;font-weight:800;letter-spacing:.3px;text-transform:uppercase;
+  padding:2px 5px;border-radius:3px;
+  background:var(--red);color:var(--white);
+}
+.pbadge.y{background:var(--yellow);color:var(--dark);}
+
+.pcard-info{
+  padding:5px 7px 7px;
+  background:var(--white);
+  border-top:1px solid var(--border);
+  flex-shrink:0;
+}
+.pcard-name{font-size:10px;font-weight:700;color:var(--dark);line-height:1.2;}
+.pcard-pack{font-size:8.5px;color:var(--gray);margin-top:1px;}
+.pcard-price{
+  font-size:16px;font-weight:900;color:var(--red);line-height:1;margin-top:3px;
+  display:flex;align-items:baseline;gap:4px;
+}
+.pcard-old{font-size:8.5px;color:var(--gray);text-decoration:line-through;font-weight:500;}
+
+/* ── NAV ARROWS ── */
+.arrow{
+  position:absolute;top:50%;transform:translateY(-50%);
+  width:24px;height:44px;z-index:15;
+  background:rgba(0,0,0,.22);border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:background .2s;
+  -webkit-tap-highlight-color:transparent;
+}
+.arrow:hover{background:rgba(0,0,0,.38);}
+#prev-btn{left:0;border-radius:0 5px 5px 0;}
+#next-btn{right:0;border-radius:5px 0 0 5px;}
+.arrow svg{width:14px;height:14px;fill:var(--white);}
+
+/* ── PROGRESS BAR ── */
+#prog-wrap{position:absolute;bottom:0;left:0;right:0;height:2px;background:rgba(0,0,0,.08);z-index:8;}
+#prog-bar{height:100%;background:rgba(255,255,255,.6);width:0;}
+
+/* ── DOT NAV ── */
+#dots{
+  height:18px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  background:var(--white);
+}
+.dot{
+  width:7px;height:7px;border-radius:50%;background:var(--border);
+  transition:background .3s,transform .3s;cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+  min-width:24px;min-height:24px; /* touch area */
+  display:flex;align-items:center;justify-content:center;
+}
+.dot::after{
+  content:'';width:7px;height:7px;border-radius:50%;
+  background:var(--border);transition:background .3s,transform .3s;
+}
+.dot.active::after{background:var(--red);transform:scale(1.35);}
+
+/* ── CTA BAR ── */
+#cta{
+  height:34px;flex-shrink:0;
+  background:var(--red);
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  cursor:pointer;transition:background .2s;
+  -webkit-tap-highlight-color:transparent;
+}
+#cta:hover{background:var(--red-dark);}
+#cta span{font-size:12px;font-weight:800;color:var(--white);letter-spacing:.3px;}
+#cta svg{width:14px;height:14px;fill:var(--white);}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(10px);}
+  to{opacity:1;transform:translateY(0);}
+}
+</style>
+</head>
+<body>
+<div id="ad">
+
+  <!-- ════ HEADER ════ -->
+  <div id="hdr">
+    <div class="logo-block">
+      <span class="logo-name">EDEKA</span>
+      <span class="logo-sub">Wir lieben Lebensmittel</span>
+    </div>
+    <div class="hdr-right">
+      <div class="hdr-label">Angebote</div>
+      <div class="hdr-dates">26.06. – 01.07.2026</div>
+    </div>
+  </div>
+
+  <!-- ════ SLIDE VIEWPORT ════ -->
+  <div id="viewport">
+    <div id="track">
+
+      <!-- ── SLIDE 1: HERO ── -->
+      <div class="slide" id="s1">
+
+        <!-- Hero Banner -->
+        <div class="hero-banner" onclick="ctaClick()">
+          <div class="hb-circle1"></div>
+          <div class="hb-circle2"></div>
+          <div class="hb-circle3"></div>
+          <div class="hero-week">Diese Woche</div>
+          <div class="hero-h1">Frische Vielfalt<br>zum Sparpreis</div>
+          <div class="hero-sub">Jetzt Angebote entdecken</div>
+          <div class="hero-badge-row">
+            <div class="hbadge" onclick="ctaClick()">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="#1A1A1A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Zu den Angeboten
+            </div>
+          </div>
+        </div>
+
+        <!-- Hero Products -->
+        <div class="hero-products">
+
+          <!-- Hero Card 1: Erdbeeren -->
+          <div class="hcard" onclick="ctaClick()">
+            <div class="hcard-img" style="background:linear-gradient(145deg,#fff0f0,#ffd6d6);">
+              <div class="hcard-badge">Angebot</div>
+              <!-- Strawberry SVG -->
+              <svg width="80" height="80" viewBox="0 0 100 100" aria-hidden="true">
+                <path d="M50 92 C30 92 14 74 14 56 C14 44 20 34 28 28 C30 40 38 50 50 54 C62 50 70 40 72 28 C80 34 86 44 86 56 C86 74 70 92 50 92Z" fill="#e53935"/>
+                <path d="M50 92 C34 92 20 78 16 63 C24 66 38 62 50 54 C62 62 76 66 84 63 C80 78 66 92 50 92Z" fill="#ef5350" opacity=".5"/>
+                <!-- seeds -->
+                <ellipse cx="39" cy="65" rx="2.5" ry="3.5" fill="#c62828" opacity=".75" transform="rotate(-10 39 65)"/>
+                <ellipse cx="52" cy="58" rx="2.5" ry="3.5" fill="#c62828" opacity=".75"/>
+                <ellipse cx="63" cy="65" rx="2.5" ry="3.5" fill="#c62828" opacity=".75" transform="rotate(10 63 65)"/>
+                <ellipse cx="44" cy="78" rx="2.5" ry="3.5" fill="#c62828" opacity=".65" transform="rotate(-5 44 78)"/>
+                <ellipse cx="58" cy="76" rx="2.5" ry="3.5" fill="#c62828" opacity=".65" transform="rotate(5 58 76)"/>
+                <!-- calyx/leaves -->
+                <path d="M50 28 C50 28 36 14 24 18 C26 30 40 34 50 28Z" fill="#4caf50"/>
+                <path d="M50 28 C50 28 64 14 76 18 C74 30 60 34 50 28Z" fill="#388e3c"/>
+                <path d="M50 28 C50 28 50 10 50 6 C55 6 56 18 50 28Z" fill="#66bb6a"/>
+                <!-- shine -->
+                <ellipse cx="36" cy="48" rx="7" ry="5" fill="rgba(255,255,255,.22)" transform="rotate(-20 36 48)"/>
+              </svg>
+            </div>
+            <div class="hcard-info">
+              <div class="hcard-name">Erdbeeren</div>
+              <div class="hcard-pack">500g, Klasse I</div>
+              <div class="hcard-price">1,49 €
+                <span class="hcard-old">statt 2,79 €</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Hero Card 2: Rinderhack -->
+          <div class="hcard" onclick="ctaClick()">
+            <div class="hcard-img" style="background:linear-gradient(145deg,#fff5f5,#ffe0e0);">
+              <div class="hcard-badge y">Preis-Hit</div>
+              <!-- Hackfleisch / Meat package SVG -->
+              <svg width="80" height="80" viewBox="0 0 100 100" aria-hidden="true">
+                <!-- package outline -->
+                <rect x="12" y="35" width="76" height="50" rx="6" fill="#ffcdd2" stroke="#e57373" stroke-width="1.5"/>
+                <rect x="14" y="37" width="72" height="46" rx="5" fill="#ef9a9a"/>
+                <!-- meat -->
+                <ellipse cx="50" cy="62" rx="30" ry="18" fill="#d32f2f"/>
+                <ellipse cx="50" cy="60" rx="28" ry="16" fill="#e53935"/>
+                <!-- marbling -->
+                <path d="M30 58 Q40 54 52 58 Q62 62 70 56" stroke="#ffcdd2" stroke-width="2.5" fill="none" stroke-linecap="round" opacity=".7"/>
+                <path d="M34 66 Q44 62 54 66 Q64 70 68 64" stroke="#ffcdd2" stroke-width="1.5" fill="none" stroke-linecap="round" opacity=".5"/>
+                <!-- tray rim shine -->
+                <path d="M14 37 L86 37" stroke="rgba(255,255,255,.3)" stroke-width="2"/>
+                <!-- "EDEKA" label on packaging -->
+                <rect x="30" y="24" width="40" height="14" rx="3" fill="var(--red, #E2001A)"/>
+                <text x="50" y="34" text-anchor="middle" font-family="sans-serif" font-size="8" font-weight="900" fill="#fff">EDEKA</text>
+              </svg>
+            </div>
+            <div class="hcard-info">
+              <div class="hcard-name">Rinderhack</div>
+              <div class="hcard-pack">500g, gemischt</div>
+              <div class="hcard-price">2,99 €
+                <span class="hcard-old">statt 4,49 €</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div><!-- /s1 -->
+
+      <!-- ── SLIDE 2: FRISCHE ── -->
+      <div class="slide pslide" id="s2">
+        <div class="cat-hdr" style="background:#2e7d32;">
+          <!-- Leaf icon -->
+          <svg class="cat-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M17 8C8 10 5.9 16.17 3.82 19.5 5.66 21.04 7.93 22 10.5 22c5.52 0 10-4.48 10-10C20.5 9.5 19 6 17 8z"/><path d="M3.82 19.5C4.5 16 7 12 12 12" fill="none" stroke="rgba(255,255,255,.65)" stroke-width="1.2" stroke-linecap="round"/></svg>
+          <span class="cat-label">Frische Angebote</span>
+        </div>
+        <div class="pgrid">
+
+          <!-- Rispentomaten -->
+          <div class="pcard" onclick="ctaClick()">
+            <div class="pcard-img" style="background:linear-gradient(145deg,#ffebee,#ffcdd2);">
+              <div class="pbadge">Angebot</div>
+              <svg width="60" height="60" viewBox="0 0 100 100" aria-hidden="true">
+                <circle cx="50" cy="58" r="30" fill="#e53935"/>
+                <circle cx="50" cy="56" r="28" fill="#f44336"/>
+                <path d="M50 28 C52 18 56 14 54 9" stroke="#5d4037" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                <path d="M54 20 C60 15 70 15 66 24 C62 29 56 27 54 20Z" fill="#4caf50"/>
+                <path d="M50 28 C44 22 34 22 32 28 C36 34 46 34 50 28Z" fill="#66bb6a"/>
+                <ellipse cx="40" cy="47" rx="7" ry="5" fill="rgba(255,255,255,.22)" transform="rotate(-20 40 47)"/>
+              </svg>
+            </div>
+            <div class="pcard-info">
+              <div class="pcard-name">Rispentomaten</div>
+              <div class="pcard-pack">1 kg, Klasse I</div>
+              <div class="pcard-price">0,99 € <span class="pcard-old">1,79 €</span></div>
+            </div>
+          </div>
+
+          <!-- Paprika-Mix -->
+          <div class="pcard" onclick="ctaClick()">
+            <div class="pcard-img" style="background:linear-gradient(145deg,#fff3e0,#ffe0b2);">
+              <div class="pbadge y">Neu</div>
+              <svg width="60" height="60" viewBox="0 0 100 100" aria-hidden="true">
+                <ellipse cx="34" cy="60" rx="16" ry="24" fill="#e53935" transform="rotate(-8 34 60)"/>
+                <ellipse cx="50" cy="58" rx="16" ry="24" fill="#fdd835"/>
+                <ellipse cx="66" cy="60" rx="16" ry="24" fill="#43a047" transform="rotate(8 66 60)"/>
+                <path d="M34 36 C34 30 36 24 34 18" stroke="#2e7d32" stroke-width="2" fill="none" stroke-linecap="round"/>
+                <path d="M50 34 C50 28 52 22 50 16" stroke="#33691e" stroke-width="2" fill="none" stroke-linecap="round"/>
+                <path d="M66 36 C66 30 68 24 66 18" stroke="#1b5e20" stroke-width="2" fill="none" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div class="pcard-info">
+              <div class="pcard-name">Paprika-Mix</div>
+              <div class="pcard-pack">3er Schale, 600g</div>
+              <div class="pcard-price">0,99 € <span class="pcard-old">1,49 €</span></div>
+            </div>
+          </div>
+
+          <!-- Champignons -->
+          <div class="pcard" onclick="ctaClick()">
+            <div class="pcard-img" style="background:linear-gradient(145deg,#fafafa,#ede7e0);">
+              <div class="pbadge">Angebot</div>
+              <svg width="60" height="60" viewBox="0 0 100 100" aria-hidden="true">
+                <!-- mushroom cap -->
+                <path d="M18 56 Q18 26 50 22 Q82 26 82 56Z" fill="#bcaaa4"/>
+                <path d="M23 56 Q23 32 50 28 Q77 32 77 56Z" fill="#d7ccc8"/>
+                <!-- stem -->
+                <rect x="38" y="56" width="24" height="26" rx="5" fill="#efebe9"/>
+                <!-- gills hint -->
+                <path d="M23 56 L38 56 M77 56 L62 56" stroke="#8d6e63" stroke-width="1" opacity=".35"/>
+                <!-- shine -->
+                <ellipse cx="40" cy="38" rx="9" ry="6" fill="rgba(255,255,255,.25)" transform="rotate(-15 40 38)"/>
+              </svg>
+            </div>
+            <div class="pcard-info">
+              <div class="pcard-name">Champignons</div>
+              <div class="pcard-pack">400g, weiß</div>
+              <div class="pcard-price">1,29 € <span class="pcard-old">1,99 €</span></div>
+            </div>
+          </div>
+
+          <!-- Äpfel -->
+          <div class="pcard" onclick="ctaClick()">
+            <div class="pcard-img" style="background:linear-gradient(145deg,#f1f8e9,#dcedc8);">
+              <svg width="60" height="60" viewBox="0 0 100 100" aria-hidden="true">
+                <path d="M50 32 C30 32 16 46 18 64 C20 80 34 90 50 90 C66 90 80 80 82 64 C84 46 70 32 50 32Z" fill="#ef5350"/>
+                <path d="M50 32 C38 32 26 42 24 58 C30 58 40 52 50 52Z" fill="#e53935" opacity=".45"/>
+                <path d="M50 32 C52 22 56 17 54 11" stroke="#5d4037" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                <path d="M54 20 C60 14 72 14 68 24 C64 30 56 27 54 20Z" fill="#66bb6a"/>
+                <ellipse cx="38" cy="52" rx="8" ry="5" fill="rgba(255,255,255,.25)" transform="rotate(-20 38 52)"/>
+              </svg>
+            </div>
+            <div class="pcard-info">
+              <div class="pcard-name">Äpfel Gala</div>
+              <div class="pcard-pack">1,5 kg, Klasse I</div>
+              <div class="pcard-price">1,99 €</div>
+            </div>
+          </div>
+
+        </div>
+      </div><!-- /s2 -->
+
+      <!-- ── SLIDE 3: FLEISCH & FISCH ── -->
+      <div class="slide pslide" id="s3">
+        <div class="cat-hdr" style="background:#b71c1c;">
+          <!-- Grill/meat icon -->
+          <svg class="cat-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M11.5 2C6.81 2 3 5.81 3 10.5S6.81 19 11.5 19h.5v3h-4v2h10v-2h-4v-3h.5c4.69 0 8.5-3.81 8.5-8.5S16.19 2 11.5 2zm2.5 11H9v-2h5v2zm0-4H9V7h5v2z"/></svg>
+          <span class="cat-label">Fleisch &amp; Fisch</span>
+        </div>
+        <div class="pgrid">
+
+          <!-- Hähnchenbrust -->
+          <div class="pcard" onclick="ctaClick()">
+            <div class="pcard-img" style="background:linear-gradient(145deg,#fff8e1,#ffecb3);">
+              <div class="pbadge">Angebot</div>
+              <svg width="60" height="60" viewBox="0 0 100 100" aria-hidden="true">
+                <!-- tray -->
+                <rect x="12" y="50" width="76" height="36" rx="5" fill="#ffe0b2" stroke="#ffb74d" stroke-width="1.5"/>
+                <!-- chicken breast shape -->
+                <path d="M25 72 Q22 42 46 34 Q72 30 78 52 Q82 68 64 78 Q44 84 25 72Z" fill="#f9a825"/>
+                <path d="M28 70 Q26 46 48 38 Q70 34 75 54 Q78 68 62 76 Q42 80 28 70Z" fill="#fbc02d"/>
+                <path d="M38 50 Q52 46 64 54" stroke="#f57f17" stroke-width="1.5" fill="none" opacity=".5"/>
+                <path d="M36 62 Q50 58 62 64" stroke="#f57f17" stroke-width="1.5" fill="none" opacity=".5"/>
+              </svg>
+            </div>
+            <div class="pcard-info">
+              <div class="pcard-name">Hähnchenbrust</div>
+              <div class="pcard-pack">500g, frisch</div>
+              <div class="pcard-price">2,99 € <span class="pcard-old">4,49 €</span></div>
+            </div>
+          </div>
+
+          <!-- Lachsfilet -->
+          <div class="pcard" onclick="ctaClick()">
+            <div class="pcard-img" style="background:linear-gradient(145deg,#e3f2fd,#bbdefb);">
+              <div class="pbadge y">Top</div>
+              <svg width="60" height="60" viewBox="0 0 100 100" aria-hidden="true">
+                <!-- fish body -->
+                <path d="M14 54 Q14 38 52 36 Q82 36 90 50 Q90 62 78 68 Q52 78 14 66Z" fill="#ff8a65"/>
+                <!-- belly -->
+                <path d="M20 62 Q20 50 52 48 Q80 48 86 58 Q80 66 56 72 Q30 76 20 62Z" fill="#ffccbc"/>
+                <!-- tail fin -->
+                <path d="M14 54 C4 46 1 36 10 33 C12 44 14 54 14 54Z" fill="#f4511e"/>
+                <path d="M14 66 C4 74 1 80 10 82 C12 74 14 66 14 66Z" fill="#f4511e"/>
+                <!-- eye -->
+                <circle cx="78" cy="48" r="3.5" fill="#1a1a1a"/>
+                <circle cx="79" cy="47" r="1.2" fill="#fff"/>
+                <!-- dorsal fin -->
+                <path d="M52 36 C54 26 62 22 68 28 C64 34 58 36 52 36Z" fill="#e64a19"/>
+                <!-- scales hint -->
+                <path d="M40 52 Q50 48 60 52" stroke="rgba(255,255,255,.3)" stroke-width="1.5" fill="none"/>
+              </svg>
+            </div>
+            <div class="pcard-info">
+              <div class="pcard-name">Lachsfilet</div>
+              <div class="pcard-pack">300g, atlantisch</div>
+              <div class="pcard-price">3,99 € <span class="pcard-old">5,99 €</span></div>
+            </div>
+          </div>
+
+          <!-- Rumpsteak -->
+          <div class="pcard" onclick="ctaClick()">
+            <div class="pcard-img" style="background:linear-gradient(145deg,#fce4ec,#f8bbd0);">
+              <div class="pbadge">Angebot</div>
+              <svg width="60" height="60" viewBox="0 0 100 100" aria-hidden="true">
+                <!-- steak -->
+                <path d="M18 68 Q16 40 40 28 Q68 22 82 40 Q90 56 78 72 Q62 84 36 82 Q20 80 18 68Z" fill="#c62828"/>
+                <path d="M22 66 Q20 42 42 32 Q66 26 80 44 Q86 58 76 70 Q60 80 38 79 Q23 77 22 66Z" fill="#e53935"/>
+                <!-- fat edge -->
+                <path d="M22 38 Q38 26 58 26 Q72 26 80 36" stroke="#fff9c4" stroke-width="5" fill="none" stroke-linecap="round" opacity=".6"/>
+                <!-- marbling -->
+                <path d="M34 54 Q46 48 58 54" stroke="#ffcdd2" stroke-width="2" fill="none" stroke-linecap="round" opacity=".7"/>
+                <path d="M38 64 Q50 59 62 64" stroke="#ffcdd2" stroke-width="1.5" fill="none" stroke-linecap="round" opacity=".55"/>
+              </svg>
+            </div>
+            <div class="pcard-info">
+              <div class="pcard-name">Rumpsteak</div>
+              <div class="pcard-pack">2×180g, Premium</div>
+              <div class="pcard-price">5,99 € <span class="pcard-old">8,99 €</span></div>
+            </div>
+          </div>
+
+          <!-- Garnelen -->
+          <div class="pcard" onclick="ctaClick()">
+            <div class="pcard-img" style="background:linear-gradient(145deg,#f3e5f5,#e1bee7);">
+              <svg width="60" height="60" viewBox="0 0 100 100" aria-hidden="true">
+                <!-- shrimp curved body -->
+                <path d="M58 20 C70 22 80 34 76 48 C72 60 60 66 50 62 C42 58 40 48 46 44 C52 40 58 44 56 50 C54 54 50 54 48 52" stroke="#ef5350" stroke-width="7" fill="none" stroke-linecap="round"/>
+                <path d="M58 20 C70 22 80 34 76 48 C72 60 60 66 50 62 C42 58 40 48 46 44 C52 40 58 44 56 50 C54 54 50 54 48 52" stroke="#ffcdd2" stroke-width="4" fill="none" stroke-linecap="round" opacity=".6"/>
+                <!-- head -->
+                <circle cx="60" cy="22" r="9" fill="#f44336"/>
+                <circle cx="64" cy="19" r="3.5" fill="#c62828"/>
+                <!-- antennae -->
+                <path d="M66 16 C72 10 80 8 82 12" stroke="#ef5350" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+                <path d="M63 14 C66 8 70 6 72 4" stroke="#ef5350" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div class="pcard-info">
+              <div class="pcard-name">Cocktailgarnelen</div>
+              <div class="pcard-pack">250g, TK</div>
+              <div class="pcard-price">4,49 € <span class="pcard-old">6,99 €</span></div>
+            </div>
+          </div>
+
+        </div>
+      </div><!-- /s3 -->
+
+      <!-- ── SLIDE 4: FRÜHSTÜCK & MEHR ── -->
+      <div class="slide pslide" id="s4">
+        <div class="cat-hdr" style="background:#1565c0;">
+          <!-- Breakfast/dairy icon -->
+          <svg class="cat-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.5 3H6c-1.1 0-2 .9-2 2v5.71c0 3.83 2.95 7.18 6.78 7.29 3.96.12 7.22-3.06 7.22-7v-1h.5c1.93 0 3.5-1.57 3.5-3.5S20.43 3 18.5 3zm0 5H17V5h1.5c.83 0 1.5.67 1.5 1.5S19.33 8 18.5 8zM4 19h16v2H4v-2z"/></svg>
+          <span class="cat-label">Frühstück &amp; Mehr</span>
+        </div>
+        <div class="pgrid">
+
+          <!-- Vollmilch -->
+          <div class="pcard" onclick="ctaClick()">
+            <div class="pcard-img" style="background:linear-gradient(145deg,#e3f2fd,#e8eaf6);">
+              <div class="pbadge">Angebot</div>
+              <svg width="50" height="62" viewBox="0 0 80 100" aria-hidden="true">
+                <!-- milk carton body -->
+                <rect x="10" y="32" width="60" height="62" rx="4" fill="#e8f4f8" stroke="#90caf9" stroke-width="1.5"/>
+                <!-- gable top -->
+                <path d="M10 32 L10 20 L24 8 L56 8 L70 20 L70 32Z" fill="#E2001A"/>
+                <!-- cap -->
+                <rect x="26" y="4" width="28" height="8" rx="4" fill="#c00016"/>
+                <!-- label -->
+                <rect x="14" y="44" width="52" height="38" rx="2" fill="#fff" opacity=".85"/>
+                <text x="40" y="62" text-anchor="middle" font-size="9.5" font-weight="900" fill="#E2001A" font-family="Arial,sans-serif">EDEKA</text>
+                <text x="40" y="74" text-anchor="middle" font-size="7.5" fill="#1565c0" font-weight="700" font-family="Arial,sans-serif">Vollmilch</text>
+                <text x="40" y="84" text-anchor="middle" font-size="6.5" fill="#555" font-family="Arial,sans-serif">3,5% Fett</text>
+              </svg>
+            </div>
+            <div class="pcard-info">
+              <div class="pcard-name">Vollmilch</div>
+              <div class="pcard-pack">1L, 3,5% Fett</div>
+              <div class="pcard-price">0,79 € <span class="pcard-old">1,09 €</span></div>
+            </div>
+          </div>
+
+          <!-- Gouda -->
+          <div class="pcard" onclick="ctaClick()">
+            <div class="pcard-img" style="background:linear-gradient(145deg,#fffde7,#fff9c4);">
+              <div class="pbadge y">Preis-Hit</div>
+              <svg width="60" height="60" viewBox="0 0 100 100" aria-hidden="true">
+                <!-- cheese wedge -->
+                <path d="M50 78 L12 46 Q12 22 50 18 Q88 22 88 46Z" fill="#fdd835"/>
+                <path d="M50 78 L12 46 Q12 32 50 28 Q88 32 88 46Z" fill="#ffee58"/>
+                <path d="M50 78 L12 46" stroke="#f9a825" stroke-width="2.5"/>
+                <path d="M50 78 L88 46" stroke="#f9a825" stroke-width="2.5"/>
+                <!-- holes -->
+                <circle cx="40" cy="50" r="5" fill="#f9a825"/>
+                <circle cx="58" cy="42" r="4" fill="#f9a825"/>
+                <circle cx="68" cy="56" r="4.5" fill="#f9a825"/>
+                <circle cx="34" cy="62" r="3" fill="#f9a825"/>
+                <!-- rind highlight -->
+                <path d="M12 46 Q50 18 88 46" stroke="rgba(255,255,255,.3)" stroke-width="2" fill="none"/>
+              </svg>
+            </div>
+            <div class="pcard-info">
+              <div class="pcard-name">Gouda Scheiben</div>
+              <div class="pcard-pack">400g, jung</div>
+              <div class="pcard-price">1,99 € <span class="pcard-old">2,79 €</span></div>
+            </div>
+          </div>
+
+          <!-- Toastbrot -->
+          <div class="pcard" onclick="ctaClick()">
+            <div class="pcard-img" style="background:linear-gradient(145deg,#fff8e1,#ffecb3);">
+              <div class="pbadge">Angebot</div>
+              <svg width="60" height="60" viewBox="0 0 100 100" aria-hidden="true">
+                <!-- loaf body -->
+                <rect x="14" y="50" width="72" height="40" rx="5" fill="#a1600a"/>
+                <rect x="16" y="52" width="68" height="36" rx="4" fill="#c17f3a"/>
+                <!-- loaf top dome -->
+                <path d="M14 50 Q50 16 86 50Z" fill="#d4956a"/>
+                <path d="M16 50 Q50 20 84 50" stroke="#a1600a" stroke-width="1.5" fill="none"/>
+                <!-- slices -->
+                <line x1="44" y1="52" x2="44" y2="88" stroke="#a1600a" stroke-width="1.5" opacity=".35"/>
+                <line x1="66" y1="52" x2="66" y2="88" stroke="#a1600a" stroke-width="1.5" opacity=".35"/>
+                <!-- sheen -->
+                <path d="M22 40 Q50 18 78 40" stroke="rgba(255,255,255,.18)" stroke-width="3" fill="none"/>
+              </svg>
+            </div>
+            <div class="pcard-info">
+              <div class="pcard-name">Toastbrot</div>
+              <div class="pcard-pack">500g, Weizen</div>
+              <div class="pcard-price">0,99 € <span class="pcard-old">1,29 €</span></div>
+            </div>
+          </div>
+
+          <!-- Bio Joghurt -->
+          <div class="pcard" onclick="ctaClick()">
+            <div class="pcard-img" style="background:linear-gradient(145deg,#f9fbe7,#f0f4c3);">
+              <svg width="50" height="62" viewBox="0 0 80 100" aria-hidden="true">
+                <!-- yogurt cup shape -->
+                <path d="M14 28 L22 88 L58 88 L66 28Z" fill="#c5e1a5" stroke="#aed581" stroke-width="1.5"/>
+                <path d="M16 30 L24 84 L56 84 L64 30Z" fill="#dcedc8"/>
+                <!-- lid/foil -->
+                <ellipse cx="40" cy="28" rx="26" ry="8" fill="#8bc34a"/>
+                <ellipse cx="40" cy="27" rx="24" ry="7" fill="#aed581"/>
+                <!-- pull tab -->
+                <path d="M56 26 C62 22 66 20 66 24 C66 27 62 28 56 27Z" fill="#8bc34a"/>
+                <!-- label -->
+                <rect x="20" y="40" width="40" height="32" rx="2" fill="#fff" opacity=".75"/>
+                <text x="40" y="53" text-anchor="middle" font-size="6.5" font-weight="900" fill="#33691e" font-family="Arial,sans-serif">EDEKA Bio</text>
+                <text x="40" y="63" text-anchor="middle" font-size="6" fill="#555" font-family="Arial,sans-serif">Joghurt Natur</text>
+              </svg>
+            </div>
+            <div class="pcard-info">
+              <div class="pcard-name">Bio Joghurt</div>
+              <div class="pcard-pack">500g, Natur</div>
+              <div class="pcard-price">0,89 € <span class="pcard-old">1,19 €</span></div>
+            </div>
+          </div>
+
+        </div>
+      </div><!-- /s4 -->
+
+    </div><!-- /track -->
+
+    <!-- ── ARROWS ── -->
+    <button id="prev-btn" class="arrow" aria-label="Vorherige Seite">
+      <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+    </button>
+    <button id="next-btn" class="arrow" aria-label="Nächste Seite">
+      <svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+    </button>
+
+    <!-- ── AUTOPLAY PROGRESS ── -->
+    <div id="prog-wrap"><div id="prog-bar"></div></div>
+
+  </div><!-- /viewport -->
+
+  <!-- ── DOT NAVIGATION ── -->
+  <div id="dots" role="tablist" aria-label="Slide-Navigation">
+    <div class="dot active" role="tab" aria-selected="true"  aria-label="Slide 1" data-i="0" tabindex="0"></div>
+    <div class="dot"        role="tab" aria-selected="false" aria-label="Slide 2" data-i="1" tabindex="0"></div>
+    <div class="dot"        role="tab" aria-selected="false" aria-label="Slide 3" data-i="2" tabindex="0"></div>
+    <div class="dot"        role="tab" aria-selected="false" aria-label="Slide 4" data-i="3" tabindex="0"></div>
+  </div>
+
+  <!-- ── CTA BAR ── -->
+  <div id="cta" role="link" tabindex="0" aria-label="Alle EDEKA-Angebote ansehen">
+    <span>Alle Angebote ansehen</span>
+    <svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+  </div>
+
+</div><!-- /ad -->
+
+<script>
+(function() {
+  'use strict';
+
+  /* ── GAM Click Tag ── */
+  var clickTag = "%%CLICK_URL_UNESC%%https://www.edeka.de/angebote/";
+  /* Local preview fallback: wenn Macro nicht ersetzt wurde */
+  if (clickTag.indexOf('%%') !== -1) {
+    clickTag = "https://www.edeka.de/angebote/";
+  }
+
+  function ctaClick() {
+    window.open(clickTag, '_blank');
+  }
+  window.ctaClick = ctaClick;
+
+  /* ── State ── */
+  var TOTAL = 4;
+  var DURATION = 4500; /* ms pro Slide */
+  var current = 0;
+  var isPaused = false;
+  var autoTimer = null;
+  var resumeTimer = null;
+  var progAnim = null;
+
+  /* ── DOM refs ── */
+  var track   = document.getElementById('track');
+  var dots    = document.querySelectorAll('.dot');
+  var progBar = document.getElementById('prog-bar');
+  var cta     = document.getElementById('cta');
+
+  /* ── Slide navigation ── */
+  function goTo(idx) {
+    current = ((idx % TOTAL) + TOTAL) % TOTAL;
+    track.style.transform = 'translateX(' + (-300 * current) + 'px)';
+    dots.forEach(function(d, i) {
+      var active = i === current;
+      d.classList.toggle('active', active);
+      d.setAttribute('aria-selected', active ? 'true' : 'false');
+    });
+    startProgress();
+  }
+
+  /* ── Progress bar ── */
+  function startProgress() {
+    if (progAnim) clearTimeout(progAnim);
+    progBar.style.transition = 'none';
+    progBar.style.width = '0%';
+    /* force reflow */
+    void progBar.offsetWidth;
+    progBar.style.transition = 'width ' + DURATION + 'ms linear';
+    progBar.style.width = '100%';
+  }
+
+  function pauseProgress() {
+    var style = window.getComputedStyle(progBar);
+    var cur = parseFloat(style.width) / 300 * 100; /* 300px = full width */
+    progBar.style.transition = 'none';
+    progBar.style.width = cur + '%';
+  }
+
+  /* ── Autoplay ── */
+  function startAutoPlay() {
+    clearInterval(autoTimer);
+    autoTimer = setInterval(function() {
+      if (!isPaused) goTo(current + 1);
+    }, DURATION);
+  }
+
+  function pauseAutoPlay(resumeAfter) {
+    isPaused = true;
+    pauseProgress();
+    clearTimeout(resumeTimer);
+    resumeTimer = setTimeout(function() {
+      isPaused = false;
+      startProgress();
+    }, resumeAfter || 5000);
+  }
+
+  /* ── Arrow buttons ── */
+  document.getElementById('prev-btn').addEventListener('click', function(e) {
+    e.stopPropagation();
+    pauseAutoPlay(5000);
+    goTo(current - 1);
+  });
+  document.getElementById('next-btn').addEventListener('click', function(e) {
+    e.stopPropagation();
+    pauseAutoPlay(5000);
+    goTo(current + 1);
+  });
+
+  /* ── Dot buttons ── */
+  dots.forEach(function(d) {
+    d.addEventListener('click', function(e) {
+      e.stopPropagation();
+      pauseAutoPlay(5000);
+      goTo(parseInt(d.getAttribute('data-i'), 10));
+    });
+    d.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        d.click();
+      }
+    });
+  });
+
+  /* ── CTA bar ── */
+  cta.addEventListener('click', ctaClick);
+  cta.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') ctaClick();
+  });
+
+  /* ── Touch / Swipe ── */
+  var touchX = 0, touchY = 0, isDrag = false, dragAxis = null;
+
+  track.addEventListener('touchstart', function(e) {
+    touchX = e.touches[0].clientX;
+    touchY = e.touches[0].clientY;
+    isDrag = false;
+    dragAxis = null;
+  }, {passive: true});
+
+  track.addEventListener('touchmove', function(e) {
+    if (dragAxis === null) {
+      var dx = Math.abs(e.touches[0].clientX - touchX);
+      var dy = Math.abs(e.touches[0].clientY - touchY);
+      dragAxis = dx > dy ? 'x' : 'y';
+    }
+    if (dragAxis === 'x') isDrag = true;
+  }, {passive: true});
+
+  track.addEventListener('touchend', function(e) {
+    if (!isDrag) return;
+    var dx = e.changedTouches[0].clientX - touchX;
+    if (Math.abs(dx) > 40) {
+      pauseAutoPlay(5000);
+      dx < 0 ? goTo(current + 1) : goTo(current - 1);
+    }
+    isDrag = false;
+  }, {passive: true});
+
+  /* ── Mouse drag (desktop preview) ── */
+  var mStartX = 0, mDown = false;
+
+  track.addEventListener('mousedown', function(e) {
+    mStartX = e.clientX;
+    mDown = true;
+  });
+  track.addEventListener('mouseup', function(e) {
+    if (!mDown) return;
+    var dx = e.clientX - mStartX;
+    if (Math.abs(dx) > 40) {
+      pauseAutoPlay(5000);
+      dx < 0 ? goTo(current + 1) : goTo(current - 1);
+    }
+    mDown = false;
+  });
+  track.addEventListener('mouseleave', function() { mDown = false; });
+
+  /* ── Keyboard ── */
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'ArrowLeft')  { pauseAutoPlay(5000); goTo(current - 1); }
+    if (e.key === 'ArrowRight') { pauseAutoPlay(5000); goTo(current + 1); }
+  });
+
+  /* ── Init ── */
+  goTo(0);
+  startAutoPlay();
+
+}());
+</script>
+</body>
+</html>
