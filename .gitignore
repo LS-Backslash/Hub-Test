@@ -9,3 +9,5 @@ webintern/home/data/*
 !webintern/home/data/.gitkeep
 webintern/home/logs/*
 !webintern/home/logs/.gitkeep
+webintern/www/epaper/creatives/*
+!webintern/www/epaper/creatives/.gitkeep

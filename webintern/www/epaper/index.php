@@ -7,18 +7,35 @@ require APP_HOME . '/lib/epaper.php';
 
 $values = ['customer' => '', 'date' => '', 'link' => ''];
 $errors = [];
-$success = null;
+$folderExists = false;
 
 if (epaper_post_too_large()) {
     $errors['_form'] = 'Die hochgeladenen Dateien sind zusammen zu groß.';
 } elseif (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
     csrf_check();
     [$values, $errors] = epaper_validate($_POST, $_FILES);
+    $overwrite = ($_POST['overwrite'] ?? '') === '1';
+
+    if ($errors === [] && epaper_folder_exists($values['folder']) && !$overwrite) {
+        $folderExists = true;
+        $errors['_form'] = "Den Ordner „{$values['folder']}“ gibt es schon. Zum Ersetzen „Vorhandenen Ordner überschreiben“ anhaken und die Bilder erneut auswählen.";
+    }
+
     if ($errors === []) {
-        // Schritt 2: HTML erzeugen, Bilder und HTML strukturiert ablegen.
-        $success = $values;
+        try {
+            epaper_save($values, $overwrite);
+            // Post/Redirect/Get: Neuladen der Seite sendet das Formular nicht erneut.
+            header('Location: ?saved=' . rawurlencode($values['folder']), true, 303);
+            exit;
+        } catch (Throwable $e) {
+            error_log('epaper_save: ' . $e->getMessage());
+            $errors['_form'] = 'Speichern fehlgeschlagen: ' . $e->getMessage();
+        }
     }
 }
+
+$saved = isset($_GET['saved']) ? epaper_get((string) $_GET['saved']) : null;
+$success = $saved;
 
 $maxMb = EPAPER_MAX_IMAGE_BYTES / 1024 / 1024;
 
@@ -54,6 +71,9 @@ function field_error(array $errors, string $field): string
   .ep-meta.is-warn { color: var(--danger); }
   .ep-link { background: var(--surface-sunken); border: 1px solid var(--border); border-radius: var(--radius-control); padding: 10px 12px; font-size: var(--fs-sm); word-break: break-all; }
   .ep-link:empty::before { content: "Link wird hier angezeigt …"; color: var(--text-faint); font-style: italic; }
+  .ep-frame { display: block; width: 100%; height: 420px; border: 0; border-bottom: 1px solid var(--border); background: var(--pd-white); }
+  .ep-check { display: flex; align-items: center; gap: var(--space-2); font-size: var(--fs-sm); color: var(--text-strong); }
+  .ep-check input { width: 18px; height: 18px; accent-color: var(--pd-blue); }
 </style>
 </head>
 <body>
@@ -64,6 +84,7 @@ function field_error(array $errors, string $field): string
     <nav class="pd-crumb" aria-label="Brotkrumen">
       <span>Creative-Tools</span><span aria-hidden="true">›</span><b>Template Generator</b>
     </nav>
+    <div class="pd-top__right"><a href="creatives.php">Alle Creatives anzeigen →</a></div>
   </div>
 </header>
 
@@ -75,16 +96,16 @@ function field_error(array $errors, string $field): string
 
   <?php if ($success): ?>
     <div class="pd-alert pd-alert--success" role="status">
-      <strong>Eingaben geprüft.</strong> Ordner: <code><?= h($success['folder']) ?></code> ·
-      Querformat <?= (int) $success['image_landscape']['width'] ?> × <?= (int) $success['image_landscape']['height'] ?> px ·
-      Hochformat <?= (int) $success['image_portrait']['width'] ?> × <?= (int) $success['image_portrait']['height'] ?> px.
-      <br>Das Erzeugen des HTML und das Speichern folgen in Schritt 2.
+      <strong>Creative gespeichert:</strong> <code><?= h($success['folder']) ?></code> ·
+      <a href="<?= h(EPAPER_CREATIVES_URL . '/' . $success['folder'] . '/index.html') ?>" target="_blank" rel="noopener">Vorschau öffnen</a> ·
+      <a href="zip.php?folder=<?= h(rawurlencode($success['folder'])) ?>">ZIP herunterladen</a>
+      <br>Live-Pfad: <em>noch nicht hochgeladen</em> (Upload auf den Live-Server folgt in Schritt 3).
     </div>
   <?php elseif ($errors): ?>
     <div class="pd-alert pd-alert--error" role="alert">
-      <strong>Bitte die markierten Angaben prüfen.</strong>
+      <strong>Bitte die Angaben prüfen.</strong>
       <?php if (isset($errors['_form'])): ?><ul><li><?= h($errors['_form']) ?></li></ul><?php endif; ?>
-      <?php if (!isset($errors['_form'])): ?>Bilder müssen nach einem Fehler erneut ausgewählt werden.<?php endif; ?>
+      Bilder müssen nach einem Fehler erneut ausgewählt werden.
     </div>
   <?php endif; ?>
 
@@ -132,7 +153,11 @@ function field_error(array $errors, string $field): string
 
         <span class="pd-hint">JPG, PNG, GIF oder WebP, je max. <?= (int) $maxMb ?> MB.</span>
 
-        <div class="pd-code" id="folder">Ordner: <?= h($success['folder'] ?? '—') ?></div>
+        <div class="pd-code" id="folder">Ordner: —</div>
+
+        <?php if ($folderExists): ?>
+          <label class="ep-check"><input type="checkbox" name="overwrite" value="1"> Vorhandenen Ordner überschreiben</label>
+        <?php endif; ?>
 
         <button class="pd-btn pd-btn--primary pd-btn--block" type="submit">Generieren &amp; Speichern</button>
       </form>
@@ -142,7 +167,21 @@ function field_error(array $errors, string $field): string
     <section class="pd-card" aria-labelledby="h-preview">
       <div class="pd-card__head"><h2 class="pd-over" id="h-preview">Vorschau</h2></div>
       <div class="pd-card__body">
+        <?php if ($success): ?>
         <div class="ep-preview">
+          <div class="ep-preview-head">Gespeichert · <?= h($success['folder']) ?></div>
+          <iframe class="ep-frame" title="Vorschau der Werbezwischenseite"
+                  src="<?= h(EPAPER_CREATIVES_URL . '/' . $success['folder'] . '/index.html') ?>"></iframe>
+          <div class="ep-preview__body">
+            <div class="ep-meta">
+              Querformat <?= (int) $success['files']['landscape']['width'] ?> × <?= (int) $success['files']['landscape']['height'] ?> px ·
+              Hochformat <?= (int) $success['files']['portrait']['width'] ?> × <?= (int) $success['files']['portrait']['height'] ?> px
+            </div>
+            <div class="ep-link"><a href="<?= h($success['link']) ?>" target="_blank" rel="noopener noreferrer"><?= h($success['link']) ?></a></div>
+          </div>
+        </div>
+        <?php endif; ?>
+        <div class="ep-preview"<?= $success ? ' hidden id="ep-live"' : '' ?>>
           <div class="ep-preview-head">Template-Ausgabe</div>
           <div class="ep-preview__body">
             <div class="ep-images">
@@ -229,6 +268,10 @@ function field_error(array $errors, string $field): string
       box.classList.add('has-image');
     });
   });
+
+  // Nach dem Speichern: sobald neu eingegeben wird, wieder die Live-Vorschau zeigen.
+  const live = $('ep-live');
+  if (live) $('ep-form').addEventListener('change', () => { live.hidden = false; }, { once: true });
 
   customer.addEventListener('input', updateFolder);
   date.addEventListener('input', updateFolder);

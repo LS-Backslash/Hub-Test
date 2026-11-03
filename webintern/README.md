@@ -18,6 +18,8 @@ www/   ->  /data/wwwcust/ads/www    (Webroot: nur schlanke Einstiegspunkte)
 | `home/cron/` | Cronjob-Skripte |
 | `home/bin/` | Hilfsskripte für die Kommandozeile |
 | `www/epaper/` | ePaper-Werbezwischenseiten (ohne Login) |
+| `www/epaper/creatives/` | Erzeugte Creatives (je Ordner: `index.html`, `quer.*`, `hoch.*`) – muss für `ads` beschreibbar sein |
+| `home/templates/` | HTML-Vorlage der Werbezwischenseite |
 | `www/adstxt/` | Ads.txt Organizer (mit Passwortschutz) |
 
 ## Server-Besonderheiten
@@ -32,7 +34,7 @@ www/   ->  /data/wwwcust/ads/www    (Webroot: nur schlanke Einstiegspunkte)
 
 1. Inhalt von `home/` nach `/data/wwwcust/ads/home/`, von `www/` nach `/data/wwwcust/ads/www/` kopieren.
 2. `home/config/config.example.php` nach `home/config/config.php` kopieren.
-3. `home/data` und `home/logs` müssen für den Benutzer `ads` beschreibbar sein.
+3. `home/data`, `home/logs` und `www/epaper/creatives` müssen für den Benutzer `ads` beschreibbar sein.
 4. Passwort für den Ads.txt-Bereich setzen (wird verdeckt abgefragt, nur der Hash wird gespeichert):
    ```bash
    php8.4 /data/wwwcust/ads/home/bin/set-password.php adstxt

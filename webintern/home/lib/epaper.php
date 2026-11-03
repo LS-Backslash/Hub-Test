@@ -133,3 +133,176 @@ function epaper_post_too_large(): bool
     $length = (int) ($_SERVER['CONTENT_LENGTH'] ?? 0);
     return ($_SERVER['REQUEST_METHOD'] ?? '') === 'POST' && $length > 0 && $_POST === [] && $_FILES === [];
 }
+
+/* ------------------------------------------------------------------------
+ * Schritt 2: HTML erzeugen und Creative-Ordner anlegen
+ * ---------------------------------------------------------------------- */
+
+/** Öffentlicher Ablageort (im Webroot, damit die Vorschau direkt aufrufbar ist). */
+const EPAPER_CREATIVES_DIR = APP_HOME . '/../www/epaper/creatives';
+/** URL relativ zu www/epaper/. */
+const EPAPER_CREATIVES_URL = 'creatives';
+/** Metadaten (nicht öffentlich). */
+const EPAPER_META_DIR = 'epaper';
+const EPAPER_FOLDER_PATTERN = '/^\d{4}-\d{2}-\d{2}_[a-z0-9-]{1,60}$/';
+
+function epaper_is_valid_folder(string $folder): bool
+{
+    return preg_match(EPAPER_FOLDER_PATTERN, $folder) === 1;
+}
+
+function epaper_folder_exists(string $folder): bool
+{
+    return epaper_is_valid_folder($folder) && is_dir(EPAPER_CREATIVES_DIR . '/' . $folder);
+}
+
+/** Füllt die HTML-Vorlage. Alle Werte werden für HTML-Attribute escaped. */
+function epaper_render_html(array $values, string $landscapeFile, string $portraitFile): string
+{
+    $template = file_get_contents(APP_HOME . '/templates/epaper-interstitial.html');
+    if ($template === false) {
+        throw new RuntimeException('HTML-Vorlage nicht gefunden.');
+    }
+    return strtr($template, [
+        '{{TITLE}}' => h('Anzeige – ' . $values['customer']),
+        '{{LINK}}' => h($values['link']),
+        '{{BILD_QUER}}' => h($landscapeFile),
+        '{{BILD_HOCH}}' => h($portraitFile),
+        '{{ALT}}' => h('Anzeige: ' . $values['customer']),
+    ]);
+}
+
+/**
+ * Legt den Creative-Ordner an: index.html + quer.<ext> + hoch.<ext>.
+ * Wird erst in einem Temp-Ordner gebaut und dann umbenannt, damit nie ein halber Ordner entsteht.
+ */
+function epaper_save(array $values, bool $overwrite): void
+{
+    $folder = $values['folder'];
+    if (!epaper_is_valid_folder($folder)) {
+        throw new RuntimeException('Ungültiger Ordnername.');
+    }
+    if (!is_dir(EPAPER_CREATIVES_DIR) || !is_writable(EPAPER_CREATIVES_DIR)) {
+        throw new RuntimeException('Ablageordner fehlt oder ist nicht beschreibbar: www/epaper/creatives');
+    }
+
+    $target = EPAPER_CREATIVES_DIR . '/' . $folder;
+    if (is_dir($target) && !$overwrite) {
+        throw new RuntimeException('Ordner existiert bereits.');
+    }
+
+    $tmp = EPAPER_CREATIVES_DIR . '/.tmp_' . bin2hex(random_bytes(6));
+    if (!mkdir($tmp, 0775)) {
+        throw new RuntimeException('Temporärer Ordner konnte nicht angelegt werden.');
+    }
+
+    try {
+        $landscape = 'quer.' . $values['image_landscape']['ext'];
+        $portrait = 'hoch.' . $values['image_portrait']['ext'];
+
+        if (!move_uploaded_file($values['image_landscape']['tmp'], "{$tmp}/{$landscape}")
+            || !move_uploaded_file($values['image_portrait']['tmp'], "{$tmp}/{$portrait}")) {
+            throw new RuntimeException('Bilder konnten nicht gespeichert werden.');
+        }
+        chmod("{$tmp}/{$landscape}", 0664);
+        chmod("{$tmp}/{$portrait}", 0664);
+
+        if (file_put_contents("{$tmp}/index.html", epaper_render_html($values, $landscape, $portrait)) === false) {
+            throw new RuntimeException('index.html konnte nicht geschrieben werden.');
+        }
+        chmod("{$tmp}/index.html", 0664);
+
+        $old = null;
+        if (is_dir($target)) {
+            $old = EPAPER_CREATIVES_DIR . '/.old_' . bin2hex(random_bytes(6));
+            rename($target, $old);
+        }
+        if (!rename($tmp, $target)) {
+            if ($old !== null) {
+                rename($old, $target);
+            }
+            throw new RuntimeException('Ordner konnte nicht angelegt werden.');
+        }
+        if ($old !== null) {
+            epaper_remove_dir($old);
+        }
+    } catch (Throwable $e) {
+        epaper_remove_dir($tmp);
+        throw $e;
+    }
+
+    $previous = read_json(EPAPER_META_DIR . "/{$folder}.json", []);
+    write_json(EPAPER_META_DIR . "/{$folder}.json", [
+        'folder' => $folder,
+        'customer' => $values['customer'],
+        'date' => $values['date'],
+        'link' => $values['link'],
+        'files' => [
+            'html' => 'index.html',
+            'landscape' => ['file' => $landscape, 'width' => $values['image_landscape']['width'], 'height' => $values['image_landscape']['height']],
+            'portrait' => ['file' => $portrait, 'width' => $values['image_portrait']['width'], 'height' => $values['image_portrait']['height']],
+        ],
+        'created_at' => $previous['created_at'] ?? date('c'),
+        'updated_at' => date('c'),
+        // Schritt 3: wird nach dem Upload auf den Live-Server gesetzt.
+        'live_url' => null,
+        'uploaded_at' => null,
+    ]);
+
+    app_log('epaper', "Creative gespeichert: {$folder}" . ($old !== null ? ' (überschrieben)' : ''));
+}
+
+function epaper_remove_dir(string $dir): void
+{
+    if (!is_dir($dir)) {
+        return;
+    }
+    foreach (scandir($dir) ?: [] as $entry) {
+        if ($entry !== '.' && $entry !== '..') {
+            $path = "{$dir}/{$entry}";
+            is_dir($path) ? epaper_remove_dir($path) : unlink($path);
+        }
+    }
+    rmdir($dir);
+}
+
+function epaper_get(string $folder): ?array
+{
+    if (!epaper_folder_exists($folder)) {
+        return null;
+    }
+    $meta = read_json(EPAPER_META_DIR . "/{$folder}.json", null);
+    return is_array($meta) ? $meta : null;
+}
+
+/** Alle Creatives, neuestes Erscheinungsdatum zuerst. */
+function epaper_list(): array
+{
+    $items = [];
+    foreach (glob(APP_DATA . '/' . EPAPER_META_DIR . '/*.json') ?: [] as $file) {
+        $folder = basename($file, '.json');
+        if ($meta = epaper_get($folder)) {
+            $items[] = $meta;
+        }
+    }
+    usort($items, static fn ($a, $b) => [$b['date'], $b['updated_at']] <=> [$a['date'], $a['updated_at']]);
+    return $items;
+}
+
+/** Erstellt ein ZIP des Creative-Ordners (für manuellen Upload). Gibt den Pfad zur Temp-Datei zurück. */
+function epaper_zip(string $folder): string
+{
+    $dir = EPAPER_CREATIVES_DIR . '/' . $folder;
+    $zipPath = tempnam(sys_get_temp_dir(), 'epaper_');
+    $zip = new ZipArchive();
+    if ($zip->open($zipPath, ZipArchive::OVERWRITE) !== true) {
+        throw new RuntimeException('ZIP konnte nicht erstellt werden.');
+    }
+    foreach (scandir($dir) ?: [] as $entry) {
+        if (is_file("{$dir}/{$entry}")) {
+            $zip->addFile("{$dir}/{$entry}", "{$folder}/{$entry}");
+        }
+    }
+    $zip->close();
+    return $zipPath;
+}

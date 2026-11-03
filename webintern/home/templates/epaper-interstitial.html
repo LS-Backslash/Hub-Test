@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{TITLE}}</title>
+<style>
+    .picture-container {
+    display: grid;
+    place-items: center;  /* zentriert horizontal + vertikal */
+    height: 85vh;
+    }
+</style>
+</head>
+<body>
+
+<div class="picture-container">
+<a id="clicktag" href="{{LINK}}" data-dcm-click-tracker="%%{{LINK}}" target="_blank" rel="noopener">
+<picture>
+<source media="(min-aspect-ratio: 1/1)" srcset="{{BILD_QUER}}">
+<img src="{{BILD_HOCH}}" alt="{{ALT}}" style="width: 100%;">
+</picture>
+</a>
+</div>
+<script>
+    /**
+     * Klick-URL aus dem Parameter ?clicktag=… übernehmen (z. B. vom Ad-Server).
+     * Ohne Parameter bleibt der eingetragene Link stehen; nur http(s)-Adressen werden akzeptiert.
+     */
+    (function () {
+        var clicktag = new URLSearchParams(window.location.search).get('clicktag');
+        if (clicktag && /^https?:\/\//i.test(clicktag)) {
+            document.getElementById('clicktag').setAttribute('href', clicktag);
+        }
+    })();
+</script>
+</body>
+</html>
