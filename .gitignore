@@ -1,3 +1,11 @@
 .env
 __pycache__/
 *.pyc
+
+# webintern: lokale Konfiguration, Passwörter, Laufzeitdaten
+webintern/home/config/config.php
+webintern/home/config/*.passwordhash
+webintern/home/data/*
+!webintern/home/data/.gitkeep
+webintern/home/logs/*
+!webintern/home/logs/.gitkeep
