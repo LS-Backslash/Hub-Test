@@ -1,0 +1,107 @@
+/* pd digital – gemeinsames Stylesheet für die internen Tools.
+   Tokens aus dem "pd digital Design System" übernommen; Schrift lokal (keine externen Requests). */
+
+@font-face { font-family: "Poppins"; font-style: normal; font-weight: 400; font-display: swap; src: url("fonts/poppins-latin-400-normal.woff2") format("woff2"); }
+@font-face { font-family: "Poppins"; font-style: normal; font-weight: 500; font-display: swap; src: url("fonts/poppins-latin-500-normal.woff2") format("woff2"); }
+@font-face { font-family: "Poppins"; font-style: normal; font-weight: 600; font-display: swap; src: url("fonts/poppins-latin-600-normal.woff2") format("woff2"); }
+
+:root {
+  /* Farben */
+  --pd-black: #000; --pd-white: #fff; --pd-navy: #0E2841; --pd-ink: #3C3C3B;
+  --pd-grey-100: #F5F5F4; --pd-grey-200: #EAEAE8; --pd-grey-300: #D9D9D6; --pd-grey-400: #C7C7C4;
+  --pd-grey-500: #9B9B97; --pd-grey-600: #6F6F6B; --pd-grey-700: #4A4A47; --pd-grey-800: #2B2B29;
+  --pd-lime: #C7F063; --pd-cyan: #3DCCE5; --pd-blue: #006BE5; --pd-yellow: #FFDB00; --pd-red: #FF4A17; --pd-amber: #FFA100;
+  --pd-blue-hover: #0059BF; --pd-blue-press: #00489C;
+  --pd-gradient-spectrum: linear-gradient(90deg, #0B8FE5 0%, #35C6DC 16%, #6FDDA0 30%, #9CE86B 42%, #FFD400 56%, #F79100 70%, #E31E24 85%, #EE0B7B 100%);
+
+  /* Semantik */
+  --text: var(--pd-ink); --text-strong: var(--pd-black); --text-muted: var(--pd-grey-600); --text-faint: var(--pd-grey-500);
+  --surface-page: var(--pd-grey-100); --surface-card: var(--pd-white); --surface-sunken: var(--pd-grey-100);
+  --border: var(--pd-grey-300); --border-strong: var(--pd-grey-400);
+  --accent: var(--pd-blue); --danger: #D93A0E; --danger-bg: #FFEDE7; --success-bg: #F0FADB; --success: #4F8A10;
+
+  /* Typo, Abstände, Radien, Schatten, Bewegung */
+  --font: "Poppins", "Calibri", system-ui, sans-serif;
+  --font-mono: ui-monospace, "SFMono-Regular", Consolas, monospace;
+  --fs-h1: 26px; --fs-body: 15px; --fs-sm: 13px; --fs-micro: 11px;
+  --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px; --space-5: 20px; --space-6: 24px; --space-8: 32px; --space-12: 48px;
+  --radius-control: 4px; --radius-card: 8px;
+  --shadow-focus: 0 0 0 3px rgba(61, 204, 229, .55);
+  --ease: cubic-bezier(.2, 0, .2, 1); --dur-fast: 140ms;
+  --transition-control: background-color var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-font-smoothing: antialiased; text-size-adjust: 100%; }
+body { margin: 0; background: var(--surface-page); color: var(--text); font-family: var(--font); font-size: var(--fs-body); line-height: 1.5; }
+h1, h2, h3 { margin: 0; color: var(--text-strong); font-weight: 600; line-height: 1.2; }
+h1 { font-size: var(--fs-h1); letter-spacing: -.01em; }
+a { color: var(--accent); text-decoration: none; }
+a:hover { color: #0B8FE5; }
+:focus-visible { outline: none; box-shadow: var(--shadow-focus); }
+::selection { background: var(--pd-lime); color: var(--pd-black); }
+
+/* Kopfzeile */
+.pd-top { background: var(--pd-white); border-bottom: 1px solid var(--border); }
+.pd-top::before { content: ""; display: block; height: 4px; background: var(--pd-gradient-spectrum); }
+.pd-top__inner { max-width: 1240px; margin: 0 auto; padding: var(--space-3) var(--space-6); display: flex; align-items: center; gap: var(--space-6); }
+.pd-top__logo { height: 40px; width: auto; display: block; }
+.pd-crumb { display: flex; align-items: center; gap: var(--space-2); font-size: var(--fs-sm); color: var(--text-muted); flex-wrap: wrap; }
+.pd-crumb b { color: var(--text-strong); font-weight: 500; }
+.pd-top__right { margin-left: auto; display: flex; align-items: center; gap: var(--space-3); font-size: var(--fs-sm); }
+
+/* Seite */
+.pd-page { max-width: 1240px; margin: 0 auto; padding: var(--space-8) var(--space-6) var(--space-12); display: flex; flex-direction: column; gap: var(--space-6); }
+.pd-over { font-size: var(--fs-micro); letter-spacing: .12em; text-transform: uppercase; color: var(--text-muted); font-weight: 500; }
+.pd-grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 440px), 1fr)); gap: var(--space-6); align-items: start; }
+
+/* Karte */
+.pd-card { background: var(--surface-card); border: 1px solid var(--border); border-radius: var(--radius-card); overflow: hidden; }
+.pd-card__head { padding: var(--space-4) var(--space-6); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
+.pd-card__body { padding: var(--space-6); display: flex; flex-direction: column; gap: var(--space-5); }
+
+/* Formular */
+.pd-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr)); gap: var(--space-4); }
+.pd-field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.pd-label { font-size: var(--fs-sm); font-weight: 600; color: var(--text-strong); }
+.pd-label small { font-weight: 400; color: var(--text-muted); }
+.pd-hint { font-size: 12px; color: var(--text-muted); }
+.pd-error-text { font-size: 12px; color: var(--danger); }
+.pd-input, .pd-file {
+  width: 100%; min-height: 44px; padding: 0 12px; font: inherit; font-size: var(--fs-body); color: var(--text);
+  background: var(--pd-white); border: 1px solid var(--border-strong); border-radius: var(--radius-control); transition: var(--transition-control);
+}
+.pd-input:hover, .pd-file:hover { border-color: var(--pd-grey-600); }
+.pd-input:focus, .pd-file:focus-within { outline: none; border-color: var(--pd-black); box-shadow: var(--shadow-focus); }
+.pd-input::placeholder { color: var(--text-faint); }
+.pd-file { padding: 6px; font-size: var(--fs-sm); color: var(--text-muted); cursor: pointer; }
+.pd-file::file-selector-button {
+  font: inherit; font-weight: 500; color: var(--text-strong); background: var(--pd-white); border: 1px solid var(--border-strong);
+  border-radius: var(--radius-control); padding: 6px 12px; margin-right: var(--space-3); cursor: pointer; transition: var(--transition-control);
+}
+.pd-file::file-selector-button:hover { border-color: var(--pd-black); }
+.is-invalid .pd-input, .is-invalid .pd-file { border-color: var(--danger); }
+
+.pd-code { font-family: var(--font-mono); font-size: var(--fs-sm); background: var(--surface-sunken); border-left: 3px solid var(--accent); border-radius: 0 var(--radius-control) var(--radius-control) 0; padding: 10px 12px; color: var(--text); word-break: break-all; }
+
+/* Buttons */
+.pd-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2); min-height: 44px; padding: 0 20px;
+  font: inherit; font-weight: 600; line-height: 1; border: 1px solid transparent; border-radius: var(--radius-control);
+  cursor: pointer; transition: var(--transition-control); white-space: nowrap;
+}
+.pd-btn:active { transform: translateY(1px); }
+.pd-btn--primary { background: var(--pd-blue); color: var(--pd-white); }
+.pd-btn--primary:hover { background: var(--pd-blue-hover); }
+.pd-btn--secondary { background: var(--pd-white); color: var(--pd-black); border-color: var(--border-strong); }
+.pd-btn--secondary:hover { border-color: var(--pd-black); }
+.pd-btn--ghost { background: none; color: var(--text-muted); min-height: 32px; padding: 0 10px; font-weight: 500; font-size: var(--fs-sm); }
+.pd-btn--ghost:hover { background: var(--pd-grey-100); color: var(--pd-black); }
+.pd-btn--block { width: 100%; }
+.pd-btn[disabled] { opacity: .4; cursor: not-allowed; }
+
+/* Meldungen */
+.pd-alert { border-radius: var(--radius-control); padding: var(--space-3) var(--space-4); font-size: var(--fs-sm); border-left: 3px solid; }
+.pd-alert--error { background: var(--danger-bg); border-color: var(--pd-red); color: #7A2207; }
+.pd-alert--success { background: var(--success-bg); border-color: #6FB51E; color: #2F5409; }
+.pd-alert ul { margin: var(--space-1) 0 0; padding-left: 18px; }
