@@ -4,7 +4,38 @@ declare(strict_types=1);
 require dirname(__DIR__, 2) . '/home/lib/bootstrap.php';
 require APP_HOME . '/lib/epaper.php';
 
-$items = epaper_list();
+const PER_PAGE = 50;
+
+// Verlag: aus der URL, sonst zuletzt gewählter (Cookie), sonst "alle".
+$publisher = (string) ($_GET['verlag'] ?? $_COOKIE['epaper_publisher'] ?? 'alle');
+if ($publisher !== 'alle' && !isset(EPAPER_PUBLISHERS[$publisher])) {
+    $publisher = 'alle';
+}
+if (isset($_GET['verlag'])) {
+    epaper_remember_publisher($publisher);
+}
+
+$period = (string) ($_GET['zeit'] ?? 'aktuell');
+if (!isset(EPAPER_PERIODS[$period])) {
+    $period = 'aktuell';
+}
+$search = mb_substr(trim((string) ($_GET['q'] ?? '')), 0, 100);
+
+$result = epaper_filter(epaper_list_all(), $publisher, $period, $search);
+$counts = $result['counts'];
+$total = count($result['items']);
+$pages = max(1, (int) ceil($total / PER_PAGE));
+$page = min($pages, max(1, (int) ($_GET['seite'] ?? 1)));
+$items = array_slice($result['items'], ($page - 1) * PER_PAGE, PER_PAGE);
+
+/** URL mit den aktuellen Filtern, einzelne Werte überschreibbar. */
+function list_url(array $override = []): string
+{
+    global $publisher, $period, $search;
+    $params = array_merge(['verlag' => $publisher, 'zeit' => $period, 'q' => $search], $override);
+    $params = array_filter($params, static fn ($v) => $v !== '' && $v !== null && $v !== 1);
+    return '?' . http_build_query($params);
+}
 ?>
 <!doctype html>
 <html lang="de">
@@ -15,6 +46,11 @@ $items = epaper_list();
 <title>Alle Creatives · ePaper Werbezwischenseiten</title>
 <link rel="stylesheet" href="../assets/pd/pd.css">
 <style>
+  .ep-toolbar { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); flex-wrap: wrap; padding: var(--space-4) var(--space-6); border-bottom: 1px solid var(--border); }
+  .ep-search { display: flex; gap: var(--space-2); flex: 1 1 260px; max-width: 420px; }
+  .ep-search .pd-input { min-height: 36px; font-size: var(--fs-sm); }
+  .ep-search .pd-btn { min-height: 36px; font-size: var(--fs-sm); padding: 0 14px; }
+  .ep-pub-logo { height: 22px; width: auto; display: block; }
   .ep-table-wrap { overflow-x: auto; }
   .ep-table { width: 100%; border-collapse: collapse; font-size: var(--fs-sm); }
   .ep-table th { text-align: left; font-size: var(--fs-micro); letter-spacing: .12em; text-transform: uppercase; color: var(--text-muted); font-weight: 500; padding: 12px var(--space-4); border-bottom: 1px solid var(--border); white-space: nowrap; }
@@ -23,13 +59,16 @@ $items = epaper_list();
   .ep-table tr:hover td { background: var(--pd-grey-100); }
   .ep-thumb { width: 72px; height: 48px; object-fit: cover; border-radius: 2px; border: 1px solid var(--border); display: block; }
   .ep-cust { font-weight: 500; color: var(--text-strong); }
-  .ep-folder { font-family: var(--font-mono); font-size: 12px; color: var(--text-muted); }
+  .ep-folder { font-family: var(--font-mono); font-size: 12px; color: var(--text-muted); white-space: nowrap; }
+  .ep-pub { white-space: nowrap; }
   .ep-url { max-width: 260px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: block; }
   .ep-actions { display: flex; gap: var(--space-2); white-space: nowrap; }
   .ep-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 11.5px; font-weight: 500; padding: 3px 9px; border-radius: 999px; white-space: nowrap; background: var(--pd-grey-200); color: var(--pd-grey-800); }
   .ep-badge::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--b, var(--pd-grey-500)); }
   .ep-badge--live { --b: #6FB51E; background: #F0FADB; }
   .ep-empty { padding: var(--space-12) var(--space-6); text-align: center; color: var(--text-muted); }
+  .ep-pager { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); padding: var(--space-3) var(--space-6); border-top: 1px solid var(--border); font-size: var(--fs-sm); color: var(--text-muted); }
+  .ep-pager nav { display: flex; gap: var(--space-2); }
 </style>
 </head>
 <body>
@@ -51,20 +90,58 @@ $items = epaper_list();
   </div>
 
   <section class="pd-card">
+    <nav class="pd-tabs" aria-label="Verlag">
+      <a class="pd-tab<?= $publisher === 'alle' ? ' is-active' : '' ?>" href="<?= h(list_url(['verlag' => 'alle', 'seite' => null])) ?>"<?= $publisher === 'alle' ? ' aria-current="page"' : '' ?>>
+        Alle <span class="pd-tab__count"><?= (int) $counts['alle'] ?></span>
+      </a>
+      <?php foreach (EPAPER_PUBLISHERS as $slug => $p): $on = $publisher === $slug; ?>
+        <a class="pd-tab<?= $on ? ' is-active' : '' ?>" href="<?= h(list_url(['verlag' => $slug, 'seite' => null])) ?>"<?= $on ? ' aria-current="page"' : '' ?>>
+          <?= h($p['name']) ?> <span class="pd-tab__count"><?= (int) ($counts[$slug] ?? 0) ?></span>
+        </a>
+      <?php endforeach; ?>
+    </nav>
+
+    <div class="ep-toolbar">
+      <div class="pd-seg" role="group" aria-label="Zeitraum">
+        <?php foreach (EPAPER_PERIODS as $key => $label): ?>
+          <a class="<?= $period === $key ? 'is-active' : '' ?>" href="<?= h(list_url(['zeit' => $key, 'seite' => null])) ?>"
+             title="<?= h(['aktuell' => 'Letzte 30 Tage und kommende', 'kommend' => 'Ab heute', 'alle' => 'Alle Erscheinungstermine'][$key]) ?>"><?= h($label) ?></a>
+        <?php endforeach; ?>
+      </div>
+      <form class="ep-search" method="get" role="search">
+        <input type="hidden" name="verlag" value="<?= h($publisher) ?>">
+        <input type="hidden" name="zeit" value="<?= h($period) ?>">
+        <input class="pd-input" type="search" name="q" value="<?= h($search) ?>" placeholder="Kunde, Ordner oder Link suchen …" aria-label="Suche">
+        <button class="pd-btn pd-btn--secondary" type="submit">Suchen</button>
+      </form>
+      <?php if ($publisher !== 'alle'): ?>
+        <img class="ep-pub-logo" src="../assets/pd/verlage/<?= h(EPAPER_PUBLISHERS[$publisher]['logo']) ?>" alt="<?= h(epaper_publisher_name($publisher)) ?>">
+      <?php endif; ?>
+    </div>
+
     <?php if (!$items): ?>
-      <p class="ep-empty">Noch keine Creatives gespeichert.</p>
+      <p class="ep-empty">
+        <?php if ($search !== ''): ?>Keine Treffer für „<?= h($search) ?>“.
+        <?php elseif ($period !== 'alle'): ?>Keine Creatives in diesem Zeitraum. <a href="<?= h(list_url(['zeit' => 'alle'])) ?>">Alle anzeigen</a>
+        <?php else: ?>Noch keine Creatives gespeichert.<?php endif; ?>
+      </p>
     <?php else: ?>
     <div class="ep-table-wrap">
       <table class="ep-table">
         <thead>
-          <tr><th></th><th>Erscheinung</th><th>Kunde / Ordner</th><th>Link</th><th>Status</th><th>Geändert</th><th></th></tr>
+          <tr>
+            <th></th><th>Erscheinung</th>
+            <?php if ($publisher === 'alle'): ?><th>Verlag</th><?php endif; ?>
+            <th>Kunde / Ordner</th><th>Link</th><th>Status</th><th>Geändert</th><th></th>
+          </tr>
         </thead>
         <tbody>
         <?php foreach ($items as $it):
-            $base = EPAPER_CREATIVES_URL . '/' . $it['folder'] . '/'; ?>
+            $base = EPAPER_CREATIVES_URL . '/' . $it['id'] . '/'; ?>
           <tr>
             <td><img class="ep-thumb" src="<?= h($base . $it['files']['landscape']['file']) ?>" alt="" loading="lazy"></td>
             <td><?= h(date_de(strtotime($it['date']), false)) ?></td>
+            <?php if ($publisher === 'alle'): ?><td class="ep-pub"><?= h(epaper_publisher_name($it['publisher'])) ?></td><?php endif; ?>
             <td><div class="ep-cust"><?= h($it['customer']) ?></div><div class="ep-folder"><?= h($it['folder']) ?></div></td>
             <td><a class="ep-url" href="<?= h($it['link']) ?>" target="_blank" rel="noopener noreferrer" title="<?= h($it['link']) ?>"><?= h($it['link']) ?></a></td>
             <td>
@@ -77,12 +154,21 @@ $items = epaper_list();
             <td><?= h(date_de(strtotime($it['updated_at']))) ?></td>
             <td><div class="ep-actions">
               <a class="pd-btn pd-btn--ghost" href="<?= h($base . 'index.html') ?>" target="_blank" rel="noopener">Vorschau</a>
-              <a class="pd-btn pd-btn--ghost" href="zip.php?folder=<?= h(rawurlencode($it['folder'])) ?>">ZIP</a>
+              <a class="pd-btn pd-btn--ghost" href="zip.php?id=<?= h(rawurlencode($it['id'])) ?>">ZIP</a>
             </div></td>
           </tr>
         <?php endforeach; ?>
         </tbody>
       </table>
+    </div>
+    <div class="ep-pager">
+      <span><?= $total ?> Creative<?= $total === 1 ? '' : 's' ?><?= $pages > 1 ? " · Seite {$page} von {$pages}" : '' ?></span>
+      <?php if ($pages > 1): ?>
+        <nav aria-label="Seiten">
+          <?php if ($page > 1): ?><a class="pd-btn pd-btn--ghost" href="<?= h(list_url(['seite' => $page - 1])) ?>">← Zurück</a><?php endif; ?>
+          <?php if ($page < $pages): ?><a class="pd-btn pd-btn--ghost" href="<?= h(list_url(['seite' => $page + 1])) ?>">Weiter →</a><?php endif; ?>
+        </nav>
+      <?php endif; ?>
     </div>
     <?php endif; ?>
   </section>

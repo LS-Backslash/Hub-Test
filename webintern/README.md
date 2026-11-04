@@ -18,7 +18,7 @@ www/   ->  /data/wwwcust/ads/www    (Webroot: nur schlanke Einstiegspunkte)
 | `home/cron/` | Cronjob-Skripte |
 | `home/bin/` | Hilfsskripte für die Kommandozeile |
 | `www/epaper/` | ePaper-Werbezwischenseiten (ohne Login) |
-| `www/epaper/creatives/` | Erzeugte Creatives (je Ordner: `index.html`, `quer.*`, `hoch.*`) – muss für `ads` beschreibbar sein |
+| `www/epaper/creatives/` | Erzeugte Creatives als `<verlag>/<datum>_<kunde>/` mit `index.html`, `quer.*`, `hoch.*` (gleiche Struktur wie später auf dem Live-Server) – muss für `ads` beschreibbar sein |
 | `home/templates/` | HTML-Vorlage der Werbezwischenseite |
 | `www/adstxt/` | Ads.txt Organizer (mit Passwortschutz) |
 

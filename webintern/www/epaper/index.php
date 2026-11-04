@@ -5,7 +5,12 @@ require dirname(__DIR__, 2) . '/home/lib/bootstrap.php';
 require APP_HOME . '/lib/auth.php';   // nur für CSRF-Schutz, kein Login nötig
 require APP_HOME . '/lib/epaper.php';
 
-$values = ['customer' => '', 'date' => '', 'link' => ''];
+// Zuletzt gewählter Verlag (Cookie, gemeinsam mit der Übersicht) als Vorauswahl.
+$rememberedPublisher = (string) ($_COOKIE['epaper_publisher'] ?? '');
+$values = [
+    'publisher' => isset(EPAPER_PUBLISHERS[$rememberedPublisher]) ? $rememberedPublisher : '',
+    'customer' => '', 'date' => '', 'link' => '',
+];
 $errors = [];
 $folderExists = false;
 
@@ -16,16 +21,17 @@ if (epaper_post_too_large()) {
     [$values, $errors] = epaper_validate($_POST, $_FILES);
     $overwrite = ($_POST['overwrite'] ?? '') === '1';
 
-    if ($errors === [] && epaper_folder_exists($values['folder']) && !$overwrite) {
+    if ($errors === [] && epaper_exists($values['id']) && !$overwrite) {
         $folderExists = true;
-        $errors['_form'] = "Den Ordner „{$values['folder']}“ gibt es schon. Zum Ersetzen „Vorhandenen Ordner überschreiben“ anhaken und die Bilder erneut auswählen.";
+        $errors['_form'] = "Den Ordner „{$values['id']}“ gibt es schon. Zum Ersetzen „Vorhandenen Ordner überschreiben“ anhaken und die Bilder erneut auswählen.";
     }
 
     if ($errors === []) {
         try {
             epaper_save($values, $overwrite);
+            epaper_remember_publisher($values['publisher']);
             // Post/Redirect/Get: Neuladen der Seite sendet das Formular nicht erneut.
-            header('Location: ?saved=' . rawurlencode($values['folder']), true, 303);
+            header('Location: ?saved=' . rawurlencode($values['id']), true, 303);
             exit;
         } catch (Throwable $e) {
             error_log('epaper_save: ' . $e->getMessage());
@@ -96,9 +102,9 @@ function field_error(array $errors, string $field): string
 
   <?php if ($success): ?>
     <div class="pd-alert pd-alert--success" role="status">
-      <strong>Creative gespeichert:</strong> <code><?= h($success['folder']) ?></code> ·
-      <a href="<?= h(EPAPER_CREATIVES_URL . '/' . $success['folder'] . '/index.html') ?>" target="_blank" rel="noopener">Vorschau öffnen</a> ·
-      <a href="zip.php?folder=<?= h(rawurlencode($success['folder'])) ?>">ZIP herunterladen</a>
+      <strong>Creative gespeichert:</strong> <?= h(epaper_publisher_name($success['publisher'])) ?> · <code><?= h($success['id']) ?></code> ·
+      <a href="<?= h(EPAPER_CREATIVES_URL . '/' . $success['id'] . '/index.html') ?>" target="_blank" rel="noopener">Vorschau öffnen</a> ·
+      <a href="zip.php?id=<?= h(rawurlencode($success['id'])) ?>">ZIP herunterladen</a>
       <br>Live-Pfad: <em>noch nicht hochgeladen</em> (Upload auf den Live-Server folgt in Schritt 3).
     </div>
   <?php elseif ($errors): ?>
@@ -115,6 +121,17 @@ function field_error(array $errors, string $field): string
       <div class="pd-card__head"><h2 class="pd-over" id="h-input">Eingabe</h2></div>
       <form class="pd-card__body" method="post" enctype="multipart/form-data" id="ep-form" novalidate>
         <input type="hidden" name="csrf" value="<?= h(csrf_token()) ?>">
+
+        <div class="<?= field_class($errors, 'publisher') ?>">
+          <label class="pd-label" for="publisher">Verlag</label>
+          <select class="pd-input pd-select" id="publisher" name="publisher" required>
+            <option value="" disabled<?= $values['publisher'] === '' ? ' selected' : '' ?>>Bitte wählen …</option>
+            <?php foreach (EPAPER_PUBLISHERS as $slug => $p): ?>
+              <option value="<?= h($slug) ?>"<?= $values['publisher'] === $slug ? ' selected' : '' ?>><?= h($p['name']) ?></option>
+            <?php endforeach; ?>
+          </select>
+          <?= field_error($errors, 'publisher') ?>
+        </div>
 
         <div class="pd-row">
           <div class="<?= field_class($errors, 'customer') ?>">
@@ -169,9 +186,9 @@ function field_error(array $errors, string $field): string
       <div class="pd-card__body">
         <?php if ($success): ?>
         <div class="ep-preview">
-          <div class="ep-preview-head">Gespeichert · <?= h($success['folder']) ?></div>
+          <div class="ep-preview-head">Gespeichert · <?= h($success['id']) ?></div>
           <iframe class="ep-frame" title="Vorschau der Werbezwischenseite"
-                  src="<?= h(EPAPER_CREATIVES_URL . '/' . $success['folder'] . '/index.html') ?>"></iframe>
+                  src="<?= h(EPAPER_CREATIVES_URL . '/' . $success['id'] . '/index.html') ?>"></iframe>
           <div class="ep-preview__body">
             <div class="ep-meta">
               Querformat <?= (int) $success['files']['landscape']['width'] ?> × <?= (int) $success['files']['landscape']['height'] ?> px ·
@@ -206,7 +223,7 @@ function field_error(array $errors, string $field): string
 (() => {
   const MAX_BYTES = <?= (int) EPAPER_MAX_IMAGE_BYTES ?>;
   const $ = (id) => document.getElementById(id);
-  const customer = $('customer'), date = $('date'), link = $('link');
+  const publisher = $('publisher'), customer = $('customer'), date = $('date'), link = $('link');
 
   // Gleiche Logik wie epaper_folder_name() in PHP.
   function folderName(name, d) {
@@ -218,7 +235,8 @@ function field_error(array $errors, string $field): string
   }
 
   function updateFolder() {
-    $('folder').textContent = 'Ordner: ' + (customer.value.trim() && date.value ? folderName(customer.value, date.value) : '—');
+    const ready = publisher.value && customer.value.trim() && date.value;
+    $('folder').textContent = 'Ordner: ' + (ready ? publisher.value + '/' + folderName(customer.value, date.value) : '—');
   }
 
   function updateLink() {
@@ -273,6 +291,7 @@ function field_error(array $errors, string $field): string
   const live = $('ep-live');
   if (live) $('ep-form').addEventListener('change', () => { live.hidden = false; }, { once: true });
 
+  publisher.addEventListener('change', updateFolder);
   customer.addEventListener('input', updateFolder);
   date.addEventListener('input', updateFolder);
   link.addEventListener('input', updateLink);

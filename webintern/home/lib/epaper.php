@@ -2,9 +2,21 @@
 declare(strict_types=1);
 
 /**
- * ePaper-Werbezwischenseiten: Validierung der Formulareingaben.
- * (Schritt 1. HTML-Erzeugung und Speichern folgen in Schritt 2.)
+ * ePaper-Werbezwischenseiten: Validierung, HTML-Erzeugung, Ablage und Übersicht.
+ *
+ * Ablage:   www/epaper/creatives/<verlag>/<datum>_<kunde>/{index.html, quer.*, hoch.*}
+ * Metadaten: home/data/epaper/<verlag>/<datum>_<kunde>.json  (nicht öffentlich)
+ * Die gleiche Ordnerstruktur wird in Schritt 3 auf dem Live-Server angelegt.
  */
+
+/** Verlage: Kürzel (= Ordnername) => Anzeigename und Logo. Neue Verlage nur hier ergänzen. */
+const EPAPER_PUBLISHERS = [
+    'augsburger-allgemeine' => ['name' => 'Augsburger Allgemeine', 'logo' => 'augsburger-allgemeine.png'],
+    'suedkurier' => ['name' => 'Südkurier', 'logo' => 'suedkurier.png'],
+    'mainpost' => ['name' => 'Main-Post', 'logo' => 'mainpost.png'],
+    'ka-news' => ['name' => 'ka-news', 'logo' => 'ka-news.png'],
+    'allgaeuer-zeitung' => ['name' => 'Allgäuer Zeitung', 'logo' => 'allgaeuer-zeitung.png'],
+];
 
 const EPAPER_MAX_IMAGE_BYTES = 10 * 1024 * 1024; // 10 MB pro Bild
 const EPAPER_IMAGE_TYPES = [
@@ -13,6 +25,20 @@ const EPAPER_IMAGE_TYPES = [
     'image/gif' => 'gif',
     'image/webp' => 'webp',
 ];
+
+/** Öffentlicher Ablageort (im Webroot, damit die Vorschau direkt aufrufbar ist). */
+const EPAPER_CREATIVES_DIR = APP_HOME . '/../www/epaper/creatives';
+/** URL relativ zu www/epaper/. */
+const EPAPER_CREATIVES_URL = 'creatives';
+/** Metadaten unter home/data/ (nicht öffentlich). */
+const EPAPER_META_DIR = 'epaper';
+/** Kennung eines Creatives: "<verlag>/<datum>_<kunde>". */
+const EPAPER_ID_PATTERN = '#^([a-z0-9-]{1,40})/(\d{4}-\d{2}-\d{2}_[a-z0-9-]{1,60})$#';
+
+function epaper_publisher_name(string $slug): string
+{
+    return EPAPER_PUBLISHERS[$slug]['name'] ?? $slug;
+}
 
 /**
  * Ordnername aus Erscheinungsdatum und Kundenname, z. B. "2026-11-05_muster-gmbh".
@@ -24,12 +50,27 @@ function epaper_folder_name(string $customer, string $date): string
     $slug = strtr($slug, ['ä' => 'ae', 'ö' => 'oe', 'ü' => 'ue', 'ß' => 'ss']);
     $slug = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $slug) ?: '';
     $slug = trim(preg_replace('/[^a-z0-9]+/', '-', $slug) ?? '', '-');
-    $slug = substr($slug, 0, 60);
+    $slug = rtrim(substr($slug, 0, 60), '-');
     return $date . '_' . ($slug !== '' ? $slug : 'kunde');
 }
 
+/** Prüft die Kennung "<verlag>/<ordner>" und ob der Verlag bekannt ist. */
+function epaper_is_valid_id(string $id): bool
+{
+    return preg_match(EPAPER_ID_PATTERN, $id, $m) === 1 && isset(EPAPER_PUBLISHERS[$m[1]]);
+}
+
+function epaper_exists(string $id): bool
+{
+    return epaper_is_valid_id($id) && is_dir(EPAPER_CREATIVES_DIR . '/' . $id);
+}
+
+/* ------------------------------------------------------------------------
+ * Formular prüfen
+ * ---------------------------------------------------------------------- */
+
 /**
- * Prüft das Formular. Gibt [Werte, Fehler] zurück; Fehler ist ein Array feld => Meldung.
+ * Gibt [Werte, Fehler] zurück; Fehler ist ein Array feld => Meldung.
  *
  * @return array{0: array<string, mixed>, 1: array<string, string>}
  */
@@ -37,10 +78,15 @@ function epaper_validate(array $post, array $files): array
 {
     $errors = [];
     $values = [
+        'publisher' => trim((string) ($post['publisher'] ?? '')),
         'customer' => trim((string) ($post['customer'] ?? '')),
         'date' => trim((string) ($post['date'] ?? '')),
         'link' => trim((string) ($post['link'] ?? '')),
     ];
+
+    if (!isset(EPAPER_PUBLISHERS[$values['publisher']])) {
+        $errors['publisher'] = 'Bitte einen Verlag auswählen.';
+    }
 
     if ($values['customer'] === '') {
         $errors['customer'] = 'Bitte einen Kundennamen angeben.';
@@ -69,8 +115,9 @@ function epaper_validate(array $post, array $files): array
         }
     }
 
-    if (!isset($errors['customer']) && !isset($errors['date'])) {
+    if (!isset($errors['publisher']) && !isset($errors['customer']) && !isset($errors['date'])) {
         $values['folder'] = epaper_folder_name($values['customer'], $values['date']);
+        $values['id'] = $values['publisher'] . '/' . $values['folder'];
     }
 
     return [$values, $errors];
@@ -83,18 +130,19 @@ function epaper_validate(array $post, array $files): array
 function epaper_check_image(?array $file, string $orientation): array|string
 {
     $label = $orientation === 'landscape' ? 'Querformat' : 'Hochformat';
+    $maxMb = EPAPER_MAX_IMAGE_BYTES / 1024 / 1024;
 
     if ($file === null || ($file['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_NO_FILE) {
         return "Bitte ein Bild im {$label} hochladen.";
     }
     if ($file['error'] === UPLOAD_ERR_INI_SIZE || $file['error'] === UPLOAD_ERR_FORM_SIZE) {
-        return 'Das Bild ist zu groß (max. ' . (EPAPER_MAX_IMAGE_BYTES / 1024 / 1024) . ' MB).';
+        return "Das Bild ist zu groß (max. {$maxMb} MB).";
     }
     if ($file['error'] !== UPLOAD_ERR_OK || !is_uploaded_file($file['tmp_name'])) {
         return 'Das Hochladen ist fehlgeschlagen. Bitte erneut versuchen.';
     }
     if ($file['size'] > EPAPER_MAX_IMAGE_BYTES) {
-        return 'Das Bild ist zu groß (max. ' . (EPAPER_MAX_IMAGE_BYTES / 1024 / 1024) . ' MB).';
+        return "Das Bild ist zu groß (max. {$maxMb} MB).";
     }
 
     // Dateityp am Inhalt erkennen, nicht an Endung oder Browser-Angabe.
@@ -135,28 +183,10 @@ function epaper_post_too_large(): bool
 }
 
 /* ------------------------------------------------------------------------
- * Schritt 2: HTML erzeugen und Creative-Ordner anlegen
+ * HTML erzeugen und Creative-Ordner anlegen
  * ---------------------------------------------------------------------- */
 
-/** Öffentlicher Ablageort (im Webroot, damit die Vorschau direkt aufrufbar ist). */
-const EPAPER_CREATIVES_DIR = APP_HOME . '/../www/epaper/creatives';
-/** URL relativ zu www/epaper/. */
-const EPAPER_CREATIVES_URL = 'creatives';
-/** Metadaten (nicht öffentlich). */
-const EPAPER_META_DIR = 'epaper';
-const EPAPER_FOLDER_PATTERN = '/^\d{4}-\d{2}-\d{2}_[a-z0-9-]{1,60}$/';
-
-function epaper_is_valid_folder(string $folder): bool
-{
-    return preg_match(EPAPER_FOLDER_PATTERN, $folder) === 1;
-}
-
-function epaper_folder_exists(string $folder): bool
-{
-    return epaper_is_valid_folder($folder) && is_dir(EPAPER_CREATIVES_DIR . '/' . $folder);
-}
-
-/** Füllt die HTML-Vorlage. Alle Werte werden für HTML-Attribute escaped. */
+/** Füllt die HTML-Vorlage. Alle Werte werden für HTML escaped. */
 function epaper_render_html(array $values, string $landscapeFile, string $portraitFile): string
 {
     $template = file_get_contents(APP_HOME . '/templates/epaper-interstitial.html');
@@ -178,44 +208,50 @@ function epaper_render_html(array $values, string $landscapeFile, string $portra
  */
 function epaper_save(array $values, bool $overwrite): void
 {
-    $folder = $values['folder'];
-    if (!epaper_is_valid_folder($folder)) {
-        throw new RuntimeException('Ungültiger Ordnername.');
+    $id = $values['id'];
+    if (!epaper_is_valid_id($id)) {
+        throw new RuntimeException('Ungültiger Verlag oder Ordnername.');
     }
     if (!is_dir(EPAPER_CREATIVES_DIR) || !is_writable(EPAPER_CREATIVES_DIR)) {
         throw new RuntimeException('Ablageordner fehlt oder ist nicht beschreibbar: www/epaper/creatives');
     }
 
-    $target = EPAPER_CREATIVES_DIR . '/' . $folder;
+    $publisherDir = EPAPER_CREATIVES_DIR . '/' . $values['publisher'];
+    if (!is_dir($publisherDir) && !mkdir($publisherDir, 0775) && !is_dir($publisherDir)) {
+        throw new RuntimeException('Verlagsordner konnte nicht angelegt werden.');
+    }
+
+    $target = EPAPER_CREATIVES_DIR . '/' . $id;
     if (is_dir($target) && !$overwrite) {
         throw new RuntimeException('Ordner existiert bereits.');
     }
 
-    $tmp = EPAPER_CREATIVES_DIR . '/.tmp_' . bin2hex(random_bytes(6));
+    $tmp = $publisherDir . '/.tmp_' . bin2hex(random_bytes(6));
     if (!mkdir($tmp, 0775)) {
         throw new RuntimeException('Temporärer Ordner konnte nicht angelegt werden.');
     }
 
-    try {
-        $landscape = 'quer.' . $values['image_landscape']['ext'];
-        $portrait = 'hoch.' . $values['image_portrait']['ext'];
+    $landscape = 'quer.' . $values['image_landscape']['ext'];
+    $portrait = 'hoch.' . $values['image_portrait']['ext'];
+    $replaced = false;
 
+    try {
         if (!move_uploaded_file($values['image_landscape']['tmp'], "{$tmp}/{$landscape}")
             || !move_uploaded_file($values['image_portrait']['tmp'], "{$tmp}/{$portrait}")) {
             throw new RuntimeException('Bilder konnten nicht gespeichert werden.');
         }
-        chmod("{$tmp}/{$landscape}", 0664);
-        chmod("{$tmp}/{$portrait}", 0664);
-
         if (file_put_contents("{$tmp}/index.html", epaper_render_html($values, $landscape, $portrait)) === false) {
             throw new RuntimeException('index.html konnte nicht geschrieben werden.');
         }
-        chmod("{$tmp}/index.html", 0664);
+        foreach ([$landscape, $portrait, 'index.html'] as $f) {
+            chmod("{$tmp}/{$f}", 0664);
+        }
 
         $old = null;
         if (is_dir($target)) {
-            $old = EPAPER_CREATIVES_DIR . '/.old_' . bin2hex(random_bytes(6));
+            $old = $publisherDir . '/.old_' . bin2hex(random_bytes(6));
             rename($target, $old);
+            $replaced = true;
         }
         if (!rename($tmp, $target)) {
             if ($old !== null) {
@@ -231,9 +267,12 @@ function epaper_save(array $values, bool $overwrite): void
         throw $e;
     }
 
-    $previous = read_json(EPAPER_META_DIR . "/{$folder}.json", []);
-    write_json(EPAPER_META_DIR . "/{$folder}.json", [
-        'folder' => $folder,
+    $metaFile = EPAPER_META_DIR . "/{$id}.json";
+    $previous = read_json($metaFile, []);
+    write_json($metaFile, [
+        'id' => $id,
+        'publisher' => $values['publisher'],
+        'folder' => $values['folder'],
         'customer' => $values['customer'],
         'date' => $values['date'],
         'link' => $values['link'],
@@ -249,9 +288,10 @@ function epaper_save(array $values, bool $overwrite): void
         'uploaded_at' => null,
     ]);
 
-    app_log('epaper', "Creative gespeichert: {$folder}" . ($old !== null ? ' (überschrieben)' : ''));
+    app_log('epaper', "Creative gespeichert: {$id}" . ($replaced ? ' (überschrieben)' : ''));
 }
 
+/** Nur für interne Temp-/Alt-Ordner beim Speichern; es gibt bewusst keine Löschfunktion für Creatives. */
 function epaper_remove_dir(string $dir): void
 {
     if (!is_dir($dir)) {
@@ -266,22 +306,33 @@ function epaper_remove_dir(string $dir): void
     rmdir($dir);
 }
 
-function epaper_get(string $folder): ?array
+function epaper_get(string $id): ?array
 {
-    if (!epaper_folder_exists($folder)) {
+    if (!epaper_exists($id)) {
         return null;
     }
-    $meta = read_json(EPAPER_META_DIR . "/{$folder}.json", null);
+    $meta = read_json(EPAPER_META_DIR . "/{$id}.json", null);
     return is_array($meta) ? $meta : null;
 }
 
-/** Alle Creatives, neuestes Erscheinungsdatum zuerst. */
-function epaper_list(): array
+/* ------------------------------------------------------------------------
+ * Übersicht
+ * ---------------------------------------------------------------------- */
+
+/** Zeiträume für die Übersicht. */
+const EPAPER_PERIODS = [
+    'aktuell' => 'Aktuell',   // letzte 30 Tage + kommende
+    'kommend' => 'Kommend',   // ab heute
+    'alle' => 'Alle',
+];
+
+/** Alle Creatives (nur Metadaten), neuestes Erscheinungsdatum zuerst. */
+function epaper_list_all(): array
 {
     $items = [];
-    foreach (glob(APP_DATA . '/' . EPAPER_META_DIR . '/*.json') ?: [] as $file) {
-        $folder = basename($file, '.json');
-        if ($meta = epaper_get($folder)) {
+    foreach (glob(APP_DATA . '/' . EPAPER_META_DIR . '/*/*.json') ?: [] as $file) {
+        $id = basename(dirname($file)) . '/' . basename($file, '.json');
+        if ($meta = epaper_get($id)) {
             $items[] = $meta;
         }
     }
@@ -289,10 +340,50 @@ function epaper_list(): array
     return $items;
 }
 
-/** Erstellt ein ZIP des Creative-Ordners (für manuellen Upload). Gibt den Pfad zur Temp-Datei zurück. */
-function epaper_zip(string $folder): string
+/**
+ * Filtert nach Zeitraum und Suchbegriff und zählt je Verlag.
+ *
+ * @return array{items: list<array>, counts: array<string, int>}
+ *         items: gefiltert (inkl. Verlag), counts: je Verlag + 'alle' (nach Zeitraum/Suche, ohne Verlagsfilter)
+ */
+function epaper_filter(array $all, string $publisher, string $period, string $search): array
 {
-    $dir = EPAPER_CREATIVES_DIR . '/' . $folder;
+    $today = date('Y-m-d');
+    $from = match ($period) {
+        'aktuell' => date('Y-m-d', strtotime('-30 days')),
+        'kommend' => $today,
+        default => null,
+    };
+    $needle = mb_strtolower(trim($search));
+
+    $counts = ['alle' => 0] + array_fill_keys(array_keys(EPAPER_PUBLISHERS), 0);
+    $items = [];
+    foreach ($all as $it) {
+        if ($from !== null && $it['date'] < $from) {
+            continue;
+        }
+        if ($needle !== '' && !str_contains(mb_strtolower($it['customer'] . ' ' . $it['folder'] . ' ' . $it['link']), $needle)) {
+            continue;
+        }
+        $counts['alle']++;
+        $counts[$it['publisher']] = ($counts[$it['publisher']] ?? 0) + 1;
+        if ($publisher === 'alle' || $it['publisher'] === $publisher) {
+            $items[] = $it;
+        }
+    }
+
+    // "Kommend" chronologisch aufsteigend (nächster Termin oben), sonst neueste zuerst.
+    if ($period === 'kommend') {
+        $items = array_reverse($items);
+    }
+
+    return ['items' => $items, 'counts' => $counts];
+}
+
+/** Erstellt ein ZIP des Creative-Ordners (für manuellen Upload). Gibt den Pfad zur Temp-Datei zurück. */
+function epaper_zip(string $id): string
+{
+    $dir = EPAPER_CREATIVES_DIR . '/' . $id;
     $zipPath = tempnam(sys_get_temp_dir(), 'epaper_');
     $zip = new ZipArchive();
     if ($zip->open($zipPath, ZipArchive::OVERWRITE) !== true) {
@@ -300,9 +391,24 @@ function epaper_zip(string $folder): string
     }
     foreach (scandir($dir) ?: [] as $entry) {
         if (is_file("{$dir}/{$entry}")) {
-            $zip->addFile("{$dir}/{$entry}", "{$folder}/{$entry}");
+            // Gleiche Struktur wie auf dem Live-Server: <verlag>/<ordner>/<datei>
+            $zip->addFile("{$dir}/{$entry}", "{$id}/{$entry}");
         }
     }
     $zip->close();
     return $zipPath;
+}
+
+/** Merkt sich den Verlag (bzw. "alle") für Formular und Übersicht, 1 Jahr. */
+function epaper_remember_publisher(string $value): void
+{
+    if ($value === 'alle' || isset(EPAPER_PUBLISHERS[$value])) {
+        setcookie('epaper_publisher', $value, [
+            'expires' => time() + 365 * 86400,
+            'path' => '/',
+            'secure' => true,
+            'httponly' => true,
+            'samesite' => 'Lax',
+        ]);
+    }
 }

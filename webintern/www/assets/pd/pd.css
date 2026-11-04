@@ -105,3 +105,31 @@ a:hover { color: #0B8FE5; }
 .pd-alert--error { background: var(--danger-bg); border-color: var(--pd-red); color: #7A2207; }
 .pd-alert--success { background: var(--success-bg); border-color: #6FB51E; color: #2F5409; }
 .pd-alert ul { margin: var(--space-1) 0 0; padding-left: 18px; }
+
+/* Auswahlliste */
+.pd-select { appearance: none; padding-right: 36px; cursor: pointer;
+  background: var(--pd-white) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%234A4A47' stroke-width='1.6'/%3E%3C/svg%3E") no-repeat right 12px center; }
+
+/* Reiter */
+.pd-tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--border); overflow-x: auto; scrollbar-width: thin; }
+.pd-tab { display: inline-flex; align-items: center; gap: var(--space-2); padding: 12px var(--space-4); font-size: var(--fs-sm); font-weight: 500;
+  color: var(--text-muted); white-space: nowrap; border-bottom: 3px solid transparent; margin-bottom: -1px; transition: var(--transition-control); }
+.pd-tab:hover { color: var(--text-strong); background: var(--pd-grey-100); }
+.pd-tab.is-active { color: var(--text-strong); border-bottom-color: var(--pd-blue); }
+.pd-tab__count { font-size: 11px; background: var(--pd-grey-200); color: var(--pd-grey-700); border-radius: 999px; padding: 1px 7px; }
+.pd-tab.is-active .pd-tab__count { background: var(--pd-blue); color: var(--pd-white); }
+
+/* Segment-Umschalter */
+.pd-seg { display: inline-flex; padding: 3px; background: var(--pd-grey-200); border-radius: var(--radius-control); gap: 2px; }
+.pd-seg a { padding: 6px 14px; border-radius: 3px; font-size: var(--fs-sm); color: var(--pd-grey-700); }
+.pd-seg a:hover { color: var(--pd-black); }
+.pd-seg a.is-active { background: var(--pd-white); color: var(--pd-black); font-weight: 500; box-shadow: 0 1px 2px rgba(14, 40, 65, .12); }
+
+/* Schmale Bildschirme: Kopfzeile kompakt, Pfad ausblenden */
+@media (max-width: 640px) {
+  .pd-top__inner { padding: var(--space-3) var(--space-4); gap: var(--space-3); }
+  .pd-top__logo { height: 32px; }
+  .pd-crumb { display: none; }
+  .pd-top__right .pd-btn { min-height: 36px; padding: 0 12px; font-size: var(--fs-sm); }
+  .pd-page { padding: var(--space-6) var(--space-4) var(--space-12); }
+}
