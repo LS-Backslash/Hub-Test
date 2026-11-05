@@ -104,6 +104,7 @@ function adstxt_parse_line(string $raw): array
         // Konto-IDs werden ohne Groß/Klein verglichen (z. B. "pub-123" vs. "PUB-123").
         'key' => $domain . '|' . strtolower($account) . '|' . $relationship,
         'domain' => $domain,
+        'cert' => $certId,
     ];
 }
 
@@ -166,11 +167,19 @@ function adstxt_build(array $publisher, string $fileType, array $parts, ?DateTim
                 $variables[$p['name']][$part['level']][] = [$p['line'], $p['key'], $part['label']];
             } elseif ($p['type'] === 'record') {
                 if (isset($seenRecords[$p['key']])) {
-                    $duplicates[] = ['line' => $p['line'], 'label' => $part['label'], 'kept_in' => $seenRecords[$p['key']]];
+                    [$keptLabel, $keptIndex] = $seenRecords[$p['key']];
+                    $keptLine = $groups[$keptLabel][$keptIndex];
+                    // Gleicher Eintrag: fehlende Zertifizierungs-ID aus der späteren Fundstelle ergänzen.
+                    if ($p['cert'] !== '' && adstxt_parse_line($keptLine)['cert'] === '') {
+                        $groups[$keptLabel][$keptIndex] = $p['line'];
+                        unset($origins[$keptLine]);
+                        $origins[$p['line']] = $keptLabel;
+                    }
+                    $duplicates[] = ['line' => $p['line'], 'label' => $part['label'], 'kept_in' => $keptLabel];
                     continue;
                 }
-                $seenRecords[$p['key']] = $part['label'];
                 $groups[$part['label']][] = $p['line'];
+                $seenRecords[$p['key']] = [$part['label'], array_key_last($groups[$part['label']])];
                 $origins[$p['line']] = $part['label'];
             }
         }

@@ -1,0 +1,6 @@
+# Globale Liste Dienstleister (Testdaten)
+OWNERDOMAIN=dienstleister.de
+CONTACT=ops@dienstleister.de
+google.com, pub-111, DIRECT, f08c47fec0942fa0
+rubiconproject.com, 1001, RESELLER, 0bfd66d529a55807
+pubmatic.com, 2002, RESELLER, 5d62403b186f2ace

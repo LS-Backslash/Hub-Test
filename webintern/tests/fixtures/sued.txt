@@ -1,0 +1,5 @@
+# Vermarkter Süd (Testdaten)
+MANAGERDOMAIN=vermarkter-sued.de
+openx.com, 3003, DIRECT, 6a698e2ec38604c6
+RubiconProject.com, 1001, reseller
+appnexus.com, 4004, RESELLER

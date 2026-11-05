@@ -60,6 +60,14 @@ check('überstimmte Kopfzeilen gemeldet', count($r['overridden']), 2); // OWNERD
 check('Titelzeile', explode("\n", $r['content'])[0], '# ads.txt für Testverlag (test.de)');
 check('Zeitstempel nicht im Body', str_contains($r['body'], '05.11.2026'), false);
 
+check('ohne IDs bleibt Zeile unverändert', isset($r['origins']['rubicon.com, 99, RESELLER']), true);
+$cert = adstxt_build($pub, 'ads', [
+    ['level' => 3, 'label' => 'Vermarkter', 'text' => 'rubiconproject.com, 1001, RESELLER'],
+    ['level' => 5, 'label' => 'Global', 'text' => 'rubiconproject.com, 1001, RESELLER, 0bfd66d529a55807'],
+]);
+check('ID ergänzt, Herkunft bleibt Vermarkter', $cert['origins']['rubiconproject.com, 1001, RESELLER, 0bfd66d529a55807'] ?? null, 'Vermarkter');
+check('ID ergänzt: nur eine Zeile', $cert['record_count'], 1);
+
 $r2 = adstxt_build($pub, 'ads', array_reverse($parts), new DateTimeImmutable('2026-11-06 08:00'));
 check('Ergebnis unabhängig von Übergabereihenfolge', $r2['body_hash'], $r['body_hash']);
 
