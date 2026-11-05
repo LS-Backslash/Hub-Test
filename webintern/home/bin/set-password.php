@@ -35,8 +35,10 @@ if ($pw1 !== $pw2) {
     fwrite(STDERR, "Passwörter stimmen nicht überein.\n");
     exit(1);
 }
-if (mb_strlen($pw1) < 12) {
-    fwrite(STDERR, "Bitte mindestens 12 Zeichen verwenden.\n");
+// Bewusst keine Mindestlänge: Schutz nur gegen versehentlichen Zugriff im Hausnetz
+// (zusätzlich sperrt auth.php nach 5 Fehlversuchen für 5 Minuten).
+if ($pw1 === '') {
+    fwrite(STDERR, "Das Passwort darf nicht leer sein.\n");
     exit(1);
 }
 
