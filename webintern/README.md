@@ -21,7 +21,8 @@ www/   ->  /data/wwwcust/ads/www    (Webroot: nur schlanke Einstiegspunkte)
 | `www/epaper/` | ePaper-Werbezwischenseiten (ohne Login) |
 | `www/epaper/creatives/` | Erzeugte Creatives als `<verlag>/<datum>_<kunde>/` mit `index.html`, `quer.*`, `hoch.*` (gleiche Struktur wie später auf dem Live-Server) – muss für `ads` beschreibbar sein |
 | `home/templates/` | HTML-Vorlage der Werbezwischenseite |
-| `www/adstxt/` | Ads.txt Organizer (mit Passwortschutz) |
+| `www/adstxt/` | Ads.txt Organizer (mit Passwortschutz) – Logik in `home/lib/adstxt/` |
+| `tests/` | Tests (werden nicht auf den Server kopiert) |
 
 ## Server-Besonderheiten
 
@@ -58,10 +59,35 @@ www/   ->  /data/wwwcust/ads/www    (Webroot: nur schlanke Einstiegspunkte)
 
 ## Cronjobs
 
-Crontab des Benutzers `ads` (`crontab -e`). Beispiel für einen Abruf alle 6 Stunden:
+Crontab des Benutzers `ads` bearbeiten (`crontab -e`) und diese Zeile eintragen –
+Ads.txt-Aktualisierung alle 12 Stunden (05:17 und 17:17 Uhr):
 
 ```
-0 */6 * * * /usr/bin/php8.4 /data/wwwcust/ads/home/cron/adstxt-fetch.php >> /data/wwwcust/ads/home/logs/cron.log 2>&1
+17 5,17 * * * /usr/bin/php8.4 /data/wwwcust/ads/home/cron/adstxt-update.php >> /data/wwwcust/ads/home/logs/cron.log 2>&1
 ```
 
-Cronjobs nutzen `acquire_lock()`, damit sie nicht doppelt laufen.
+Prüfen: `crontab -l`. Einmal von Hand testen: `php8.4 /data/wwwcust/ads/home/cron/adstxt-update.php; echo $?`
+(0 = ok, 1 = Warnung, z. B. eine Quelle nicht erreichbar, 2 = Fehler). Läufe erscheinen auch im Tool unter „Protokoll“.
+Parallel laufende Aktualisierungen (Cron + „Jetzt aktualisieren“) werden per Sperre verhindert.
+
+## Ads.txt Organizer – Funktionsweise
+
+- **Bausteine:** Publisher-Kopfzeilen, Einträge (manuelle Blöcke) und Quellen (externe URLs), jeweils global oder
+  pro Publisher und für `ads.txt`, `app-ads.txt` oder beide.
+- **Vorrang bei Kopfzeilen** (OWNERDOMAIN, CONTACT …): Publisher-Kopfzeilen → eigene Einträge → eigene Quellen →
+  globale Einträge → globale Quellen. Je Variable gilt nur die höchste Ebene, OWNERDOMAIN nur einmal.
+- **Dubletten** (gleiche Domain + Konto-ID + Beziehung) werden entfernt; die erste Fundstelle in obiger Reihenfolge
+  bleibt, eine fehlende Zertifizierungs-ID wird ergänzt.
+- **Absicherung:** Ist eine Quelle nicht erreichbar, liefert HTML/JSON, ist leer oder schrumpft um mehr als die Hälfte,
+  wird der letzte gültige Stand weiterverwendet.
+- **Bereitstellung für die Verlage:** folgt mit dem externen Live-Server (gleicher Upload-Weg wie beim ePaper-Tool).
+  Bis dahin: Vorschau und Download im Tool.
+
+## Tests (lokal, nicht auf dem Server)
+
+```bash
+php webintern/tests/adstxt_core_test.php
+# Integrationstest – NUR gegen eine Test-Datenbank, leert die adstxt-Tabellen:
+php -S 127.0.0.1:8099 -t webintern/tests/fixtures &
+ADSTXT_TEST_DB=1 php webintern/tests/adstxt_service_test.php http://127.0.0.1:8099
+```
