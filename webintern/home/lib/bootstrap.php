@@ -28,6 +28,7 @@ error_reporting(E_ALL);
 require __DIR__ . '/helpers.php';
 require __DIR__ . '/storage.php';
 require __DIR__ . '/http.php';
+require __DIR__ . '/db.php';
 
 $configFile = APP_CONFIG . '/config.php';
 $GLOBALS['APP_CONFIG'] = is_file($configFile) ? (require $configFile) : [];
@@ -36,3 +37,22 @@ function config(string $key, mixed $default = null): mixed
 {
     return $GLOBALS['APP_CONFIG'][$key] ?? $default;
 }
+
+// Unerwartete Fehler: ins Log schreiben, im Browser eine verständliche Meldung zeigen.
+set_exception_handler(static function (Throwable $e): void {
+    error_log('Unbehandelter Fehler: ' . $e::class . ': ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine());
+    if (PHP_SAPI === 'cli') {
+        fwrite(STDERR, 'FEHLER: ' . $e->getMessage() . "\n");
+        exit(1);
+    }
+    if (!headers_sent()) {
+        http_response_code(500);
+        header('Content-Type: text/html; charset=utf-8');
+    }
+    $isDb = $e instanceof PDOException || str_contains($e->getMessage(), 'Datenbank');
+    echo '<!doctype html><meta charset="utf-8"><title>Fehler</title>'
+        . '<body style="font-family:system-ui,sans-serif;max-width:640px;margin:15vh auto;padding:0 16px;color:#3C3C3B">'
+        . '<h1 style="font-size:22px;color:#000">Es ist ein Fehler aufgetreten.</h1>'
+        . '<p>' . ($isDb ? 'Die Datenbank ist nicht erreichbar oder nicht konfiguriert.' : 'Die Seite konnte nicht geladen werden.')
+        . ' Details stehen in <code>home/logs/php-error.log</code>.</p></body>';
+});

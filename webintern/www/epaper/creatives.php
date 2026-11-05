@@ -21,12 +21,16 @@ if (!isset(EPAPER_PERIODS[$period])) {
 }
 $search = mb_substr(trim((string) ($_GET['q'] ?? '')), 0, 100);
 
-$result = epaper_filter(epaper_list_all(), $publisher, $period, $search);
+$page = max(1, (int) ($_GET['seite'] ?? 1));
+$result = epaper_query($publisher, $period, $search, $page, PER_PAGE);
 $counts = $result['counts'];
-$total = count($result['items']);
+$total = $result['total'];
 $pages = max(1, (int) ceil($total / PER_PAGE));
-$page = min($pages, max(1, (int) ($_GET['seite'] ?? 1)));
-$items = array_slice($result['items'], ($page - 1) * PER_PAGE, PER_PAGE);
+if ($page > $pages) {
+    $page = $pages;
+    $result = epaper_query($publisher, $period, $search, $page, PER_PAGE);
+}
+$items = $result['items'];
 
 /** URL mit den aktuellen Filtern, einzelne Werte überschreibbar. */
 function list_url(array $override = []): string
