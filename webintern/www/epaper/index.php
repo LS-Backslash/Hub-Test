@@ -78,7 +78,7 @@ function field_error(array $errors, string $field): string
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
 <title>Template Generator · ePaper Werbezwischenseiten</title>
-<link rel="stylesheet" href="../assets/pd/pd.css">
+<link rel="stylesheet" href="<?= h(asset_url('pd/pd.css')) ?>">
 <style>
   .ep-preview-head { background: var(--pd-navy); color: var(--pd-white); padding: 10px var(--space-4); font-size: var(--fs-micro); letter-spacing: .12em; text-transform: uppercase; font-weight: 500; }
   .ep-preview { border: 1px solid var(--border); border-radius: var(--radius-control); overflow: hidden; }

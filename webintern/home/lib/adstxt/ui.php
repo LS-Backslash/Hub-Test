@@ -150,7 +150,7 @@ function ui_start(string $active, string $title, array $crumbs = [], string $bar
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
 <title><?= h($title) ?> · Ads.txt Organizer</title>
-<link rel="stylesheet" href="../assets/pd/pd.css">
+<link rel="stylesheet" href="<?= h(asset_url('pd/pd.css')) ?>">
 <style>
   .pd-alert--warning { background: #FFF6E5; border-color: var(--pd-amber); color: #6B4100; }
   .pd-live { display: flex; flex-direction: column; gap: 6px; padding: var(--space-3); background: var(--surface-sunken); border-radius: var(--radius-control); }

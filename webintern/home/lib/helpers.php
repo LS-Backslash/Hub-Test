@@ -39,3 +39,15 @@ function acquire_lock(string $name)
     }
     return $fh;
 }
+
+/**
+ * Adresse einer Datei unter www/assets/ mit Versionsnummer (Änderungszeitpunkt).
+ * Ändert sich die Datei, lädt jeder Browser sie automatisch neu – kein Strg+F5 nötig.
+ * $fromDir: relativer Weg vom aufrufenden Ordner zum Webroot, z. B. "../" aus www/epaper/.
+ */
+function asset_url(string $path, string $fromDir = '../'): string
+{
+    $file = APP_HOME . '/../www/assets/' . ltrim($path, '/');
+    $version = is_file($file) ? filemtime($file) : 0;
+    return $fromDir . 'assets/' . ltrim($path, '/') . '?v=' . $version;
+}

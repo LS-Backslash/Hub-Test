@@ -51,7 +51,7 @@ function list_url(array $override = []): string
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
 <title>Alle Creatives · ePaper Werbezwischenseiten</title>
-<link rel="stylesheet" href="../assets/pd/pd.css">
+<link rel="stylesheet" href="<?= h(asset_url('pd/pd.css')) ?>">
 <style>
   .ep-toolbar { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); flex-wrap: wrap; padding: var(--space-4) var(--space-6); border-bottom: 1px solid var(--border); }
   .ep-search { display: flex; gap: var(--space-2); flex: 1 1 260px; max-width: 420px; }
