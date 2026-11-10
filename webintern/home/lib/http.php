@@ -126,7 +126,7 @@ function fetch_url_stream(string $url, int $timeout, array $headerLines): array
  * @param array<string|int, string> $urls Schlüssel => URL
  * @return array<string|int, array{ok: bool, status: int, body: string, headers: list<string>, error: ?string}>
  */
-function fetch_many(array $urls, int $timeout = 15, int $parallel = 10): array
+function fetch_many(array $urls, int $timeout = 15, int $parallel = 10, bool $verifyTls = true): array
 {
     if (!function_exists('curl_multi_init')) {
         return array_map(static fn ($u) => fetch_url($u, $timeout), $urls);
@@ -137,7 +137,7 @@ function fetch_many(array $urls, int $timeout = 15, int $parallel = 10): array
     $mh = curl_multi_init();
     $active = []; // (int) handle => [key, handle]
 
-    $add = static function () use (&$queue, &$active, $mh, $timeout): void {
+    $add = static function () use (&$queue, &$active, $mh, $timeout, $verifyTls): void {
         $key = array_key_first($queue);
         $url = $queue[$key];
         unset($queue[$key]);
@@ -153,8 +153,9 @@ function fetch_many(array $urls, int $timeout = 15, int $parallel = 10): array
             CURLOPT_USERAGENT => config('http_user_agent', 'pu-webintern/1.0'),
             CURLOPT_HTTPHEADER => ['Accept: text/plain, */*'],
             CURLOPT_ENCODING => '',
-            CURLOPT_SSL_VERIFYPEER => true,
-            CURLOPT_SSL_VERIFYHOST => 2,
+            // Nur für das Lesen öffentlicher Dateien abschaltbar (Abgleich bei fehlerhaftem Verlags-Zertifikat).
+            CURLOPT_SSL_VERIFYPEER => $verifyTls,
+            CURLOPT_SSL_VERIFYHOST => $verifyTls ? 2 : 0,
         ]);
         if ($proxy = config('http_proxy')) {
             curl_setopt($ch, CURLOPT_PROXY, $proxy);
@@ -184,6 +185,7 @@ function fetch_many(array $urls, int $timeout = 15, int $parallel = 10): array
                 'body' => $failed ? '' : (string) $body,
                 'headers' => [],
                 'error' => $failed ? (curl_strerror($info['result']) ?: 'Abruf fehlgeschlagen') : ($ok ? null : "HTTP {$status}"),
+                'errno' => (int) $info['result'],
             ];
             curl_multi_remove_handle($mh, $ch);
             curl_close($ch);

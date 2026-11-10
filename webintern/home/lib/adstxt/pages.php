@@ -784,6 +784,12 @@ function page_verify(): void
                   · unser Stand: <?= h(ui_date($c['output_changed_at'])) ?></div>
               <?php endif; ?>
               <?php if ($fresh): ?><div class="pd-t-sub">Unsere letzte Änderung ist jünger als 24 Std. – der Verlag holt sie evtl. noch ab.</div><?php endif; ?>
+              <?php $hint = adstxt_check_hint($c, live_url(adstxt_live_path($c['slug'], $c['file_type']))); if ($hint): ?>
+                <details class="pd-details pd-hint-box"><summary><?= ui_icon('info') ?> Tipp für die IT des Verlags: <?= h($hint['title']) ?></summary>
+                  <pre class="pd-hint-text"><?= h($hint['text']) ?></pre>
+                  <button type="button" class="pd-btn pd-btn--secondary pd-btn--sm" data-copy="<?= h($hint['text']) ?>">Text kopieren</button>
+                </details>
+              <?php endif; ?>
               <?php if ($c['missing_count'] + $c['extra_count'] > 0): ?>
                 <details class="pd-details"><summary>Zeilen anzeigen</summary><div class="pd-t-mono" style="line-height:1.7">
                   <?php if ($c['missing_count']): ?><div class="pd-t-sub" style="margin-top:4px">Fehlen beim Verlag (<?= (int) $c['missing_count'] ?>):</div>

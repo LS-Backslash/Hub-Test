@@ -167,4 +167,9 @@ return [
         ) ' . DB_TABLE_OPTIONS,
     ],
 
+    '2026_11_12_005_adstxt_checks_cert' => [
+        // Datei nur mit abgeschalteter Zertifikatsprüfung lesbar (Zertifikat beim Verlag fehlerhaft).
+        'ALTER TABLE adstxt_checks ADD COLUMN cert_problem TINYINT(1) NOT NULL DEFAULT 0 AFTER message',
+    ],
+
 ];

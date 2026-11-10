@@ -53,6 +53,7 @@ function ui_icon(string $name): string
         'clock' => '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
         'signal' => '<rect x="7" y="2.5" width="10" height="19" rx="3"/><circle cx="12" cy="7" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="17" r="1.6"/>',
         'check' => '<path d="M5 12.5l4.5 4.5L19 7.5"/>',
+        'info' => '<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/>',
         'refresh' => '<path d="M20 11a8 8 0 0 0-14.9-3M4 4v4h4M4 13a8 8 0 0 0 14.9 3M20 20v-4h-4"/>',
         'plus' => '<path d="M12 5v14M5 12h14"/>',
         'download' => '<path d="M12 4v11M7 10l5 5 5-5M5 20h14"/>',
@@ -155,6 +156,11 @@ function ui_start(string $active, string $title, array $crumbs = [], string $bar
   .pd-live { display: flex; flex-direction: column; gap: 6px; padding: var(--space-3); background: var(--surface-sunken); border-radius: var(--radius-control); }
   .pd-live__row { display: flex; align-items: center; gap: var(--space-2); }
   .pd-live__url { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+  .pd-hint-box { margin-top: 6px; }
+  .pd-hint-box summary { display: inline-flex; align-items: center; gap: 6px; color: #8A5300; font-weight: 500; }
+  .pd-hint-box summary svg { width: 16px; height: 16px; flex: none; }
+  .pd-hint-text { margin: 8px 0; padding: 10px 12px; white-space: pre-wrap; font-family: var(--font); font-size: 13px; line-height: 1.55;
+    background: #FFF8EA; border: 1px solid #F5D9A6; border-radius: var(--radius-control); color: var(--pd-grey-800); max-width: 70ch; }
 </style>
 </head>
 <body>

@@ -115,6 +115,10 @@ Seite „Abgleich“ im Ads.txt Organizer: ruft `https://<domain>/ads.txt` bzw. 
 (bei Verbindungsfehlern `http://`) und vergleicht den Inhalt mit unserem Stand – Reihenfolge, Kommentare und
 Schreibweise zählen nicht. Grün = identisch, Gelb = Zeilen fehlen/zu viel (mit Liste und „Stand beim Verlag“ aus
 unserer Kopfzeile), Rot = nicht abrufbar/404/Webseite statt Datei, Grau = keine Domain oder noch keine Datei.
+Antwortet `https://<domain>` nicht, werden der Reihe nach `https://www.<domain>`, `http://<domain>` und
+`http://www.<domain>` versucht. Bei fehlerhaftem HTTPS-Zertifikat wird die (öffentliche) Datei ohne Zertifikatsprüfung
+gelesen und verglichen, der Befund aber als „Zertifikat fehlerhaft“ markiert. Zu jedem Befund gibt es einen
+„Tipp für die IT des Verlags“ zum Kopieren (www fehlt, nur http, Zertifikat, 404, Webseite statt Datei, keine Antwort, veraltet).
 20 Abrufe parallel; täglich per Cron, sonst „Jetzt prüfen“ bzw. „Neu prüfen“ je Publisher.
 
 ## Tests (lokal, nicht auf dem Server)

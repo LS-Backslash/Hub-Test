@@ -84,8 +84,9 @@ function adstxt_evaluate(array $response, string $ours): array
  *
  * @return array{ok: int, outdated: int, error: int, skipped: int}
  */
-function adstxt_verify(?int $publisherId = null): array
+function adstxt_verify(?int $publisherId = null, ?callable $fetch = null): array
 {
+    $fetch ??= static fn (array $urls, bool $verifyTls) => fetch_many($urls, ADSTXT_VERIFY_TIMEOUT, ADSTXT_VERIFY_PARALLEL, $verifyTls);
     $publishers = $publisherId ? array_filter([adstxt_publisher($publisherId)], static fn ($p) => $p && $p['active']) : adstxt_publishers(false);
     $outputs = [];
     foreach (db_all('SELECT publisher_id, file_type, content, changed_at FROM adstxt_outputs') as $o) {
@@ -103,52 +104,49 @@ function adstxt_verify(?int $publisherId = null): array
 
     $counts = ['ok' => 0, 'outdated' => 0, 'error' => 0, 'skipped' => 0];
     $now = db_now();
-    $save = static function (array $t, string $status, ?string $url, ?int $http, string $message, array $c = []) use ($now, &$counts): void {
+    $save = static function (array $t, string $status, ?string $url, ?int $http, string $message, array $c = [], bool $cert = false) use ($now, &$counts): void {
         $counts[$status]++;
-        db_run('INSERT INTO adstxt_checks (publisher_id, file_type, checked_at, status, url, http_status, message,
+        db_run('INSERT INTO adstxt_checks (publisher_id, file_type, checked_at, status, url, http_status, message, cert_problem,
                     missing_count, extra_count, missing, extra, remote_generated, our_changed_at)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 ON DUPLICATE KEY UPDATE checked_at = VALUES(checked_at), status = VALUES(status), url = VALUES(url),
-                    http_status = VALUES(http_status), message = VALUES(message), missing_count = VALUES(missing_count),
+                    http_status = VALUES(http_status), message = VALUES(message), cert_problem = VALUES(cert_problem),
+                    missing_count = VALUES(missing_count),
                     extra_count = VALUES(extra_count), missing = VALUES(missing), extra = VALUES(extra),
                     remote_generated = VALUES(remote_generated), our_changed_at = VALUES(our_changed_at)', [
-            $t['publisher']['id'], $t['type'], $now, $status, $url, $http, mb_substr($message, 0, 500),
+            $t['publisher']['id'], $t['type'], $now, $status, $url, $http, mb_substr($message, 0, 500), $cert ? 1 : 0,
             count($c['missing'] ?? []), count($c['extra'] ?? []),
             implode("\n", array_slice($c['missing'] ?? [], 0, 2000)), implode("\n", array_slice($c['extra'] ?? [], 0, 2000)),
             $c['remote_generated'] ?? null, $t['changed_at'],
         ]);
     };
 
-    // Erst https, bei Verbindungsfehler http (laut ads.txt-Spezifikation beides zulässig).
-    $urls = [];
+    $domains = [];
     foreach ($targets as $key => $t) {
         if ($t['publisher']['domain'] === '') {
             $save($t, 'skipped', null, null, 'Keine Domain hinterlegt');
         } elseif ($t['content'] === null) {
             $save($t, 'skipped', null, null, 'Bei uns noch keine Datei erzeugt');
         } else {
-            $urls[$key] = 'https://' . $t['publisher']['domain'] . '/' . ADSTXT_FILE_NAMES[$t['type']];
-        }
-    }
-    $responses = fetch_many($urls, ADSTXT_VERIFY_TIMEOUT, ADSTXT_VERIFY_PARALLEL);
-    $retry = [];
-    foreach ($responses as $key => $res) {
-        // Keine Verbindung über https (z. B. kein Zertifikat) → http versuchen; bei Zeitüberschreitung nicht nochmal warten.
-        if ($res['status'] === 0 && !str_contains((string) $res['error'], 'Timeout')) {
-            $retry[$key] = 'http://' . substr($urls[$key], strlen('https://'));
-        }
-    }
-    foreach (fetch_many($retry, ADSTXT_VERIFY_TIMEOUT, ADSTXT_VERIFY_PARALLEL) as $key => $res) {
-        if ($res['status'] !== 0) {
-            $responses[$key] = $res;
-            $urls[$key] = $retry[$key];
+            $domains[$key] = [$t['publisher']['domain'], ADSTXT_FILE_NAMES[$t['type']]];
         }
     }
 
-    foreach ($responses as $key => $res) {
+    foreach (adstxt_fetch_with_fallback($domains, $fetch) as $key => $r) {
         $t = $targets[$key];
-        $e = adstxt_evaluate($res, $t['content']);
-        $save($t, $e['status'], $urls[$key], $res['status'] ?: null, $e['message'], $e);
+        $e = adstxt_evaluate($r['response'], $t['content']);
+        $msg = $e['message'];
+        if ($r['response']['ok'] && $r['url'] !== $r['tried'][0]) {
+            $msg .= ' – gefunden unter ' . $r['url'] . ', ' . $r['tried'][0] . ' antwortet nicht';
+        } elseif ($r['response']['status'] !== 0 && $r['url'] !== $r['tried'][0]) {
+            $msg .= ' – geprüft unter ' . $r['url'] . ', da ' . $r['tried'][0] . ' nicht antwortet';
+        } elseif ($r['response']['status'] === 0 && count($r['tried']) > 1) {
+            $msg .= ' (auch mit www. und http versucht)';
+        }
+        if ($r['cert_problem']) {
+            $msg .= ' – Zertifikat der Website fehlerhaft';
+        }
+        $save($t, $e['status'], $r['url'], $r['response']['status'] ?: null, $msg, $e, $r['cert_problem']);
     }
 
     app_log('adstxt', sprintf('Abgleich: %d aktuell, %d veraltet, %d Problem, %d nicht prüfbar',
@@ -181,4 +179,163 @@ function adstxt_check_counts(): array
         $counts[$c['status']]++;
     }
     return $counts;
+}
+
+/**
+ * Adressen, unter denen die Datei gesucht wird – in dieser Reihenfolge.
+ * Laut ads.txt-Spezifikation liegt die Datei im Stamm der Domain; viele Verlage antworten aber nur mit "www.".
+ */
+function adstxt_candidate_urls(string $domain, string $file): array
+{
+    $hosts = [$domain];
+    if (!str_starts_with($domain, 'www.')) {
+        $hosts[] = 'www.' . $domain;
+    }
+    $urls = [];
+    foreach (['https', 'http'] as $scheme) {
+        foreach ($hosts as $host) {
+            $urls[] = "{$scheme}://{$host}/{$file}";
+        }
+    }
+    return $urls;
+}
+
+/** cURL-Fehler, die auf ein ungültiges oder unvollständiges Zertifikat hindeuten. */
+const ADSTXT_CERT_ERRNOS = [51, 60];
+
+/**
+ * Ruft für jedes Ziel die erste erreichbare Adresse ab.
+ * Bei Zertifikatsfehlern wird dieselbe Adresse ohne Zertifikatsprüfung gelesen (nur Lesen einer öffentlichen
+ * Datei, es werden keine Daten gesendet) und das Ergebnis als „Zertifikat fehlerhaft“ markiert.
+ *
+ * @param array<string, array{0: string, 1: string}> $domains Schlüssel => [Domain, Dateiname]
+ * @param callable(array<string,string>, bool): array $fetch
+ * @return array<string, array{response: array, url: string, tried: list<string>, cert_problem: bool}>
+ */
+function adstxt_fetch_with_fallback(array $domains, callable $fetch): array
+{
+    $state = [];
+    foreach ($domains as $key => [$domain, $file]) {
+        $state[$key] = ['candidates' => adstxt_candidate_urls($domain, $file), 'i' => 0, 'insecure' => false,
+            'cert_problem' => false, 'tried' => [], 'first' => null, 'done' => null];
+    }
+
+    for ($round = 0; $round < 8; $round++) {
+        $secure = $insecure = [];
+        foreach ($state as $key => $st) {
+            if ($st['done'] === null) {
+                $url = $st['candidates'][$st['i']];
+                $st['insecure'] ? $insecure[$key] = $url : $secure[$key] = $url;
+            }
+        }
+        if (!$secure && !$insecure) {
+            break;
+        }
+        $results = ($secure ? $fetch($secure, true) : []) + ($insecure ? $fetch($insecure, false) : []);
+
+        foreach ($results as $key => $res) {
+            $st = &$state[$key];
+            $url = $st['candidates'][$st['i']];
+            if (!in_array($url, $st['tried'], true)) {
+                $st['tried'][] = $url;
+            }
+            $st['first'] ??= $res;
+            if ($res['status'] !== 0) {
+                $st['done'] = ['response' => $res, 'url' => $url];
+            } elseif (!$st['insecure'] && in_array($res['errno'] ?? 0, ADSTXT_CERT_ERRNOS, true)) {
+                $st['insecure'] = true;      // gleiche Adresse noch einmal, ohne Zertifikatsprüfung
+                $st['cert_problem'] = true;
+            } elseif ($st['i'] + 1 < count($st['candidates'])) {
+                $st['i']++;
+                $st['insecure'] = false;
+            } else {
+                // Alles fehlgeschlagen: die Meldung der eigentlichen Adresse zeigen.
+                $st['done'] = ['response' => $st['first'], 'url' => $st['tried'][0]];
+            }
+            unset($st);
+        }
+    }
+
+    $out = [];
+    foreach ($state as $key => $st) {
+        $done = $st['done'] ?? ['response' => $st['first'] ?? ['ok' => false, 'status' => 0, 'body' => '', 'error' => 'Abbruch', 'errno' => 0], 'url' => $st['candidates'][0]];
+        $out[$key] = $done + ['tried' => $st['tried'], 'cert_problem' => $st['cert_problem'] && $done['response']['status'] !== 0];
+    }
+    return $out;
+}
+
+
+/**
+ * Formuliert für einen auffälligen Befund einen Hinweis, den man direkt an die IT des Verlags schicken kann.
+ *
+ * @param array $c Zeile aus adstxt_checks (mit domain, file_type, status, url, message, cert_problem, remote_generated, missing_count, extra_count)
+ * @param string|null $liveUrl unsere Abhol-Adresse auf ads.pddigital.de
+ * @return array{title: string, text: string}|null
+ */
+function adstxt_check_hint(array $c, ?string $liveUrl): ?array
+{
+    $file = ADSTXT_FILE_NAMES[$c['file_type']];
+    $domain = (string) $c['domain'];
+    if ($domain === '') {
+        return null;
+    }
+    $root = "https://{$domain}/{$file}";
+    // Genutzte Adresse ohne Schema und Dateinamen, z. B. "www.suedkurier.de".
+    $usedHost = $c['url'] ? preg_replace('#^https?://|/' . preg_quote($file, '#') . '$#', '', (string) $c['url']) : '';
+    $usedScheme = $c['url'] ? (string) parse_url($c['url'], PHP_URL_SCHEME) : '';
+    $pickup = $liveUrl ? "\nAktuelle Datei zum Abholen: {$liveUrl}" : '';
+    $hints = [];
+
+    if (in_array($c['status'], ['ok', 'outdated'], true)) {
+        if ($usedHost === "www.{$domain}") {
+            $hints[] = ['Domain ohne www antwortet nicht',
+                "Die {$file} ist nur unter www.{$domain} erreichbar. Die Adresse {$root} antwortet nicht.\n"
+                . "Laut IAB-ads.txt-Standard muss die Datei im Stamm der Domain abrufbar sein – manche Crawler der Werbepartner fragen nur dort.\n"
+                . "Bitte dafür sorgen, dass {$root} erreichbar ist, am einfachsten per Weiterleitung (301) von {$domain} auf www.{$domain}."];
+        }
+        if ($usedScheme === 'http') {
+            $hints[] = ['Nur über http erreichbar',
+                "Die {$file} ist nur unverschlüsselt über http erreichbar, nicht über https.\n"
+                . "Bitte HTTPS für {$usedHost} einrichten (oder http auf https weiterleiten), damit {$root} funktioniert."];
+        }
+        if (!empty($c['cert_problem'])) {
+            $hints[] = ['HTTPS-Zertifikat fehlerhaft',
+                "Das HTTPS-Zertifikat von {$usedHost} wird von Prüfprogrammen nicht akzeptiert. Browser gleichen das oft aus, automatische Crawler (z. B. der Werbepartner beim Auslesen der {$file}) jedoch nicht.\n"
+                . "Häufigste Ursache: Der Webserver sendet das Zwischenzertifikat (Intermediate) nicht mit. Seltener: Zertifikat abgelaufen oder für den Hostnamen nicht gültig.\n"
+                . "Bitte die vollständige Zertifikatskette auf dem Webserver hinterlegen. Prüfen lässt sich das z. B. mit https://www.ssllabs.com/ssltest/analyze.html?d={$usedHost}"];
+        }
+        if ($c['status'] === 'outdated') {
+            $stand = $c['remote_generated'] ? "Auf der Website liegt der Stand vom {$c['remote_generated']}." : 'Die Datei auf der Website wurde nicht aus unserem System erzeugt oder wurde verändert.';
+            $hints[] = ['Datei nicht aktuell',
+                "Die {$file} auf {$domain} entspricht nicht dem aktuellen Stand ({$c['missing_count']} Zeile(n) fehlen, {$c['extra_count']} Zeile(n) zu viel). {$stand}\n"
+                . "Bitte prüfen, ob der automatische Abruf (Cronjob) läuft und die Datei unverändert übernommen wird.{$pickup}"];
+        }
+    } elseif ($c['status'] === 'error') {
+        $msg = (string) $c['message'];
+        if (str_contains($msg, '404')) {
+            $hints[] = ['Datei fehlt',
+                "Unter {$root} ist keine {$file} vorhanden (Fehler 404).\n"
+                . "Bitte die Datei regelmäßig (z. B. per Cronjob alle 12 Stunden) von unserer Adresse abholen und unter /{$file} im Stamm der Domain ablegen.{$pickup}"];
+        } elseif (str_contains($msg, 'Webseite')) {
+            $hints[] = ['Webseite statt Textdatei',
+                "Unter {$root} wird eine Webseite (HTML, z. B. Fehler- oder Startseite) ausgeliefert statt der {$file}.\n"
+                . "Bitte sicherstellen, dass /{$file} als reine Textdatei (Content-Type text/plain) ausgeliefert wird.{$pickup}"];
+        } elseif (preg_match('/resolve|Name or service/i', $msg)) {
+            $hints[] = ['Domain nicht auflösbar',
+                "Die Domain {$domain} ist im DNS nicht auflösbar. Bitte im Tool prüfen, ob die Domain richtig geschrieben ist."];
+        } else {
+            $hints[] = ['Website antwortet nicht',
+                "Die Website {$domain} antwortet nicht auf Abrufe von {$root} (auch mit www. und über http versucht).\n"
+                . "Mögliche Ursachen: Firewall oder Bot-Schutz blockiert automatische Abrufe, oder der Webserver ist für diese Adresse nicht eingerichtet.\n"
+                . "Bitte prüfen, ob {$root} von außen ohne Browser (z. B. mit curl) abrufbar ist.{$pickup}"];
+        }
+    }
+
+    if (!$hints) {
+        return null;
+    }
+    return [
+        'title' => implode(' · ', array_column($hints, 0)),
+        'text' => "Hinweis zur {$file} von {$domain}:\n\n" . implode("\n\n", array_column($hints, 1)),
+    ];
 }
