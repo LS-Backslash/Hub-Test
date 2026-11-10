@@ -118,3 +118,91 @@ function fetch_url_stream(string $url, int $timeout, array $headerLines): array
     $ok = $status >= 200 && $status < 300;
     return ['ok' => $ok, 'status' => $status, 'body' => $body, 'headers' => $responseHeaders, 'error' => $ok ? null : "HTTP {$status}"];
 }
+
+/**
+ * Ruft mehrere Adressen parallel ab (cURL multi), höchstens $parallel gleichzeitig.
+ * Ohne cURL: nacheinander über fetch_url().
+ *
+ * @param array<string|int, string> $urls Schlüssel => URL
+ * @return array<string|int, array{ok: bool, status: int, body: string, headers: list<string>, error: ?string}>
+ */
+function fetch_many(array $urls, int $timeout = 15, int $parallel = 10): array
+{
+    if (!function_exists('curl_multi_init')) {
+        return array_map(static fn ($u) => fetch_url($u, $timeout), $urls);
+    }
+
+    $results = [];
+    $queue = $urls;
+    $mh = curl_multi_init();
+    $active = []; // (int) handle => [key, handle]
+
+    $add = static function () use (&$queue, &$active, $mh, $timeout): void {
+        $key = array_key_first($queue);
+        $url = $queue[$key];
+        unset($queue[$key]);
+        $ch = curl_init($url);
+        curl_setopt_array($ch, [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_MAXREDIRS => 5,
+            CURLOPT_PROTOCOLS => CURLPROTO_HTTP | CURLPROTO_HTTPS,
+            CURLOPT_REDIR_PROTOCOLS => CURLPROTO_HTTP | CURLPROTO_HTTPS,
+            CURLOPT_CONNECTTIMEOUT => min(8, $timeout),
+            CURLOPT_TIMEOUT => $timeout,
+            CURLOPT_USERAGENT => config('http_user_agent', 'pu-webintern/1.0'),
+            CURLOPT_HTTPHEADER => ['Accept: text/plain, */*'],
+            CURLOPT_ENCODING => '',
+            CURLOPT_SSL_VERIFYPEER => true,
+            CURLOPT_SSL_VERIFYHOST => 2,
+        ]);
+        if ($proxy = config('http_proxy')) {
+            curl_setopt($ch, CURLOPT_PROXY, $proxy);
+        }
+        if ($ca = config('http_ca_file')) {
+            curl_setopt($ch, CURLOPT_CAINFO, $ca);
+        }
+        curl_multi_add_handle($mh, $ch);
+        $active[(int) $ch] = [$key, $ch];
+    };
+
+    while ($queue && count($active) < $parallel) {
+        $add();
+    }
+    do {
+        curl_multi_exec($mh, $running);
+        while ($info = curl_multi_info_read($mh)) {
+            $ch = $info['handle'];
+            [$key] = $active[(int) $ch];
+            $body = curl_multi_getcontent($ch);
+            $status = (int) curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
+            $failed = $info['result'] !== CURLE_OK;
+            $ok = !$failed && $status >= 200 && $status < 300;
+            $results[$key] = [
+                'ok' => $ok,
+                'status' => $status,
+                'body' => $failed ? '' : (string) $body,
+                'headers' => [],
+                'error' => $failed ? (curl_strerror($info['result']) ?: 'Abruf fehlgeschlagen') : ($ok ? null : "HTTP {$status}"),
+            ];
+            curl_multi_remove_handle($mh, $ch);
+            curl_close($ch);
+            unset($active[(int) $ch]);
+            if ($queue) {
+                $add();
+                $running = true;
+            }
+        }
+        if ($running) {
+            curl_multi_select($mh, 1.0);
+        }
+    } while ($running || $active);
+    curl_multi_close($mh);
+
+    // Reihenfolge wie übergeben.
+    $ordered = [];
+    foreach (array_keys($urls) as $key) {
+        $ordered[$key] = $results[$key];
+    }
+    return $ordered;
+}

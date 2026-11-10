@@ -72,6 +72,12 @@ Zusätzlich alle 15 Minuten: fehlgeschlagene Uploads zum Live-Server nachholen (
 */15 * * * * /usr/bin/php8.4 /data/wwwcust/ads/home/cron/live-sync.php >> /data/wwwcust/ads/home/logs/cron.log 2>&1
 ```
 
+Und täglich um 10:43 Uhr der Abgleich (Ampel: haben die Verlage die aktuelle Datei?):
+
+```
+43 10 * * * /usr/bin/php8.4 /data/wwwcust/ads/home/cron/adstxt-check.php >> /data/wwwcust/ads/home/logs/cron.log 2>&1
+```
+
 Prüfen: `crontab -l`. Einmal von Hand testen: `php8.4 /data/wwwcust/ads/home/cron/adstxt-update.php; echo $?`
 (0 = ok, 1 = Warnung, z. B. eine Quelle nicht erreichbar, 2 = Fehler). Läufe erscheinen auch im Tool unter „Protokoll“.
 Parallel laufende Aktualisierungen (Cron + „Jetzt aktualisieren“) werden per Sperre verhindert.
@@ -103,6 +109,14 @@ Parallel laufende Aktualisierungen (Cron + „Jetzt aktualisieren“) werden per
   wird der letzte gültige Stand weiterverwendet.
 - **Bereitstellung für die Verlage:** `https://ads.pddigital.de/adstxt/<publisher>/ads.txt` (Adresse steht beim Publisher).
 
+## Abgleich (Ampel)
+
+Seite „Abgleich“ im Ads.txt Organizer: ruft `https://<domain>/ads.txt` bzw. `app-ads.txt` jedes aktiven Publishers ab
+(bei Verbindungsfehlern `http://`) und vergleicht den Inhalt mit unserem Stand – Reihenfolge, Kommentare und
+Schreibweise zählen nicht. Grün = identisch, Gelb = Zeilen fehlen/zu viel (mit Liste und „Stand beim Verlag“ aus
+unserer Kopfzeile), Rot = nicht abrufbar/404/Webseite statt Datei, Grau = keine Domain oder noch keine Datei.
+20 Abrufe parallel; täglich per Cron, sonst „Jetzt prüfen“ bzw. „Neu prüfen“ je Publisher.
+
 ## Tests (lokal, nicht auf dem Server)
 
 ```bash
@@ -112,4 +126,7 @@ php -S 127.0.0.1:8099 -t webintern/tests/fixtures &
 ADSTXT_TEST_DB=1 php webintern/tests/adstxt_service_test.php http://127.0.0.1:8099
 # Live-Upload – braucht einen lokalen Test-SFTP-Server im 'live'-Eintrag der Test-config.php:
 ADSTXT_TEST_DB=1 php webintern/tests/live_sync_test.php /var/www/html/ads/www
+# Abgleich – lokaler Webserver simuliert die Verlags-Websites:
+php -S 127.0.0.1:8098 -t /tmp/verlage &
+ADSTXT_TEST_DB=1 php webintern/tests/adstxt_verify_test.php /tmp/verlage 127.0.0.1:8098
 ```

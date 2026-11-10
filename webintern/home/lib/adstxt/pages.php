@@ -35,6 +35,11 @@ function page_overview(): void
       <div class="pd-stat" style="--c: <?= ($src['err'] ?? 0) > 0 ? 'var(--pd-red)' : (($src['warn'] ?? 0) > 0 ? 'var(--pd-amber)' : '#6FB51E') ?>">
         <div class="pd-stat__n"><?= (int) $src['n'] ?></div><div class="pd-stat__l">Aktive Quellen</div>
         <div class="pd-stat__s"><?= (int) $src['ok'] ?> ok · <?= (int) $src['warn'] ?> Warnung · <?= (int) $src['err'] ?> Fehler</div></div>
+      <?php $cc = adstxt_check_counts(); ?>
+      <a class="pd-stat" href="<?= h(ui_url('abgleich')) ?>" style="--c: <?= $cc['error'] ? 'var(--pd-red)' : ($cc['outdated'] ? 'var(--pd-amber)' : '#6FB51E') ?>">
+        <div class="pd-stat__n"><?= $cc['ok'] ?><span style="font-size:18px;color:var(--text-faint)"> / <?= array_sum($cc) ?></span></div>
+        <div class="pd-stat__l">Verlage aktuell</div>
+        <div class="pd-stat__s"><?= $cc['outdated'] ?> veraltet · <?= $cc['error'] ?> Problem</div></a>
       <div class="pd-stat" style="--c: var(--pd-cyan)"><div class="pd-stat__n"><?= $changes7 ?></div><div class="pd-stat__l">Dateiänderungen (7 Tage)</div>
         <div class="pd-stat__s"><a href="<?= h(ui_url('protokoll')) ?>">Zum Protokoll</a></div></div>
       <div class="pd-stat" style="--c: var(--pd-navy)">
@@ -257,6 +262,9 @@ function page_publisher_form(?int $id, ?array $form, array $errors): void
                     <button type="button" class="pd-btn pd-btn--ghost pd-btn--sm" data-copy="<?= h($ls['url']) ?>">Kopieren</button>
                   </div>
                   <div><?= ui_badge($ls['status'], $ls['status'] === 'ok' ? 'Live' : null) ?> <span class="pd-t-sub"><?= h($ls['text']) ?></span></div>
+                  <?php $chk = db_one('SELECT * FROM adstxt_checks WHERE publisher_id = ? AND file_type = ?', [$p['id'], $type]); ?>
+                  <div>Beim Verlag: <?= ui_check_badge($chk['status'] ?? null) ?>
+                    <?php if ($chk): ?><span class="pd-t-sub"><?= h($chk['message']) ?> · <a href="<?= h(ui_url('abgleich', ['q' => $p['name']])) ?>">Details</a></span><?php endif; ?></div>
                 </div>
               <?php elseif (!live_enabled()): ?>
                 <div class="pd-t-sub">Live-Server noch nicht eingerichtet.</div>
@@ -692,6 +700,105 @@ function page_log(): void
             <td><?= isset($s['sources']) ? (int) $s['sources']['ok'] . ' / ' . (int) $s['sources']['warning'] . ' / ' . (int) $s['sources']['error'] : '—' ?></td>
             <td class="pd-num"><?= (int) ($s['files'] ?? 0) ?></td>
             <td class="pd-num"><?= isset($s['changed']) ? count($s['changed']) : 0 ?></td>
+          </tr>
+        <?php endforeach; ?>
+        </tbody>
+      </table></div>
+      <?php endif; ?>
+    </section>
+    <?php
+    ui_end();
+}
+
+/* ------------------------------------------------------------------------
+ * Abgleich (Ampel): Datei beim Verlag vs. unser Stand
+ * ---------------------------------------------------------------------- */
+function page_verify(): void
+{
+    $filter = (string) ($_GET['status'] ?? 'alle');
+    $q = trim((string) ($_GET['q'] ?? ''));
+    $all = adstxt_checks();
+    $counts = ['alle' => count($all), 'outdated' => 0, 'error' => 0, 'ok' => 0, 'skipped' => 0];
+    foreach ($all as $c) {
+        $counts[$c['status']]++;
+    }
+    $rows = array_filter($all, static fn ($c) => ($filter === 'alle' || $c['status'] === $filter)
+        && ($q === '' || mb_stripos($c['name'] . ' ' . $c['domain'], $q) !== false));
+    $lastCheck = db_value('SELECT MAX(checked_at) FROM adstxt_checks');
+    $neverChecked = (int) db_value('SELECT COUNT(*) FROM adstxt_publishers p WHERE p.active = 1
+        AND NOT EXISTS (SELECT 1 FROM adstxt_checks c WHERE c.publisher_id = p.id)');
+
+    $btn = '<form method="post" action="' . h(ui_url('abgleich')) . '">' . ui_csrf()
+        . '<button class="pd-btn pd-btn--primary pd-btn--sm" name="action" value="verify" data-busy="Prüfe alle Verlage …">'
+        . ui_icon('refresh') . '<span> Jetzt prüfen</span></button></form>';
+    ui_start('abgleich', 'Abgleich', [['Abgleich', null]], $btn);
+    ?>
+    <div class="pd-head"><div><div class="pd-over">Ampel</div><h1>Abgleich bei den Verlagen</h1>
+      <p>Vergleicht die ads.txt/app-ads.txt auf der Website jedes Verlags (<span class="pd-t-mono">https://&lt;domain&gt;/ads.txt</span>) mit unserem aktuellen Stand.
+        Verglichen wird der Inhalt – Reihenfolge, Kommentare und Schreibweise spielen keine Rolle. Automatisch einmal täglich.</p></div>
+      <div class="pd-t-sub"><?= $lastCheck ? 'Zuletzt geprüft: ' . h(ui_date($lastCheck)) : 'Noch nie geprüft' ?></div>
+    </div>
+
+    <div class="pd-stats">
+      <a class="pd-stat" style="--c:#6FB51E" href="<?= h(ui_url('abgleich', ['status' => 'ok'])) ?>"><div class="pd-stat__n"><?= $counts['ok'] ?></div><div class="pd-stat__l">Aktuell</div><div class="pd-stat__s">Datei stimmt überein</div></a>
+      <a class="pd-stat" style="--c:var(--pd-amber)" href="<?= h(ui_url('abgleich', ['status' => 'outdated'])) ?>"><div class="pd-stat__n"><?= $counts['outdated'] ?></div><div class="pd-stat__l">Veraltet</div><div class="pd-stat__s">Zeilen fehlen oder sind zu viel</div></a>
+      <a class="pd-stat" style="--c:var(--pd-red)" href="<?= h(ui_url('abgleich', ['status' => 'error'])) ?>"><div class="pd-stat__n"><?= $counts['error'] ?></div><div class="pd-stat__l">Problem</div><div class="pd-stat__s">nicht erreichbar oder keine ads.txt</div></a>
+      <a class="pd-stat" style="--c:var(--pd-grey-400)" href="<?= h(ui_url('abgleich', ['status' => 'skipped'])) ?>"><div class="pd-stat__n"><?= $counts['skipped'] ?></div><div class="pd-stat__l">Nicht prüfbar</div><div class="pd-stat__s">keine Domain / noch keine Datei</div></a>
+    </div>
+    <?php if ($neverChecked > 0): ?>
+      <div class="pd-alert pd-alert--warning"><?= $neverChecked ?> aktive(r) Publisher wurde(n) noch nie geprüft – „Jetzt prüfen“ holt das nach.</div>
+    <?php endif; ?>
+
+    <section class="pd-card">
+      <nav class="pd-tabs" aria-label="Status">
+        <?php foreach (['alle' => 'Alle', 'outdated' => 'Veraltet', 'error' => 'Problem', 'ok' => 'Aktuell', 'skipped' => 'Nicht prüfbar'] as $k => $label): ?>
+          <a class="pd-tab<?= $filter === $k ? ' is-active' : '' ?>" href="<?= h(ui_url('abgleich', ['status' => $k, 'q' => $q])) ?>"<?= $filter === $k ? ' aria-current="page"' : '' ?>>
+            <?= h($label) ?> <span class="pd-tab__count"><?= $counts[$k] ?></span></a>
+        <?php endforeach; ?>
+      </nav>
+      <div class="pd-toolbar">
+        <form method="get" role="search">
+          <input type="hidden" name="seite" value="abgleich"><input type="hidden" name="status" value="<?= h($filter) ?>">
+          <label class="pd-label" for="q" style="position:absolute;left:-9999px">Suche</label>
+          <input class="pd-input" id="q" type="search" name="q" value="<?= h($q) ?>" placeholder="Publisher oder Domain …" style="min-width:260px">
+          <button class="pd-btn pd-btn--secondary pd-btn--sm">Suchen</button>
+        </form>
+      </div>
+      <?php if (!$rows): ?>
+        <div class="pd-empty"><b><?= $all ? 'Keine Treffer' : 'Noch keine Ergebnisse' ?></b><?= $all ? 'Filter oder Suche anpassen.' : 'Mit „Jetzt prüfen“ starten.' ?></div>
+      <?php else: ?>
+      <div class="pd-table-wrap"><table class="pd-table">
+        <thead><tr><th>Publisher</th><th>Datei</th><th>Ampel</th><th>Befund</th><th>Geprüft</th><th></th></tr></thead>
+        <tbody>
+        <?php foreach ($rows as $c):
+            $fresh = $c['status'] === 'outdated' && $c['output_changed_at'] && strtotime($c['checked_at']) - strtotime($c['output_changed_at']) < 86400; ?>
+          <tr>
+            <td><a class="pd-t-strong" href="<?= h(ui_url('publisher-bearbeiten', ['id' => $c['publisher_id']])) ?>"><?= h($c['name']) ?></a>
+              <div class="pd-t-sub"><?= $c['url'] ? '<a href="' . h($c['url']) . '" target="_blank" rel="noopener noreferrer">' . h($c['domain']) . '</a>' : h($c['domain'] ?: '—') ?></div></td>
+            <td style="white-space:nowrap"><?= h(ADSTXT_FILE_NAMES[$c['file_type']]) ?></td>
+            <td><?= ui_check_badge($c['status']) ?></td>
+            <td>
+              <div><?= h($c['message']) ?></div>
+              <?php if ($c['status'] === 'outdated' || $c['status'] === 'ok'): ?>
+                <div class="pd-t-sub">Stand beim Verlag: <?= $c['remote_generated'] ? h($c['remote_generated']) : 'unbekannt (nicht von uns erzeugt)' ?>
+                  · unser Stand: <?= h(ui_date($c['output_changed_at'])) ?></div>
+              <?php endif; ?>
+              <?php if ($fresh): ?><div class="pd-t-sub">Unsere letzte Änderung ist jünger als 24 Std. – der Verlag holt sie evtl. noch ab.</div><?php endif; ?>
+              <?php if ($c['missing_count'] + $c['extra_count'] > 0): ?>
+                <details class="pd-details"><summary>Zeilen anzeigen</summary><div class="pd-t-mono" style="line-height:1.7">
+                  <?php if ($c['missing_count']): ?><div class="pd-t-sub" style="margin-top:4px">Fehlen beim Verlag (<?= (int) $c['missing_count'] ?>):</div>
+                    <?php foreach (array_filter(explode("\n", (string) $c['missing'])) as $l): ?><div class="pd-diff-add"><?= h($l) ?></div><?php endforeach; ?><?php endif; ?>
+                  <?php if ($c['extra_count']): ?><div class="pd-t-sub" style="margin-top:4px">Beim Verlag zu viel (<?= (int) $c['extra_count'] ?>):</div>
+                    <?php foreach (array_filter(explode("\n", (string) $c['extra'])) as $l): ?><div class="pd-diff-del"><?= h($l) ?></div><?php endforeach; ?><?php endif; ?>
+                </div></details>
+              <?php endif; ?>
+            </td>
+            <td style="white-space:nowrap"><?= h(ui_date($c['checked_at'])) ?></td>
+            <td><div class="pd-t-actions">
+              <form method="post" action="<?= h(ui_url('abgleich', ['status' => $filter, 'q' => $q])) ?>"><?= ui_csrf() ?>
+                <input type="hidden" name="id" value="<?= (int) $c['publisher_id'] ?>">
+                <button class="pd-btn pd-btn--ghost pd-btn--sm" name="action" value="verify" data-busy="Prüfe …"><span>Neu prüfen</span></button></form>
+            </div></td>
           </tr>
         <?php endforeach; ?>
         </tbody>

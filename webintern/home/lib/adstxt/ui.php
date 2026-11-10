@@ -11,6 +11,7 @@ const ADSTXT_PAGES = [
     'quellen' => ['Quellen', 'link'],
     'eintraege' => ['Einträge', 'list'],
     'vorschau' => ['Vorschau', 'file'],
+    'abgleich' => ['Abgleich', 'signal'],
     'protokoll' => ['Protokoll', 'clock'],
 ];
 
@@ -50,6 +51,8 @@ function ui_icon(string $name): string
         'list' => '<path d="M8 6h13M8 12h13M8 18h13"/><circle cx="4" cy="6" r="1"/><circle cx="4" cy="12" r="1"/><circle cx="4" cy="18" r="1"/>',
         'file' => '<path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/>',
         'clock' => '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+        'signal' => '<rect x="7" y="2.5" width="10" height="19" rx="3"/><circle cx="12" cy="7" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="17" r="1.6"/>',
+        'check' => '<path d="M5 12.5l4.5 4.5L19 7.5"/>',
         'refresh' => '<path d="M20 11a8 8 0 0 0-14.9-3M4 4v4h4M4 13a8 8 0 0 0 14.9 3M20 20v-4h-4"/>',
         'plus' => '<path d="M12 5v14M5 12h14"/>',
         'download' => '<path d="M12 4v11M7 10l5 5 5-5M5 20h14"/>',
@@ -66,6 +69,18 @@ function ui_badge(?string $status, ?string $text = null): string
         'ok' => 'ok', 'warning' => 'warning', 'error' => 'error', 'running' => 'info', default => 'off',
     };
     return '<span class="pd-badge pd-badge--' . $cls . '">' . h($text ?? $labels[$status] ?? (string) $status) . '</span>';
+}
+
+/** Ampel für den Abgleich (Farbe + Text, nie nur Farbe). */
+function ui_check_badge(?string $status): string
+{
+    return match ($status) {
+        'ok' => ui_badge('ok', 'Aktuell'),
+        'outdated' => ui_badge('warning', 'Veraltet'),
+        'error' => ui_badge('error', 'Problem'),
+        'skipped' => ui_badge('off', 'Nicht prüfbar'),
+        default => ui_badge('off', 'Noch nicht geprüft'),
+    };
 }
 
 function ui_scope(?string $publisherName): string
@@ -124,6 +139,8 @@ function ui_type_radios(string $selected, array $errors): string
 function ui_start(string $active, string $title, array $crumbs = [], string $barRight = ''): void
 {
     $warn = (int) db_value("SELECT COUNT(*) FROM adstxt_sources WHERE active = 1 AND last_status IN ('warning','error')");
+    $checkCounts = adstxt_check_counts();
+    $checkWarn = $checkCounts['outdated'] + $checkCounts['error'];
     ?>
 <!doctype html>
 <html lang="de">
@@ -152,6 +169,7 @@ function ui_start(string $active, string $title, array $crumbs = [], string $bar
         <a href="<?= h(ui_url($key)) ?>" class="<?= $key === $active ? 'is-active' : '' ?>"<?= $key === $active ? ' aria-current="page"' : '' ?>>
           <?= ui_icon($icon) ?><span><?= h($label) ?></span>
           <?php if ($key === 'quellen' && $warn > 0): ?><span class="pd-nav__count pd-nav__count--warn" title="Quellen mit Warnung oder Fehler"><?= $warn ?></span><?php endif; ?>
+          <?php if ($key === 'abgleich' && $checkWarn > 0): ?><span class="pd-nav__count pd-nav__count--warn" title="Verlage mit veralteter oder fehlender Datei"><?= $checkWarn ?></span><?php endif; ?>
         </a>
       <?php endforeach; ?>
     </nav>

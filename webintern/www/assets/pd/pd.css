@@ -247,3 +247,5 @@ details.pd-details summary { cursor: pointer; color: var(--accent); font-size: v
 details.pd-details[open] summary { margin-bottom: var(--space-2); }
 .pd-grid-side { display: grid; grid-template-columns: minmax(0, 2fr) minmax(260px, 1fr); gap: var(--space-6); align-items: start; }
 @media (max-width: 1000px) { .pd-grid-side { grid-template-columns: 1fr; } }
+a.pd-stat { display: block; color: inherit; transition: var(--transition-control); }
+a.pd-stat:hover { border-color: var(--border-strong); box-shadow: 0 4px 14px rgba(14, 40, 65, .08); color: inherit; }

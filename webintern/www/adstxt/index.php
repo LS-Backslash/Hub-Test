@@ -4,6 +4,7 @@ declare(strict_types=1);
 require dirname(__DIR__, 2) . '/home/lib/bootstrap.php';
 require APP_HOME . '/lib/auth.php';
 require APP_HOME . '/lib/adstxt/service.php';
+require APP_HOME . '/lib/adstxt/verify.php';
 require APP_HOME . '/lib/adstxt/ui.php';
 require APP_HOME . '/lib/adstxt/pages.php';
 
@@ -58,6 +59,14 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
             } catch (Throwable $e) {
                 ui_redirect('uebersicht', [], $e->getMessage(), 'error');
             }
+
+        case 'verify':
+            @set_time_limit(300);
+            ignore_user_abort(true);
+            $one = isset($_POST['id']) && $_POST['id'] !== '' ? (int) $_POST['id'] : null;
+            $c = adstxt_verify($one);
+            $msg = sprintf('Abgleich fertig: %d aktuell, %d veraltet, %d Problem, %d nicht prüfbar.', $c['ok'], $c['outdated'], $c['error'], $c['skipped']);
+            ui_redirect('abgleich', array_intersect_key($_GET, ['status' => 1, 'q' => 1]), $msg, $c['outdated'] + $c['error'] > 0 ? 'warning' : 'success');
 
         case 'publisher_save':
             [$newId, $errors] = adstxt_publisher_save($_POST, $id);
@@ -145,5 +154,6 @@ match ($page) {
     'eintrag-bearbeiten' => page_block_form($id, $form, $errors, $analysis),
     'vorschau' => page_preview($id, (string) ($_GET['typ'] ?? 'ads')),
     'protokoll' => page_log(),
+    'abgleich' => page_verify(),
     default => page_overview(),
 };

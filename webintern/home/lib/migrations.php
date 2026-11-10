@@ -145,4 +145,26 @@ return [
             ADD COLUMN upload_error VARCHAR(500) NULL',
     ],
 
+    '2026_11_12_004_adstxt_checks' => [
+        // Abgleich: aktuelle Datei beim Verlag vs. unser Stand (ein Eintrag je Publisher und Datei).
+        'CREATE TABLE adstxt_checks (
+            publisher_id INT UNSIGNED NOT NULL,
+            file_type ENUM(\'ads\',\'app-ads\') NOT NULL,
+            checked_at DATETIME NOT NULL,
+            status ENUM(\'ok\',\'outdated\',\'error\',\'skipped\') NOT NULL,
+            url VARCHAR(300) NULL,
+            http_status SMALLINT UNSIGNED NULL,
+            message VARCHAR(500) NULL,
+            missing_count INT UNSIGNED NOT NULL DEFAULT 0,
+            extra_count INT UNSIGNED NOT NULL DEFAULT 0,
+            missing MEDIUMTEXT NULL,
+            extra MEDIUMTEXT NULL,
+            remote_generated VARCHAR(20) NULL,
+            our_changed_at DATETIME NULL,
+            PRIMARY KEY (publisher_id, file_type),
+            KEY ix_status (status),
+            CONSTRAINT fk_checks_publisher FOREIGN KEY (publisher_id) REFERENCES adstxt_publishers (id)
+        ) ' . DB_TABLE_OPTIONS,
+    ],
+
 ];
