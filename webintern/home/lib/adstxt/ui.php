@@ -133,7 +133,12 @@ function ui_start(string $active, string $title, array $crumbs = [], string $bar
 <meta name="robots" content="noindex">
 <title><?= h($title) ?> · Ads.txt Organizer</title>
 <link rel="stylesheet" href="../assets/pd/pd.css">
-<style>.pd-alert--warning { background: #FFF6E5; border-color: var(--pd-amber); color: #6B4100; }</style>
+<style>
+  .pd-alert--warning { background: #FFF6E5; border-color: var(--pd-amber); color: #6B4100; }
+  .pd-live { display: flex; flex-direction: column; gap: 6px; padding: var(--space-3); background: var(--surface-sunken); border-radius: var(--radius-control); }
+  .pd-live__row { display: flex; align-items: center; gap: var(--space-2); }
+  .pd-live__url { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+</style>
 </head>
 <body>
 <div class="pd-app">
@@ -180,6 +185,12 @@ function ui_end(): void
 </div>
 <script>
 // Ladezustand für Buttons mit data-busy, Rückfrage für data-confirm.
+document.querySelectorAll('[data-copy]').forEach((btn) => btn.addEventListener('click', async () => {
+  const label = btn.textContent;
+  try { await navigator.clipboard.writeText(btn.dataset.copy); btn.textContent = 'Kopiert'; }
+  catch { window.prompt('Adresse kopieren:', btn.dataset.copy); }
+  setTimeout(() => { btn.textContent = label; }, 1500);
+}));
 document.addEventListener('submit', (e) => {
   const btn = e.submitter;
   if (btn && btn.dataset.confirm && !confirm(btn.dataset.confirm)) { e.preventDefault(); return; }

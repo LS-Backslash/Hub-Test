@@ -13,4 +13,15 @@ return [
         'user' => 'ads',
         'pass' => 'HIER_PASSWORT_EINTRAGEN',
     ],
+
+    // Externer Live-Server (SFTP). Solange Benutzer/Passwort Platzhalter sind, wird nichts hochgeladen.
+    'live' => [
+        'host' => 'webextern.pdv1.mediengruppe.pd',
+        'port' => 22,
+        'user' => 'HIER_BENUTZER_EINTRAGEN',
+        'pass' => 'HIER_PASSWORT_EINTRAGEN',
+        'path' => '/var/www/html/ads/www',          // Zielordner auf dem Live-Server
+        'url' => 'https://ads.pddigital.de',         // unter dieser Adresse ist der Zielordner öffentlich erreichbar
+        'known_hosts' => '/data/wwwcust/ads/home/.ssh/known_hosts',
+    ],
 ];

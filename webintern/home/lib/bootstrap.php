@@ -29,6 +29,7 @@ require __DIR__ . '/helpers.php';
 require __DIR__ . '/storage.php';
 require __DIR__ . '/http.php';
 require __DIR__ . '/db.php';
+require __DIR__ . '/live.php';
 
 $configFile = APP_CONFIG . '/config.php';
 $GLOBALS['APP_CONFIG'] = is_file($configFile) ? (require $configFile) : [];

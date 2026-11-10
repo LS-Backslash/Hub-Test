@@ -2,7 +2,10 @@
 declare(strict_types=1);
 
 require dirname(__DIR__, 2) . '/home/lib/bootstrap.php';
+require APP_HOME . '/lib/auth.php';   // nur für CSRF-Schutz
 require APP_HOME . '/lib/epaper.php';
+
+auth_start_session(); // vor jeder Ausgabe, damit das CSRF-Token in der Sitzung landet
 
 const PER_PAGE = 50;
 
@@ -70,6 +73,10 @@ function list_url(array $override = []): string
   .ep-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 11.5px; font-weight: 500; padding: 3px 9px; border-radius: 999px; white-space: nowrap; background: var(--pd-grey-200); color: var(--pd-grey-800); }
   .ep-badge::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--b, var(--pd-grey-500)); }
   .ep-badge--live { --b: #6FB51E; background: #F0FADB; }
+  .ep-badge--error { --b: var(--pd-red); background: var(--danger-bg); color: #7A2207; cursor: help; }
+  .ep-copy { border: 0; background: none; cursor: pointer; color: var(--text-muted); font-size: 15px; padding: 2px 6px; border-radius: 4px; vertical-align: middle; }
+  .ep-copy:hover { background: var(--pd-grey-200); color: var(--pd-black); }
+  .ep-copy.is-done { color: #4F9A10; }
   .ep-empty { padding: var(--space-12) var(--space-6); text-align: center; color: var(--text-muted); }
   .ep-pager { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); padding: var(--space-3) var(--space-6); border-top: 1px solid var(--border); font-size: var(--fs-sm); color: var(--text-muted); }
   .ep-pager nav { display: flex; gap: var(--space-2); }
@@ -151,6 +158,9 @@ function list_url(array $override = []): string
             <td>
               <?php if ($it['live_url']): ?>
                 <a class="ep-badge ep-badge--live" href="<?= h($it['live_url']) ?>" target="_blank" rel="noopener">Live</a>
+                <button type="button" class="ep-copy" data-copy="<?= h($it['live_url']) ?>" title="Live-Adresse kopieren" aria-label="Live-Adresse kopieren"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="1.5"/><path d="M5 15V5a1 1 0 0 1 1-1h10"/></svg></button>
+              <?php elseif ($it['upload_error']): ?>
+                <span class="ep-badge ep-badge--error" title="<?= h($it['upload_error']) ?>">Fehler</span>
               <?php else: ?>
                 <span class="ep-badge">Lokal</span>
               <?php endif; ?>
@@ -159,6 +169,11 @@ function list_url(array $override = []): string
             <td><div class="ep-actions">
               <a class="pd-btn pd-btn--ghost" href="<?= h($base . 'index.html') ?>" target="_blank" rel="noopener">Vorschau</a>
               <a class="pd-btn pd-btn--ghost" href="zip.php?id=<?= h(rawurlencode($it['id'])) ?>">ZIP</a>
+              <?php if (!$it['live_url'] && live_enabled()): ?>
+                <form method="post" action="./"><input type="hidden" name="csrf" value="<?= h(csrf_token()) ?>">
+                  <input type="hidden" name="id" value="<?= h($it['id']) ?>"><input type="hidden" name="return" value="list">
+                  <button class="pd-btn pd-btn--ghost" name="action" value="publish">Hochladen</button></form>
+              <?php endif; ?>
             </div></td>
           </tr>
         <?php endforeach; ?>
@@ -177,5 +192,12 @@ function list_url(array $override = []): string
     <?php endif; ?>
   </section>
 </main>
+<script>
+document.querySelectorAll('[data-copy]').forEach((btn) => btn.addEventListener('click', async () => {
+  try { await navigator.clipboard.writeText(btn.dataset.copy); btn.classList.add('is-done'); btn.title = 'Kopiert'; }
+  catch { window.prompt('Adresse kopieren:', btn.dataset.copy); }
+  setTimeout(() => { btn.classList.remove('is-done'); btn.title = 'Live-Adresse kopieren'; }, 1500);
+}));
+</script>
 </body>
 </html>

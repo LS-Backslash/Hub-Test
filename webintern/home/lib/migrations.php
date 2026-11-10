@@ -135,4 +135,14 @@ return [
         ) ' . DB_TABLE_OPTIONS,
     ],
 
+    '2026_11_10_003_live_upload' => [
+        // ePaper: letzter Upload-Fehler (live_url/uploaded_at gibt es schon).
+        'ALTER TABLE epaper_creatives ADD COLUMN upload_error VARCHAR(500) NULL AFTER uploaded_at',
+        // Ads.txt: welcher Stand liegt auf dem Live-Server?
+        'ALTER TABLE adstxt_outputs
+            ADD COLUMN uploaded_hash CHAR(64) NULL,
+            ADD COLUMN uploaded_at DATETIME NULL,
+            ADD COLUMN upload_error VARCHAR(500) NULL',
+    ],
+
 ];

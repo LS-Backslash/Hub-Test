@@ -363,7 +363,12 @@ function adstxt_run(string $trigger): array
             }
         }
 
-        $result['status'] = $result['sources']['error'] > 0 || $result['sources']['warning'] > 0 ? 'warning' : 'ok';
+        if (live_enabled()) {
+            $result['live'] = adstxt_sync();
+        }
+
+        $liveFailed = ($result['live']['failed'] ?? 0) > 0;
+        $result['status'] = $result['sources']['error'] > 0 || $result['sources']['warning'] > 0 || $liveFailed ? 'warning' : 'ok';
     } catch (Throwable $e) {
         $result['status'] = 'error';
         $result['error'] = $e->getMessage();
@@ -375,9 +380,10 @@ function adstxt_run(string $trigger): array
         fclose($lock);
     }
 
-    app_log('adstxt', sprintf('Lauf #%d (%s): %s – Quellen ok/Warnung/Fehler %d/%d/%d, %d Datei(en), %d geändert',
+    app_log('adstxt', sprintf('Lauf #%d (%s): %s – Quellen ok/Warnung/Fehler %d/%d/%d, %d Datei(en), %d geändert%s',
         $runId, $trigger, $result['status'], $result['sources']['ok'], $result['sources']['warning'], $result['sources']['error'],
-        $result['files'], count($result['changed'])));
+        $result['files'], count($result['changed']),
+        isset($result['live']) ? sprintf(', live: %d hochgeladen, %d gelöscht, %d Fehler', $result['live']['uploaded'], $result['live']['deleted'], $result['live']['failed']) : ''));
     return $result;
 }
 
@@ -386,3 +392,85 @@ function adstxt_output(int $publisherId, string $fileType): ?array
 {
     return db_one('SELECT * FROM adstxt_outputs WHERE publisher_id = ? AND file_type = ?', [$publisherId, $fileType]);
 }
+
+/* ------------------------------------------------------------------------
+ * Live-Server
+ * ---------------------------------------------------------------------- */
+
+/** Pfad einer Datei auf dem Live-Server, z. B. "adstxt/suedkurier/ads.txt". */
+function adstxt_live_path(string $slug, string $fileType): string
+{
+    return "adstxt/{$slug}/" . ADSTXT_FILE_NAMES[$fileType];
+}
+
+/**
+ * Gleicht den Live-Server ab: geänderte Dateien hochladen, Dateien von deaktivierten
+ * Publishern bzw. abgewählten Dateitypen löschen.
+ *
+ * @return array{uploaded: int, deleted: int, failed: int, errors: list<string>}
+ */
+function adstxt_sync(): array
+{
+    $r = ['uploaded' => 0, 'deleted' => 0, 'failed' => 0, 'errors' => []];
+    if (!live_enabled()) {
+        return $r;
+    }
+    $rows = db_all('SELECT o.*, p.slug, p.name, p.active, p.wants_ads, p.wants_app_ads
+                    FROM adstxt_outputs o JOIN adstxt_publishers p ON p.id = o.publisher_id ORDER BY p.name, o.file_type');
+
+    foreach ($rows as $o) {
+        if ($r['failed'] >= 3 && $r['uploaded'] + $r['deleted'] === 0) {
+            $r['errors'][] = 'Abgebrochen nach 3 Fehlern – Live-Server vermutlich nicht erreichbar.';
+            break;
+        }
+        $wanted = $o['active'] && $o[$o['file_type'] === 'ads' ? 'wants_ads' : 'wants_app_ads'];
+        $path = adstxt_live_path($o['slug'], $o['file_type']);
+        try {
+            if ($wanted && $o['uploaded_hash'] !== $o['body_hash']) {
+                live_put($path, $o['content']);
+                db_run('UPDATE adstxt_outputs SET uploaded_hash = ?, uploaded_at = ?, upload_error = NULL WHERE publisher_id = ? AND file_type = ?',
+                    [$o['body_hash'], db_now(), $o['publisher_id'], $o['file_type']]);
+                $r['uploaded']++;
+            } elseif (!$wanted && $o['uploaded_hash'] !== null) {
+                live_delete([$path], ["adstxt/{$o['slug']}"]); // Ordner nur, wenn er danach leer ist
+                db_run('UPDATE adstxt_outputs SET uploaded_hash = NULL, uploaded_at = NULL, upload_error = NULL WHERE publisher_id = ? AND file_type = ?',
+                    [$o['publisher_id'], $o['file_type']]);
+                $r['deleted']++;
+            }
+        } catch (Throwable $e) {
+            db_run('UPDATE adstxt_outputs SET upload_error = ? WHERE publisher_id = ? AND file_type = ?',
+                [mb_substr($e->getMessage(), 0, 500), $o['publisher_id'], $o['file_type']]);
+            $r['failed']++;
+            $r['errors'][] = "{$o['name']} – " . ADSTXT_FILE_NAMES[$o['file_type']] . ': ' . $e->getMessage();
+            app_log('adstxt', "Live-Upload fehlgeschlagen ({$path}): " . $e->getMessage());
+        }
+    }
+    return $r;
+}
+
+/**
+ * Live-Status einer Datei für die Anzeige.
+ *
+ * @return array{status: string, text: string, url: ?string}
+ */
+function adstxt_live_status(array $publisher, ?array $output, string $fileType): array
+{
+    $url = live_url(adstxt_live_path($publisher['slug'], $fileType));
+    if (!live_enabled()) {
+        return ['status' => 'off', 'text' => 'Live-Server nicht eingerichtet', 'url' => null];
+    }
+    if ($output === null) {
+        return ['status' => 'off', 'text' => 'Noch nicht erzeugt', 'url' => $url];
+    }
+    if ($output['upload_error']) {
+        return ['status' => 'error', 'text' => 'Upload fehlgeschlagen: ' . $output['upload_error'], 'url' => $url];
+    }
+    if ($output['uploaded_hash'] === null) {
+        return ['status' => 'warning', 'text' => 'Noch nicht hochgeladen', 'url' => $url];
+    }
+    if ($output['uploaded_hash'] !== $output['body_hash']) {
+        return ['status' => 'warning', 'text' => 'Neuer Stand wird beim nächsten Lauf hochgeladen', 'url' => $url];
+    }
+    return ['status' => 'ok', 'text' => 'Live seit ' . date_de(strtotime($output['uploaded_at'])), 'url' => $url];
+}
+

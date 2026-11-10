@@ -49,6 +49,10 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
                 $r = adstxt_run('manual');
                 $msg = sprintf('Aktualisierung abgeschlossen: %d Datei(en), davon %d geändert. Quellen: %d ok, %d Warnung, %d Fehler.',
                     $r['files'], count($r['changed']), $r['sources']['ok'], $r['sources']['warning'], $r['sources']['error']);
+                if (isset($r['live'])) {
+                    $msg .= sprintf(' Live-Server: %d hochgeladen, %d gelöscht%s.', $r['live']['uploaded'], $r['live']['deleted'],
+                        $r['live']['failed'] ? ', ' . $r['live']['failed'] . ' Fehler (' . $r['live']['errors'][0] . ')' : '');
+                }
                 $return = in_array($_POST['return'] ?? '', ['uebersicht', 'vorschau'], true) ? $_POST['return'] : 'uebersicht';
                 ui_redirect($return, $return === 'vorschau' ? ['id' => $id] : [], $msg, $r['status'] === 'ok' ? 'success' : 'warning');
             } catch (Throwable $e) {

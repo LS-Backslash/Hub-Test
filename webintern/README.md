@@ -66,9 +66,30 @@ Ads.txt-Aktualisierung alle 12 Stunden (05:17 und 17:17 Uhr):
 17 5,17 * * * /usr/bin/php8.4 /data/wwwcust/ads/home/cron/adstxt-update.php >> /data/wwwcust/ads/home/logs/cron.log 2>&1
 ```
 
+Zusätzlich alle 15 Minuten: fehlgeschlagene Uploads zum Live-Server nachholen (tut nichts, wenn nichts aussteht):
+
+```
+*/15 * * * * /usr/bin/php8.4 /data/wwwcust/ads/home/cron/live-sync.php >> /data/wwwcust/ads/home/logs/cron.log 2>&1
+```
+
 Prüfen: `crontab -l`. Einmal von Hand testen: `php8.4 /data/wwwcust/ads/home/cron/adstxt-update.php; echo $?`
 (0 = ok, 1 = Warnung, z. B. eine Quelle nicht erreichbar, 2 = Fehler). Läufe erscheinen auch im Tool unter „Protokoll“.
 Parallel laufende Aktualisierungen (Cron + „Jetzt aktualisieren“) werden per Sperre verhindert.
+
+## Live-Server (extern)
+
+- Zugang: SFTP auf `webextern.pdv1.mediengruppe.pd:22`, Zielordner `/var/www/html/ads/www`,
+  öffentlich unter `https://ads.pddigital.de`. Zugangsdaten nur in `config.php` (Eintrag `live`).
+- Fingerabdruck des Servers einmalig speichern (die Verbindung wird sonst abgelehnt):
+  `ssh-keyscan -p 22 webextern.pdv1.mediengruppe.pd >> ~/.ssh/known_hosts`
+- Struktur auf dem Live-Server:
+  `epaper/<verlag>/<datum>_<kunde>/{index.html,quer.*,hoch.*}` und `adstxt/<publisher>/{ads.txt,app-ads.txt}`.
+- ePaper: Upload direkt nach dem Speichern (Bilder zuerst, `index.html` zuletzt). Bei Fehlern Status „Fehler“,
+  Button „Hochladen“ bzw. automatisch über `live-sync.php`.
+- Ads.txt: nach jeder Aktualisierung werden nur geänderte Dateien hochgeladen; Dateien deaktivierter Publisher
+  bzw. abgewählter Dateitypen werden gelöscht.
+- Jede Datei wird erst als `.tmp-…` hochgeladen und dann umbenannt – niemand bekommt eine halbe Datei.
+- Test: `php8.4 /data/wwwcust/ads/home/bin/check.php` (Abschnitt „Live-Server“ schreibt und löscht eine Testdatei).
 
 ## Ads.txt Organizer – Funktionsweise
 
@@ -80,8 +101,7 @@ Parallel laufende Aktualisierungen (Cron + „Jetzt aktualisieren“) werden per
   bleibt, eine fehlende Zertifizierungs-ID wird ergänzt.
 - **Absicherung:** Ist eine Quelle nicht erreichbar, liefert HTML/JSON, ist leer oder schrumpft um mehr als die Hälfte,
   wird der letzte gültige Stand weiterverwendet.
-- **Bereitstellung für die Verlage:** folgt mit dem externen Live-Server (gleicher Upload-Weg wie beim ePaper-Tool).
-  Bis dahin: Vorschau und Download im Tool.
+- **Bereitstellung für die Verlage:** `https://ads.pddigital.de/adstxt/<publisher>/ads.txt` (Adresse steht beim Publisher).
 
 ## Tests (lokal, nicht auf dem Server)
 
@@ -90,4 +110,6 @@ php webintern/tests/adstxt_core_test.php
 # Integrationstest – NUR gegen eine Test-Datenbank, leert die adstxt-Tabellen:
 php -S 127.0.0.1:8099 -t webintern/tests/fixtures &
 ADSTXT_TEST_DB=1 php webintern/tests/adstxt_service_test.php http://127.0.0.1:8099
+# Live-Upload – braucht einen lokalen Test-SFTP-Server im 'live'-Eintrag der Test-config.php:
+ADSTXT_TEST_DB=1 php webintern/tests/live_sync_test.php /var/www/html/ads/www
 ```

@@ -64,5 +64,16 @@ line($res['ok'], 'Abruf ' . parse_url($url, PHP_URL_HOST), $res['ok']
     ? sprintf('HTTP %d, %d Bytes, %.1f s', $res['status'], strlen($res['body']), microtime(true) - $t)
     : ($res['error'] ?? 'Fehler'));
 
+echo "\n== Live-Server (SFTP) ==\n";
+$live = live_config();
+if ($live === null) {
+    line(null, 'Konfiguration', 'noch nicht eingetragen (config.php, Eintrag "live") – wird übersprungen');
+} else {
+    line(is_file($live['known_hosts']), 'Fingerabdruck (known_hosts)', $live['known_hosts']);
+    $t = live_test();
+    line($t['ok'], "Verbindung {$live['host']}:{$live['port']}", $t['message']);
+    line(null, 'Öffentliche Adresse', $live['url']);
+}
+
 echo "\n" . ($problems === 0 ? "Alles in Ordnung.\n" : "{$problems} Problem(e) gefunden (mit !! markiert).\n");
 exit($problems === 0 ? 0 : 1);

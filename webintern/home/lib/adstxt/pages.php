@@ -12,7 +12,7 @@ function page_overview(): void
 {
     $publishers = adstxt_publishers(false);
     $outputs = [];
-    foreach (db_all('SELECT publisher_id, file_type, record_count, changed_at FROM adstxt_outputs') as $o) {
+    foreach (db_all('SELECT * FROM adstxt_outputs') as $o) {
         $outputs[$o['publisher_id']][$o['file_type']] = $o;
     }
     $src = db_one("SELECT COUNT(*) AS n, SUM(last_status = 'ok') AS ok, SUM(last_status = 'warning') AS warn, SUM(last_status = 'error') AS err
@@ -83,6 +83,9 @@ function page_overview(): void
                 <?php else: ?>
                   <a href="<?= h(ui_url('vorschau', ['id' => $p['id'], 'typ' => $type])) ?>"><?= (int) $o['record_count'] ?> Einträge</a>
                   <div class="pd-t-sub">geändert <?= h(ui_date($o['changed_at'])) ?></div>
+                  <?php if (live_enabled()): $ls = adstxt_live_status($p, $o, $type); ?>
+                    <div style="margin-top:4px"><?= ui_badge($ls['status'], $ls['status'] === 'ok' ? 'Live' : ($ls['status'] === 'error' ? 'Upload-Fehler' : 'Ausstehend')) ?></div>
+                  <?php endif; ?>
                 <?php endif; ?>
               </td>
             <?php endforeach; ?>
@@ -181,7 +184,7 @@ function page_publisher_form(?int $id, ?array $form, array $errors): void
     ui_start('publisher', $title, [['Publisher', ui_url('publisher')], [$title, null]]);
     ?>
     <div class="pd-head"><div><div class="pd-over">Publisher</div><h1><?= h($title) ?></h1>
-      <?php if (!$isNew): ?><p>Kürzel <span class="pd-t-mono"><?= h($p['slug']) ?></span> – Teil der späteren Download-Adresse, bleibt deshalb fest.</p><?php endif; ?></div>
+      <?php if (!$isNew): ?><p>Kürzel <span class="pd-t-mono"><?= h($p['slug']) ?></span> – Teil der Adresse, unter der sich der Verlag seine Dateien abholt; bleibt deshalb fest.</p><?php endif; ?></div>
       <?php if (!$isNew): ?><?= $p['active'] ? ui_badge('ok', 'Aktiv') : ui_badge('off') ?><?php endif; ?>
     </div>
 
@@ -246,6 +249,18 @@ function page_publisher_form(?int $id, ?array $form, array $errors): void
                 <div><b><?= h(ADSTXT_FILE_NAMES[$type]) ?></b><div class="pd-t-sub"><?= $o ? (int) $o['record_count'] . ' Einträge · ' . h(ui_date($o['changed_at'])) : 'noch nicht erzeugt' ?></div></div>
                 <a class="pd-btn pd-btn--ghost pd-btn--sm" href="<?= h(ui_url('vorschau', ['id' => $p['id'], 'typ' => $type])) ?>">Vorschau</a>
               </div>
+              <?php $ls = adstxt_live_status($p, $o, $type); if ($ls['url']): ?>
+                <div class="pd-live">
+                  <div class="pd-label" style="font-size:12px">Adresse für den Verlag</div>
+                  <div class="pd-live__row">
+                    <code class="pd-t-mono pd-live__url"><?= h($ls['url']) ?></code>
+                    <button type="button" class="pd-btn pd-btn--ghost pd-btn--sm" data-copy="<?= h($ls['url']) ?>">Kopieren</button>
+                  </div>
+                  <div><?= ui_badge($ls['status'], $ls['status'] === 'ok' ? 'Live' : null) ?> <span class="pd-t-sub"><?= h($ls['text']) ?></span></div>
+                </div>
+              <?php elseif (!live_enabled()): ?>
+                <div class="pd-t-sub">Live-Server noch nicht eingerichtet.</div>
+              <?php endif; ?>
             <?php endforeach; ?>
           </div>
         </section>

@@ -5,6 +5,8 @@ require dirname(__DIR__, 2) . '/home/lib/bootstrap.php';
 require APP_HOME . '/lib/auth.php';   // nur für CSRF-Schutz, kein Login nötig
 require APP_HOME . '/lib/epaper.php';
 
+auth_start_session(); // vor jeder Ausgabe, damit das CSRF-Token in der Sitzung landet
+
 // Zuletzt gewählter Verlag (Cookie, gemeinsam mit der Übersicht) als Vorauswahl.
 $rememberedPublisher = (string) ($_COOKIE['epaper_publisher'] ?? '');
 $values = [
@@ -16,6 +18,16 @@ $folderExists = false;
 
 if (epaper_post_too_large()) {
     $errors['_form'] = 'Die hochgeladenen Dateien sind zusammen zu groß.';
+} elseif (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST' && ($_POST['action'] ?? '') === 'publish') {
+    // "Erneut hochladen" für ein bereits gespeichertes Creative.
+    csrf_check();
+    $id = (string) ($_POST['id'] ?? '');
+    if (epaper_exists($id)) {
+        epaper_publish($id);
+    }
+    $back = ($_POST['return'] ?? '') === 'list' ? 'creatives.php' : '?saved=' . rawurlencode($id);
+    header('Location: ' . $back, true, 303);
+    exit;
 } elseif (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
     csrf_check();
     [$values, $errors] = epaper_validate($_POST, $_FILES);
@@ -30,6 +42,10 @@ if (epaper_post_too_large()) {
         try {
             epaper_save($values, $overwrite);
             epaper_remember_publisher($values['publisher']);
+            if (live_enabled()) {
+                @set_time_limit(120);
+                epaper_publish($values['id']); // Ergebnis steht danach am Creative (live_url bzw. upload_error)
+            }
             // Post/Redirect/Get: Neuladen der Seite sendet das Formular nicht erneut.
             header('Location: ?saved=' . rawurlencode($values['id']), true, 303);
             exit;
@@ -78,6 +94,8 @@ function field_error(array $errors, string $field): string
   .ep-link { background: var(--surface-sunken); border: 1px solid var(--border); border-radius: var(--radius-control); padding: 10px 12px; font-size: var(--fs-sm); word-break: break-all; }
   .ep-link:empty::before { content: "Link wird hier angezeigt …"; color: var(--text-faint); font-style: italic; }
   .ep-frame { display: block; width: 100%; height: 420px; border: 0; border-bottom: 1px solid var(--border); background: var(--pd-white); }
+  .ep-live { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2) var(--space-3); }
+  .ep-live a { word-break: break-all; }
   .ep-check { display: flex; align-items: center; gap: var(--space-2); font-size: var(--fs-sm); color: var(--text-strong); }
   .ep-check input { width: 18px; height: 18px; accent-color: var(--pd-blue); }
 </style>
@@ -105,8 +123,25 @@ function field_error(array $errors, string $field): string
       <strong>Creative gespeichert:</strong> <?= h(epaper_publisher_name($success['publisher'])) ?> · <code><?= h($success['id']) ?></code> ·
       <a href="<?= h(EPAPER_CREATIVES_URL . '/' . $success['id'] . '/index.html') ?>" target="_blank" rel="noopener">Vorschau öffnen</a> ·
       <a href="zip.php?id=<?= h(rawurlencode($success['id'])) ?>">ZIP herunterladen</a>
-      <br>Live-Pfad: <em>noch nicht hochgeladen</em> (Upload auf den Live-Server folgt in Schritt 3).
     </div>
+    <?php if ($success['live_url']): ?>
+      <div class="pd-alert pd-alert--success ep-live" role="status">
+        <strong>Live:</strong>
+        <a href="<?= h($success['live_url']) ?>" target="_blank" rel="noopener" id="ep-live-url"><?= h($success['live_url']) ?></a>
+        <button type="button" class="pd-btn pd-btn--secondary pd-btn--sm" data-copy="<?= h($success['live_url']) ?>">Adresse kopieren</button>
+      </div>
+    <?php elseif (live_enabled()): ?>
+      <div class="pd-alert pd-alert--error ep-live" role="alert">
+        <strong>Noch nicht live:</strong> <?= h($success['upload_error'] ?: 'Upload ausstehend.') ?>
+        Der Cronjob versucht es automatisch erneut.
+        <form method="post" style="display:inline"><?= '<input type="hidden" name="csrf" value="' . h(csrf_token()) . '">' ?>
+          <input type="hidden" name="id" value="<?= h($success['id']) ?>">
+          <button class="pd-btn pd-btn--secondary pd-btn--sm" name="action" value="publish">Jetzt erneut hochladen</button>
+        </form>
+      </div>
+    <?php else: ?>
+      <div class="pd-alert ep-live" style="background:var(--pd-grey-100);border-color:var(--border-strong)">Live-Server ist noch nicht eingerichtet – das Creative liegt nur lokal.</div>
+    <?php endif; ?>
   <?php elseif ($errors): ?>
     <div class="pd-alert pd-alert--error" role="alert">
       <strong>Bitte die Angaben prüfen.</strong>
@@ -297,6 +332,13 @@ function field_error(array $errors, string $field): string
   link.addEventListener('input', updateLink);
   updateFolder();
   updateLink();
+
+  // Live-Adresse in die Zwischenablage kopieren.
+  document.querySelectorAll('[data-copy]').forEach((btn) => btn.addEventListener('click', async () => {
+    try { await navigator.clipboard.writeText(btn.dataset.copy); btn.textContent = 'Kopiert ✓'; }
+    catch { window.prompt('Adresse kopieren:', btn.dataset.copy); }
+    setTimeout(() => { btn.textContent = 'Adresse kopieren'; }, 2000);
+  }));
 
   // Browser-Prüfung vor dem Absenden; der Server prüft trotzdem alles erneut.
   $('ep-form').addEventListener('submit', (e) => {

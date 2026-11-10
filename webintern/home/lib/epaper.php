@@ -279,7 +279,7 @@ function epaper_save(array $values, bool $overwrite): void
             customer = VALUES(customer), pub_date = VALUES(pub_date), link = VALUES(link),
             landscape_file = VALUES(landscape_file), landscape_width = VALUES(landscape_width), landscape_height = VALUES(landscape_height),
             portrait_file = VALUES(portrait_file), portrait_width = VALUES(portrait_width), portrait_height = VALUES(portrait_height),
-            live_url = NULL, uploaded_at = NULL, -- neue Version muss neu hochgeladen werden
+            live_url = NULL, uploaded_at = NULL, upload_error = NULL, -- neue Version muss neu hochgeladen werden
             updated_at = VALUES(updated_at)',
         [
             $values['publisher'], $values['folder'], $values['customer'], $values['date'], $values['link'],
@@ -324,6 +324,7 @@ function epaper_row_to_item(array $r): array
         ],
         'live_url' => $r['live_url'],
         'uploaded_at' => $r['uploaded_at'],
+        'upload_error' => $r['upload_error'] ?? null,
         'created_at' => $r['created_at'],
         'updated_at' => $r['updated_at'],
     ];
@@ -429,3 +430,57 @@ function epaper_remember_publisher(string $value): void
         ]);
     }
 }
+
+/* ------------------------------------------------------------------------
+ * Live-Server
+ * ---------------------------------------------------------------------- */
+
+/**
+ * Lädt ein Creative auf den Live-Server (epaper/<verlag>/<ordner>/…).
+ * Reihenfolge: Bilder zuerst, index.html zuletzt – so ist die Seite nie ohne Bilder erreichbar.
+ *
+ * @return string|null Fehlermeldung oder null bei Erfolg
+ */
+function epaper_publish(string $id): ?string
+{
+    $item = epaper_get($id);
+    if ($item === null) {
+        return 'Creative nicht gefunden.';
+    }
+    if (!live_enabled()) {
+        return 'Live-Server ist noch nicht eingerichtet.';
+    }
+    [$publisher, $folder] = explode('/', $id, 2);
+    $local = EPAPER_CREATIVES_DIR . '/' . $id;
+    try {
+        foreach ([$item['files']['landscape']['file'], $item['files']['portrait']['file'], 'index.html'] as $file) {
+            live_put_file("epaper/{$id}/{$file}", "{$local}/{$file}");
+        }
+        db_run('UPDATE epaper_creatives SET live_url = ?, uploaded_at = ?, upload_error = NULL WHERE publisher = ? AND folder = ?',
+            [live_url("epaper/{$id}/index.html"), db_now(), $publisher, $folder]);
+        app_log('epaper', "Live hochgeladen: {$id}");
+        return null;
+    } catch (Throwable $e) {
+        db_run('UPDATE epaper_creatives SET upload_error = ? WHERE publisher = ? AND folder = ?',
+            [mb_substr($e->getMessage(), 0, 500), $publisher, $folder]);
+        app_log('epaper', "Upload fehlgeschlagen ({$id}): " . $e->getMessage());
+        return $e->getMessage();
+    }
+}
+
+/** Lädt alle noch nicht hochgeladenen Creatives hoch (für den Cronjob). Gibt [ok, fehler] zurück. */
+function epaper_sync(int $limit = 50): array
+{
+    if (!live_enabled()) {
+        return [0, 0];
+    }
+    $ok = $failed = 0;
+    foreach (db_all('SELECT publisher, folder FROM epaper_creatives WHERE live_url IS NULL ORDER BY pub_date LIMIT ' . (int) $limit) as $r) {
+        epaper_publish($r['publisher'] . '/' . $r['folder']) === null ? $ok++ : $failed++;
+        if ($failed >= 3 && $ok === 0) {
+            break; // Server offenbar nicht erreichbar – nicht weiter probieren.
+        }
+    }
+    return [$ok, $failed];
+}
+
