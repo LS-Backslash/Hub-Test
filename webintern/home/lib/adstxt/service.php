@@ -471,6 +471,6 @@ function adstxt_live_status(array $publisher, ?array $output, string $fileType):
     if ($output['uploaded_hash'] !== $output['body_hash']) {
         return ['status' => 'warning', 'text' => 'Neuer Stand wird beim nächsten Lauf hochgeladen', 'url' => $url];
     }
-    return ['status' => 'ok', 'text' => 'Live seit ' . date_de(strtotime($output['uploaded_at'])), 'url' => $url];
+    return ['status' => 'ok', 'text' => 'Bereitgestellt seit ' . date_de(strtotime($output['uploaded_at'])), 'url' => $url];
 }
 

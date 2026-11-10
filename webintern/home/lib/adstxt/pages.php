@@ -89,7 +89,7 @@ function page_overview(): void
                   <a href="<?= h(ui_url('vorschau', ['id' => $p['id'], 'typ' => $type])) ?>"><?= (int) $o['record_count'] ?> Einträge</a>
                   <div class="pd-t-sub">geändert <?= h(ui_date($o['changed_at'])) ?></div>
                   <?php if (live_enabled()): $ls = adstxt_live_status($p, $o, $type); ?>
-                    <div style="margin-top:4px"><?= ui_badge($ls['status'], $ls['status'] === 'ok' ? 'Live' : ($ls['status'] === 'error' ? 'Upload-Fehler' : 'Ausstehend')) ?></div>
+                    <div style="margin-top:4px"><?= ui_badge($ls['status'], $ls['status'] === 'ok' ? 'Bereitgestellt' : ($ls['status'] === 'error' ? 'Upload-Fehler' : 'Ausstehend')) ?></div>
                   <?php endif; ?>
                 <?php endif; ?>
               </td>
@@ -261,7 +261,7 @@ function page_publisher_form(?int $id, ?array $form, array $errors): void
                     <code class="pd-t-mono pd-live__url"><?= h($ls['url']) ?></code>
                     <button type="button" class="pd-btn pd-btn--ghost pd-btn--sm" data-copy="<?= h($ls['url']) ?>">Kopieren</button>
                   </div>
-                  <div><?= ui_badge($ls['status'], $ls['status'] === 'ok' ? 'Live' : null) ?> <span class="pd-t-sub"><?= h($ls['text']) ?></span></div>
+                  <div><?= ui_badge($ls['status'], $ls['status'] === 'ok' ? 'Bereitgestellt' : null) ?> <span class="pd-t-sub"><?= h($ls['text']) ?></span></div>
                   <?php $chk = db_one('SELECT * FROM adstxt_checks WHERE publisher_id = ? AND file_type = ?', [$p['id'], $type]); ?>
                   <div>Beim Verlag: <?= ui_check_badge($chk['status'] ?? null) ?>
                     <?php if ($chk): ?><span class="pd-t-sub"><?= h($chk['message']) ?> · <a href="<?= h(ui_url('abgleich', ['q' => $p['name']])) ?>">Details</a></span><?php endif; ?></div>

@@ -60,15 +60,16 @@ function list_url(array $override = []): string
   .ep-pub-logo { height: 22px; width: auto; display: block; }
   .ep-table-wrap { overflow-x: auto; }
   .ep-table { width: 100%; border-collapse: collapse; font-size: var(--fs-sm); }
-  .ep-table th { text-align: left; font-size: var(--fs-micro); letter-spacing: .12em; text-transform: uppercase; color: var(--text-muted); font-weight: 500; padding: 12px var(--space-4); border-bottom: 1px solid var(--border); white-space: nowrap; }
-  .ep-table td { padding: 12px var(--space-4); border-bottom: 1px dotted var(--border-strong); vertical-align: middle; }
+  .ep-table th { text-align: left; font-size: var(--fs-micro); letter-spacing: .12em; text-transform: uppercase; color: var(--text-muted); font-weight: 500; padding: 12px var(--space-3); border-bottom: 1px solid var(--border); white-space: nowrap; }
+  .ep-table td { padding: 12px var(--space-3); border-bottom: 1px dotted var(--border-strong); vertical-align: middle; }
   .ep-table tr:last-child td { border-bottom: 0; }
   .ep-table tr:hover td { background: var(--pd-grey-100); }
   .ep-thumb { width: 72px; height: 48px; object-fit: cover; border-radius: 2px; border: 1px solid var(--border); display: block; }
   .ep-cust { font-weight: 500; color: var(--text-strong); }
-  .ep-folder { font-family: var(--font-mono); font-size: 12px; color: var(--text-muted); white-space: nowrap; }
-  .ep-pub { white-space: nowrap; }
-  .ep-url { max-width: 260px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: block; }
+  .ep-folder { font-family: var(--font-mono); font-size: 12px; color: var(--text-muted); overflow-wrap: anywhere; }
+  .ep-pub { min-width: 90px; }
+  /* Link darf auf 2 Zeilen umbrechen (danach abgeschnitten) – so wird die Tabelle nie breiter als die Seite. */
+  .ep-url { min-width: 170px; max-width: 240px; overflow: hidden; overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
   .ep-actions { display: flex; gap: var(--space-2); white-space: nowrap; }
   .ep-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 11.5px; font-weight: 500; padding: 3px 9px; border-radius: 999px; white-space: nowrap; background: var(--pd-grey-200); color: var(--pd-grey-800); }
   .ep-badge::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--b, var(--pd-grey-500)); }
@@ -155,17 +156,18 @@ function list_url(array $override = []): string
             <?php if ($publisher === 'alle'): ?><td class="ep-pub"><?= h(epaper_publisher_name($it['publisher'])) ?></td><?php endif; ?>
             <td><div class="ep-cust"><?= h($it['customer']) ?></div><div class="ep-folder"><?= h($it['folder']) ?></div></td>
             <td><a class="ep-url" href="<?= h($it['link']) ?>" target="_blank" rel="noopener noreferrer" title="<?= h($it['link']) ?>"><?= h($it['link']) ?></a></td>
-            <td>
+            <td style="white-space:nowrap">
               <?php if ($it['live_url']): ?>
-                <a class="ep-badge ep-badge--live" href="<?= h($it['live_url']) ?>" target="_blank" rel="noopener">Live</a>
-                <button type="button" class="ep-copy" data-copy="<?= h($it['live_url']) ?>" title="Live-Adresse kopieren" aria-label="Live-Adresse kopieren"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="1.5"/><path d="M5 15V5a1 1 0 0 1 1-1h10"/></svg></button>
+                <a class="ep-badge ep-badge--live" href="<?= h($it['live_url']) ?>" target="_blank" rel="noopener"
+                   title="Liegt auf ads.pddigital.de und kann gebucht werden – noch nicht im Ad-Server gebucht">Bereitgestellt</a>
+                <button type="button" class="ep-copy" data-copy="<?= h($it['live_url']) ?>" title="Adresse kopieren" aria-label="Adresse auf ads.pddigital.de kopieren"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="1.5"/><path d="M5 15V5a1 1 0 0 1 1-1h10"/></svg></button>
               <?php elseif ($it['upload_error']): ?>
-                <span class="ep-badge ep-badge--error" title="<?= h($it['upload_error']) ?>">Fehler</span>
+                <span class="ep-badge ep-badge--error" title="<?= h($it['upload_error']) ?>">Upload-Fehler</span>
               <?php else: ?>
-                <span class="ep-badge">Lokal</span>
+                <span class="ep-badge" title="Nur auf dem internen Server gespeichert">Nicht bereitgestellt</span>
               <?php endif; ?>
             </td>
-            <td><?= h(date_de(strtotime($it['updated_at']))) ?></td>
+            <td style="white-space:nowrap"><?= h(date_de(strtotime($it['updated_at']), false)) ?><div class="ep-folder"><?= h(date('H:i', strtotime($it['updated_at']))) ?> Uhr</div></td>
             <td><div class="ep-actions">
               <a class="pd-btn pd-btn--ghost" href="<?= h($base . 'index.html') ?>" target="_blank" rel="noopener">Vorschau</a>
               <a class="pd-btn pd-btn--ghost" href="zip.php?id=<?= h(rawurlencode($it['id'])) ?>">ZIP</a>
@@ -196,7 +198,7 @@ function list_url(array $override = []): string
 document.querySelectorAll('[data-copy]').forEach((btn) => btn.addEventListener('click', async () => {
   try { await navigator.clipboard.writeText(btn.dataset.copy); btn.classList.add('is-done'); btn.title = 'Kopiert'; }
   catch { window.prompt('Adresse kopieren:', btn.dataset.copy); }
-  setTimeout(() => { btn.classList.remove('is-done'); btn.title = 'Live-Adresse kopieren'; }, 1500);
+  setTimeout(() => { btn.classList.remove('is-done'); btn.title = 'Adresse kopieren'; }, 1500);
 }));
 </script>
 </body>

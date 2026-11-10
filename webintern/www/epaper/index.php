@@ -126,13 +126,13 @@ function field_error(array $errors, string $field): string
     </div>
     <?php if ($success['live_url']): ?>
       <div class="pd-alert pd-alert--success ep-live" role="status">
-        <strong>Live:</strong>
+        <strong>Bereitgestellt</strong> <span>(liegt auf ads.pddigital.de, noch nicht im Ad-Server gebucht):</span>
         <a href="<?= h($success['live_url']) ?>" target="_blank" rel="noopener" id="ep-live-url"><?= h($success['live_url']) ?></a>
         <button type="button" class="pd-btn pd-btn--secondary pd-btn--sm" data-copy="<?= h($success['live_url']) ?>">Adresse kopieren</button>
       </div>
     <?php elseif (live_enabled()): ?>
       <div class="pd-alert pd-alert--error ep-live" role="alert">
-        <strong>Noch nicht live:</strong> <?= h($success['upload_error'] ?: 'Upload ausstehend.') ?>
+        <strong>Noch nicht bereitgestellt:</strong> <?= h($success['upload_error'] ?: 'Upload ausstehend.') ?>
         Der Cronjob versucht es automatisch erneut.
         <form method="post" style="display:inline"><?= '<input type="hidden" name="csrf" value="' . h(csrf_token()) . '">' ?>
           <input type="hidden" name="id" value="<?= h($success['id']) ?>">
@@ -140,7 +140,7 @@ function field_error(array $errors, string $field): string
         </form>
       </div>
     <?php else: ?>
-      <div class="pd-alert ep-live" style="background:var(--pd-grey-100);border-color:var(--border-strong)">Live-Server ist noch nicht eingerichtet – das Creative liegt nur lokal.</div>
+      <div class="pd-alert ep-live" style="background:var(--pd-grey-100);border-color:var(--border-strong)">Externer Server ist noch nicht eingerichtet – das Creative liegt nur auf dem internen Server.</div>
     <?php endif; ?>
   <?php elseif ($errors): ?>
     <div class="pd-alert pd-alert--error" role="alert">
