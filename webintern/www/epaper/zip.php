@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 require dirname(__DIR__, 2) . '/home/lib/bootstrap.php';
-require APP_HOME . '/lib/epaper.php';
+require APP_HOME . '/lib/epaper/core.php';
 
 $id = (string) ($_GET['id'] ?? '');
 if (!epaper_exists($id)) {

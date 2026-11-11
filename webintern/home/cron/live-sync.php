@@ -16,7 +16,7 @@ if (PHP_SAPI !== 'cli') {
     exit(1);
 }
 require dirname(__DIR__) . '/lib/bootstrap.php';
-require APP_HOME . '/lib/epaper.php';
+require APP_HOME . '/lib/epaper/core.php';
 require APP_HOME . '/lib/adstxt/service.php';
 
 if (!live_enabled()) {

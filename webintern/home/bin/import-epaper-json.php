@@ -13,7 +13,7 @@ if (PHP_SAPI !== 'cli') {
     exit(1);
 }
 require dirname(__DIR__) . '/lib/bootstrap.php';
-require APP_HOME . '/lib/epaper.php';
+require APP_HOME . '/lib/epaper/core.php';
 
 $files = glob(APP_DATA . '/' . EPAPER_META_DIR . '/*/*.json') ?: [];
 $imported = $skipped = 0;

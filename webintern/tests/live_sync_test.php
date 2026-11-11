@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 
 require __DIR__ . '/../home/lib/bootstrap.php';
-require APP_HOME . '/lib/epaper.php';
+require APP_HOME . '/lib/epaper/core.php';
 require APP_HOME . '/lib/adstxt/service.php';
 
 if (getenv('ADSTXT_TEST_DB') !== '1') {

@@ -19,6 +19,8 @@ const GAM_SCOPE = 'https://www.googleapis.com/auth/admanager';
 const GAM_REST_BASE = 'https://admanager.googleapis.com/v1/';
 const GAM_SOAP_BASE = 'https://ads.google.com/apis/ads/publisher/';
 const GAM_TIMEOUT = 30;
+/** Mindestabstand zwischen zwei unserer Anfragen (das Dienstkonto teilen wir mit einer anderen Anwendung). */
+const GAM_MIN_INTERVAL_MS = 350;
 
 final class GamError extends RuntimeException
 {
@@ -148,6 +150,7 @@ function gam_http(string $method, string $url, array $headers = [], ?string $bod
 function gam_rest(string $method, string $path, array $query = [], ?array $body = null): array
 {
     $cfg = gam_config();
+    gam_throttle();
     $url = rtrim($cfg['rest_base'], '/') . '/' . ltrim($path, '/') . ($query ? '?' . http_build_query($query) : '');
     $res = gam_http($method, $url, [
         'Authorization: Bearer ' . gam_token(),
@@ -185,6 +188,7 @@ function gam_explain(int $status, string $msg): string
 function gam_soap(string $service, string $method, array $params = []): mixed
 {
     $cfg = gam_config();
+    gam_throttle();
     $ns = 'https://www.google.com/apis/ads/publisher/' . $cfg['soap_version'];
     $wsdl = rtrim($cfg['soap_base'], '/') . '/' . $cfg['soap_version'] . "/{$service}?wsdl";
     $context = stream_context_create(['http' => [
@@ -220,5 +224,42 @@ function gam_soap_proxy(): array
         return [];
     }
     return ['proxy_host' => $p['host'], 'proxy_port' => (int) ($p['port'] ?? 8080)];
+}
+
+/** Bremse: hält innerhalb eines Prozesses den Mindestabstand zwischen Anfragen ein. */
+function gam_throttle(): void
+{
+    static $last = 0.0;
+    $wait = $last + GAM_MIN_INTERVAL_MS / 1000 - microtime(true);
+    if ($wait > 0) {
+        usleep((int) ($wait * 1_000_000));
+    }
+    $last = microtime(true);
+}
+
+/**
+ * Führt $fn exklusiv aus: Unsere Tools (Reporting, ePaper, …) fragen Google nie gleichzeitig ab.
+ * Wartet bis zu $waitSeconds auf ein laufendes anderes Tool; danach Fehler statt Doppelbelastung.
+ */
+function gam_exclusive(callable $fn, int $waitSeconds = 300): mixed
+{
+    $fh = fopen(APP_DATA . '/gam-api.lock', 'c');
+    if ($fh === false) {
+        throw new GamError('Sperrdatei für Ad-Manager-Abfragen nicht anlegbar (home/data beschreibbar?).');
+    }
+    $deadline = time() + $waitSeconds;
+    while (!flock($fh, LOCK_EX | LOCK_NB)) {
+        if (time() >= $deadline) {
+            fclose($fh);
+            throw new GamError('Ein anderes Tool fragt gerade den Ad Manager ab – bitte später erneut versuchen.');
+        }
+        usleep(500_000);
+    }
+    try {
+        return $fn();
+    } finally {
+        flock($fh, LOCK_UN);
+        fclose($fh);
+    }
 }
 

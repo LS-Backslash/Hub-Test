@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 require dirname(__DIR__, 2) . '/home/lib/bootstrap.php';
 require APP_HOME . '/lib/auth.php';   // nur für CSRF-Schutz
-require APP_HOME . '/lib/epaper.php';
+require APP_HOME . '/lib/epaper/core.php';
 
 auth_start_session(); // vor jeder Ausgabe, damit das CSRF-Token in der Sitzung landet
 

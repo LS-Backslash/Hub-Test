@@ -11,7 +11,10 @@ www/   ->  /data/wwwcust/ads/www    (Webroot: nur schlanke Einstiegspunkte)
 
 | Pfad | Zweck |
 |---|---|
-| `home/lib/` | Gemeinsame Bibliothek (bootstrap, Datenbank, HTTP, Ablage, Login) |
+| `home/lib/` | Grundgerüst für alle Tools (bootstrap, Datenbank, HTTP, Live-Server, Login) |
+| `home/lib/connectors/` | Anbindungen an fremde Systeme, von allen Tools nutzbar (`gam.php`; später Piano) |
+| `home/lib/epaper/` | ePaper-Werbezwischenseiten (`core.php`; später Buchung und Kennzahlen) |
+| `home/lib/adstxt/` | Ads.txt Organizer |
 | `home/lib/migrations.php` | Tabellen-Definitionen; werden automatisch eingespielt |
 | `home/config/` | `config.php` (inkl. DB-Passwort) und Passwort-Hashes (nicht im Git) |
 | `home/data/` | Sperrdateien und kleine Laufzeitdaten |
@@ -23,6 +26,10 @@ www/   ->  /data/wwwcust/ads/www    (Webroot: nur schlanke Einstiegspunkte)
 | `home/templates/` | HTML-Vorlage der Werbezwischenseite |
 | `www/adstxt/` | Ads.txt Organizer (mit Passwortschutz) – Logik in `home/lib/adstxt/` |
 | `tests/` | Tests (werden nicht auf den Server kopiert) |
+
+**Faustregel:** Was mit einem fremden System spricht, gehört nach `connectors/`. Was ein Tool tut, in seinen eigenen
+Ordner. Tools nutzen Connectoren, greifen aber nicht in den Ordner eines anderen Tools. Cronjobs, Tabellen und
+Web-Ordner tragen den Tool-Namen als Vorsilbe (`epaper_…`, `adstxt_…`, später `report_…`).
 
 ## Server-Besonderheiten
 
@@ -103,8 +110,10 @@ Parallel laufende Aktualisierungen (Cron + „Jetzt aktualisieren“) werden per
   **Wird mit einer anderen Anwendung geteilt** (Abfrage ca. alle 6 Stunden):
   Schlüssel nie neu erzeugen/löschen, Dienstkonto und Rechte nicht ändern, Abfragen sparsam halten.
 - Schlüssel: Original-JSON-Datei nach `home/config/admanager-key.json`, `chmod 600`, nie ins Git/in Chats.
-- `home/lib/gam.php`: Anmeldung (JWT/RS256 mit OpenSSL, ohne Zusatzbibliotheken), neue REST-API
+- `home/lib/connectors/gam.php`: Anmeldung (JWT/RS256 mit OpenSSL, ohne Zusatzbibliotheken), neue REST-API
   (`admanager.googleapis.com/v1`, Beta) und SOAP-API (`v202605`) als Ausweichweg.
+- Schonender Umgang: mind. 350 ms zwischen zwei Anfragen; `gam_exclusive()` sorgt dafür, dass unsere Tools
+  (Reporting, ePaper …) nie gleichzeitig abfragen – das zweite wartet.
 - Verbindungstest (nur lesend): `php8.4 /data/wwwcust/ads/home/bin/gam-test.php`
 
 ## Ads.txt Organizer – Funktionsweise

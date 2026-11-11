@@ -12,7 +12,7 @@ if (PHP_SAPI !== 'cli') {
     exit(1);
 }
 require dirname(__DIR__) . '/lib/bootstrap.php';
-require APP_HOME . '/lib/gam.php';
+require APP_HOME . '/lib/connectors/gam.php';
 
 $problems = 0;
 function row(?bool $ok, string $label, string $detail = ''): void
@@ -37,6 +37,10 @@ try {
     row(false, 'Konfiguration', $e->getMessage());
     exit(1);
 }
+
+// Alles Weitere exklusiv: läuft gerade ein anderes unserer Tools gegen Google, wird gewartet.
+gam_exclusive(static function () use ($cfg): void {
+global $problems;
 
 echo "\n== Anmeldung ==\n";
 try {
@@ -70,7 +74,6 @@ foreach ($rest as $label => [$path, $query, $describe]) {
     } catch (GamError $e) {
         row(false, $label, $e->getMessage());
     }
-    usleep(300000); // schonend: max. ~3 Anfragen pro Sekunde
 }
 if ($adUnits) {
     echo "\n  Erste Anzeigenblöcke (Name · Code):\n";
@@ -92,6 +95,8 @@ try {
 } catch (Throwable $e) {
     row(false, 'Rolle des Dienstkontos', $e->getMessage());
 }
+
+});
 
 echo "\n" . ($problems === 0 ? "Alles in Ordnung.\n" : "{$problems} Punkt(e) mit !! – Ausgabe bitte an Claude schicken (enthält keine Schlüssel).\n");
 exit($problems === 0 ? 0 : 1);
