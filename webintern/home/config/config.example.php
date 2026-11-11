@@ -24,4 +24,13 @@ return [
         'url' => 'https://ads.pddigital.de',         // unter dieser Adresse ist der Zielordner öffentlich erreichbar
         'known_hosts' => '/data/wwwcust/ads/home/.ssh/known_hosts',
     ],
+
+    // Google Ad Manager. Der Dienstkonto-Schlüssel liegt als JSON-Datei daneben (chmod 600), nie im Git.
+    // Achtung: Das Dienstkonto wird mit einer anderen Anwendung geteilt – Schlüssel nie neu erzeugen oder löschen.
+    'gam' => [
+        'network_code' => '4444',
+        'key_file' => '/data/wwwcust/ads/home/config/admanager-key.json',
+        'application_name' => 'pd-webintern',
+        'soap_version' => 'v202605',
+    ],
 ];

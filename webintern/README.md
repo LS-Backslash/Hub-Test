@@ -97,6 +97,16 @@ Parallel laufende Aktualisierungen (Cron + „Jetzt aktualisieren“) werden per
 - Jede Datei wird erst als `.tmp-…` hochgeladen und dann umbenannt – niemand bekommt eine halbe Datei.
 - Test: `php8.4 /data/wwwcust/ads/home/bin/check.php` (Abschnitt „Live-Server“ schreibt und löscht eine Testdatei).
 
+## Google Ad Manager (Anbindung im Aufbau)
+
+- Dienstkonto der Abteilung (Adresse steht in der Schlüsseldatei), Netzwerk-Code in `config.php` (Eintrag `gam`).
+  **Wird mit einer anderen Anwendung geteilt** (Abfrage ca. alle 6 Stunden):
+  Schlüssel nie neu erzeugen/löschen, Dienstkonto und Rechte nicht ändern, Abfragen sparsam halten.
+- Schlüssel: Original-JSON-Datei nach `home/config/admanager-key.json`, `chmod 600`, nie ins Git/in Chats.
+- `home/lib/gam.php`: Anmeldung (JWT/RS256 mit OpenSSL, ohne Zusatzbibliotheken), neue REST-API
+  (`admanager.googleapis.com/v1`, Beta) und SOAP-API (`v202605`) als Ausweichweg.
+- Verbindungstest (nur lesend): `php8.4 /data/wwwcust/ads/home/bin/gam-test.php`
+
 ## Ads.txt Organizer – Funktionsweise
 
 - **Bausteine:** Publisher-Kopfzeilen, Einträge (manuelle Blöcke) und Quellen (externe URLs), jeweils global oder
